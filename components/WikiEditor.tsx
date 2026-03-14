@@ -22,6 +22,7 @@ import {
 import ContentRenderer from "@/components/ContentRenderer";
 import { Callout } from "@/lib/tiptap-extensions";
 import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/context/ToastContext";
 import { cn } from "@/lib/utils";
 import type { Database, Document } from "@/types";
 
@@ -173,11 +174,11 @@ interface WikiEditorProps {
 
 export default function WikiEditor({ document: doc }: WikiEditorProps) {
   const { role, user, session } = useAuth();
+  const { showToast } = useToast();
   const isAdmin = role === "admin";
 
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
   const [localDoc, setLocalDoc] = useState(doc);
 
   const supabase = createClientComponentClient<Database>();
@@ -203,7 +204,6 @@ export default function WikiEditor({ document: doc }: WikiEditorProps) {
   }, [editor, isEditing]);
 
   const handleEdit = () => {
-    setSaveError(null);
     editor?.commands.setContent(localDoc.content);
     setIsEditing(true);
   };
@@ -211,13 +211,11 @@ export default function WikiEditor({ document: doc }: WikiEditorProps) {
   const handleCancel = () => {
     editor?.commands.setContent(localDoc.content);
     setIsEditing(false);
-    setSaveError(null);
   };
 
   const handleSave = useCallback(async () => {
     if (!editor) return;
     setSaving(true);
-    setSaveError(null);
 
     const newContent = editor.getJSON();
     const now = new Date().toISOString();
@@ -234,7 +232,7 @@ export default function WikiEditor({ document: doc }: WikiEditorProps) {
       .eq("id", localDoc.id);
 
     if (error) {
-      setSaveError("Failed to save. Please try again.");
+      showToast("Failed to save. Please try again.", "error");
       setSaving(false);
       return;
     }
@@ -248,7 +246,8 @@ export default function WikiEditor({ document: doc }: WikiEditorProps) {
 
     setIsEditing(false);
     setSaving(false);
-  }, [editor, supabase, localDoc.id, user, session]);
+    showToast("Changes saved", "success");
+  }, [editor, supabase, localDoc.id, user, session, showToast]);
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
@@ -294,13 +293,6 @@ export default function WikiEditor({ document: doc }: WikiEditorProps) {
           </div>
         )}
       </div>
-
-      {/* ── Save error ────────────────────────────────────────────────────── */}
-      {saveError && (
-        <div className="mb-4 px-4 py-2.5 bg-red/10 border border-red/20 rounded-lg text-sm text-red font-medium">
-          {saveError}
-        </div>
-      )}
 
       {/* ── View mode ─────────────────────────────────────────────────────── */}
       {!isEditing && (

@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { LogOut, Menu, X } from "lucide-react";
 
 import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/context/ToastContext";
 import DynamicIcon from "@/components/DynamicIcon";
 import SearchBar from "@/components/SearchBar";
 import SubNav from "@/components/SubNav";
@@ -21,7 +22,23 @@ export default function WikiShell({ sections, children }: WikiShellProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const pathname = usePathname();
   const { user, session, signOut } = useAuth();
+  const { showToast } = useToast();
   const drawerRef = useRef<HTMLDivElement>(null);
+
+  const FLASH_KEY = "__wiki_flash__";
+
+  // Show login success flash from LoginForm redirect
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(FLASH_KEY);
+      if (raw) {
+        sessionStorage.removeItem(FLASH_KEY);
+        const { message, type } = JSON.parse(raw);
+        showToast(message, type);
+      }
+    } catch { /* ignore */ }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // /wiki/[section]/[page] → parts[1] is section slug
   const pathParts = pathname.split("/").filter(Boolean);
@@ -203,7 +220,15 @@ export default function WikiShell({ sections, children }: WikiShellProps) {
               {displayEmail}
             </span>
             <button
-              onClick={signOut}
+              onClick={() => {
+                try {
+                  sessionStorage.setItem(
+                    FLASH_KEY,
+                    JSON.stringify({ message: "Signed out", type: "info" })
+                  );
+                } catch { /* ignore */ }
+                signOut();
+              }}
               className="flex items-center gap-1.5 text-xs font-semibold text-dark/50 hover:text-red px-2.5 py-1.5 rounded-md hover:bg-red/8 transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" />

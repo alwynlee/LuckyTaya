@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import { AuthProvider } from "@/context/AuthContext";
+import { ToastProvider } from "@/context/ToastContext";
+import Toaster from "@/components/Toaster";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -23,7 +25,10 @@ export default function RootLayout({
       <body
         className={`${outfit.variable} font-sans bg-offwhite text-dark antialiased`}
       >
-        <AuthProvider>{children}</AuthProvider>
+        <ToastProvider>
+          <AuthProvider>{children}</AuthProvider>
+          <Toaster />
+        </ToastProvider>
       </body>
     </html>
   );

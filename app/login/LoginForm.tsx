@@ -1,13 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { AlertCircle, BookOpen, Eye, EyeOff, Loader2 } from "lucide-react";
+import { useToast } from "@/context/ToastContext";
 import type { Database } from "@/types";
 
+const FLASH_KEY = "__wiki_flash__";
+
 export default function LoginForm() {
+  const { showToast } = useToast();
   const [email, setEmail] = useState("");
+
+  // Show flash toast from logout redirect
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(FLASH_KEY);
+      if (raw) {
+        sessionStorage.removeItem(FLASH_KEY);
+        const { message, type } = JSON.parse(raw);
+        showToast(message, type);
+      }
+    } catch {
+      // ignore
+    }
+  }, [showToast]);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -33,6 +51,14 @@ export default function LoginForm() {
       setLoading(false);
       return;
     }
+
+    // Store flash for wiki to display after redirect
+    try {
+      sessionStorage.setItem(
+        FLASH_KEY,
+        JSON.stringify({ message: "Signed in successfully", type: "success" })
+      );
+    } catch { /* ignore */ }
 
     // Honour ?redirectTo= set by middleware, fall back to /wiki
     const redirectTo = searchParams.get("redirectTo") ?? "/wiki";
