@@ -11,7 +11,7 @@ export default function AdminError({
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
       <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
-        <div className="w-12 h-12 rounded-xl bg-red/10 flex items-center justify-center mb-5">
+        <div className="w-12 h-12 bg-red/10 flex items-center justify-center mb-5">
           <AlertTriangle className="w-6 h-6 text-red" strokeWidth={1.75} />
         </div>
         <h2 className="text-xl font-bold text-dark">Failed to load admin panel</h2>
@@ -20,7 +20,7 @@ export default function AdminError({
         </p>
         <button
           onClick={reset}
-          className="mt-6 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-dark text-offwhite text-sm font-semibold hover:bg-dark/85 transition-colors"
+          className="mt-6 flex items-center gap-2 px-4 py-2.5 bg-dark text-offwhite text-sm font-semibold hover:bg-dark/85 transition-colors"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           Try again

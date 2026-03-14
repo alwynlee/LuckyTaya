@@ -18,6 +18,8 @@ interface WikiShellProps {
   children: React.ReactNode;
 }
 
+const FLASH_KEY = "__wiki_flash__";
+
 export default function WikiShell({ sections, children }: WikiShellProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const pathname = usePathname();
@@ -25,9 +27,13 @@ export default function WikiShell({ sections, children }: WikiShellProps) {
   const { showToast } = useToast();
   const drawerRef = useRef<HTMLDivElement>(null);
 
-  const FLASH_KEY = "__wiki_flash__";
+  const pathParts = pathname.split("/").filter(Boolean);
+  const currentSectionSlug = pathParts[1] ?? null;
+  const currentSection = sections.find((s) => s.slug === currentSectionSlug) ?? null;
 
-  // Show login success flash from LoginForm redirect
+  const displayEmail = user?.email ?? session?.user.email ?? "";
+
+  // Show login-success flash from LoginForm redirect
   useEffect(() => {
     try {
       const raw = sessionStorage.getItem(FLASH_KEY);
@@ -40,19 +46,8 @@ export default function WikiShell({ sections, children }: WikiShellProps) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // /wiki/[section]/[page] → parts[1] is section slug
-  const pathParts = pathname.split("/").filter(Boolean);
-  const currentSectionSlug = pathParts[1] ?? null;
-  const currentSection = sections.find((s) => s.slug === currentSectionSlug) ?? null;
+  useEffect(() => { setDrawerOpen(false); }, [pathname]);
 
-  const displayEmail = user?.email ?? session?.user.email ?? "";
-
-  // Close drawer on route change
-  useEffect(() => {
-    setDrawerOpen(false);
-  }, [pathname]);
-
-  // Close drawer on outside click
   useEffect(() => {
     if (!drawerOpen) return;
     const handlePointerDown = (e: MouseEvent) => {
@@ -64,15 +59,21 @@ export default function WikiShell({ sections, children }: WikiShellProps) {
     return () => document.removeEventListener("mousedown", handlePointerDown);
   }, [drawerOpen]);
 
-  // Lock body scroll while drawer is open
   useEffect(() => {
     document.body.style.overflow = drawerOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
+    return () => { document.body.style.overflow = ""; };
   }, [drawerOpen]);
 
-  // ── Shared nav link list ──────────────────────────────────────────────────
+  const handleSignOut = () => {
+    try {
+      sessionStorage.setItem(
+        FLASH_KEY,
+        JSON.stringify({ message: "Signed out", type: "info" })
+      );
+    } catch { /* ignore */ }
+    signOut();
+  };
+
   const NavLinks = ({ onLinkClick }: { onLinkClick?: () => void }) => (
     <>
       {sections.map((section) => {
@@ -83,12 +84,12 @@ export default function WikiShell({ sections, children }: WikiShellProps) {
             href={`/wiki/${section.slug}`}
             onClick={onLinkClick}
             className={cn(
-              "group flex items-center gap-3 mx-3 px-3 py-2.5 rounded-lg",
-              "border-l-2 text-sm font-medium",
+              "group flex items-center gap-3 mx-3 px-3 py-2.5",
+              "border-l-[3px] text-[11px] font-bold uppercase tracking-[0.1em]",
               "transition-all duration-150",
               isActive
                 ? "bg-white/10 text-offwhite"
-                : "border-transparent text-offwhite/55 hover:text-offwhite hover:bg-white/6"
+                : "border-transparent text-offwhite/45 hover:text-offwhite hover:bg-white/6"
             )}
             style={isActive ? { borderLeftColor: section.colour } : undefined}
           >
@@ -96,7 +97,7 @@ export default function WikiShell({ sections, children }: WikiShellProps) {
               name={section.icon}
               className={cn(
                 "w-4 h-4 shrink-0 transition-colors",
-                isActive ? "text-offwhite" : "text-offwhite/50 group-hover:text-offwhite/80"
+                isActive ? "text-offwhite" : "text-offwhite/45 group-hover:text-offwhite/75"
               )}
             />
             <span className="truncate">{section.title}</span>
@@ -106,30 +107,24 @@ export default function WikiShell({ sections, children }: WikiShellProps) {
     </>
   );
 
-  // ── Sidebar brand header ──────────────────────────────────────────────────
   const BrandHeader = () => (
     <div className="px-6 py-5 border-b border-white/10 shrink-0">
       <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-offwhite/35 mb-0.5">
         iGaming Philippines
       </p>
-      <h1 className="text-[15px] font-bold text-offwhite leading-snug">
-        Internal Wiki
-      </h1>
+      <h1 className="text-[15px] font-bold text-offwhite leading-snug">Internal Wiki</h1>
     </div>
   );
 
-  // ── Sidebar footer ────────────────────────────────────────────────────────
   const SidebarFooter = () => (
     <div className="px-5 py-4 border-t border-white/10 shrink-0">
-      <p className="text-[11px] text-offwhite/35 font-medium truncate px-1">
-        {displayEmail}
-      </p>
+      <p className="text-[11px] text-offwhite/35 font-medium truncate px-1">{displayEmail}</p>
     </div>
   );
 
   return (
     <div className="flex h-screen overflow-hidden bg-offwhite">
-      {/* ── Desktop Sidebar ─────────────────────────────────────────────── */}
+      {/* Desktop Sidebar */}
       <aside className="hidden lg:flex flex-col w-[260px] shrink-0 bg-dark overflow-y-auto">
         <BrandHeader />
         <nav className="flex-1 py-3 space-y-0.5 overflow-y-auto">
@@ -138,18 +133,17 @@ export default function WikiShell({ sections, children }: WikiShellProps) {
         <SidebarFooter />
       </aside>
 
-      {/* ── Mobile overlay backdrop ──────────────────────────────────────── */}
+      {/* Mobile overlay backdrop */}
       <div
         aria-hidden="true"
         onClick={() => setDrawerOpen(false)}
         className={cn(
-          "fixed inset-0 bg-black/60 z-40 lg:hidden",
-          "transition-opacity duration-300",
+          "fixed inset-0 bg-black/60 z-40 lg:hidden transition-opacity duration-300",
           drawerOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         )}
       />
 
-      {/* ── Mobile Drawer ────────────────────────────────────────────────── */}
+      {/* Mobile Drawer */}
       <div
         ref={drawerRef}
         className={cn(
@@ -168,33 +162,36 @@ export default function WikiShell({ sections, children }: WikiShellProps) {
           <button
             onClick={() => setDrawerOpen(false)}
             aria-label="Close navigation"
-            className="p-1.5 rounded-md text-offwhite/50 hover:text-offwhite hover:bg-white/10 transition-colors"
+            className="p-1.5 text-offwhite/50 hover:text-offwhite hover:bg-white/10 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
-
         <nav className="flex-1 py-3 space-y-0.5 overflow-y-auto">
           <NavLinks onLinkClick={() => setDrawerOpen(false)} />
         </nav>
-
         <SidebarFooter />
       </div>
 
-      {/* ── Main content column ──────────────────────────────────────────── */}
-      <div className="flex flex-1 flex-col min-w-0 overflow-hidden">
-        {/* Top bar — `relative` is required so SearchBar's absolute overlays work */}
-        <header className="relative flex items-center gap-3 bg-offwhite border-b border-dark/10 px-4 lg:px-6 h-14 shrink-0">
-          {/* Hamburger — mobile only */}
+      {/* Main content column — --section-colour CSS variable injected here */}
+      <div
+        className="flex flex-1 flex-col min-w-0 overflow-hidden"
+        style={
+          currentSection
+            ? ({ "--section-colour": currentSection.colour } as React.CSSProperties)
+            : undefined
+        }
+      >
+        {/* Top bar */}
+        <header className="relative flex items-center gap-3 bg-dark border-b border-white/10 px-4 lg:px-6 h-14 shrink-0">
           <button
             onClick={() => setDrawerOpen(true)}
             aria-label="Open navigation"
-            className="lg:hidden p-1.5 rounded-md text-dark/50 hover:text-dark hover:bg-dark/6 transition-colors"
+            className="lg:hidden p-1.5 text-offwhite/50 hover:text-offwhite hover:bg-white/10 transition-colors"
           >
             <Menu className="w-5 h-5" />
           </button>
 
-          {/* Section title */}
           <div className="flex items-center gap-2 flex-1 min-w-0">
             {currentSection ? (
               <>
@@ -202,34 +199,24 @@ export default function WikiShell({ sections, children }: WikiShellProps) {
                   className="hidden sm:block w-2 h-2 rounded-full shrink-0"
                   style={{ backgroundColor: currentSection.colour }}
                 />
-                <span className="text-sm font-semibold text-dark truncate">
+                <span className="text-sm font-semibold text-offwhite truncate">
                   {currentSection.title}
                 </span>
               </>
             ) : (
-              <span className="text-sm font-semibold text-dark/40">Wiki</span>
+              <span className="text-sm font-semibold text-offwhite/40">Wiki</span>
             )}
           </div>
 
-          {/* Search */}
           <SearchBar sections={sections} />
 
-          {/* User email + sign out */}
           <div className="flex items-center gap-2 shrink-0">
-            <span className="hidden sm:block text-xs text-dark/45 font-medium max-w-[180px] truncate">
+            <span className="hidden sm:block text-xs text-offwhite/45 font-medium max-w-[180px] truncate">
               {displayEmail}
             </span>
             <button
-              onClick={() => {
-                try {
-                  sessionStorage.setItem(
-                    FLASH_KEY,
-                    JSON.stringify({ message: "Signed out", type: "info" })
-                  );
-                } catch { /* ignore */ }
-                signOut();
-              }}
-              className="flex items-center gap-1.5 text-xs font-semibold text-dark/50 hover:text-red px-2.5 py-1.5 rounded-md hover:bg-red/8 transition-colors"
+              onClick={handleSignOut}
+              className="flex items-center gap-1.5 text-xs font-semibold text-offwhite/45 hover:text-red px-2.5 py-1.5 hover:bg-white/8 transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Sign out</span>
@@ -237,18 +224,11 @@ export default function WikiShell({ sections, children }: WikiShellProps) {
           </div>
         </header>
 
-        {/* Section sub-navigation tabs */}
         {currentSection && (
-          <SubNav
-            sectionSlug={currentSection.slug}
-            sectionColour={currentSection.colour}
-          />
+          <SubNav sectionSlug={currentSection.slug} sectionColour={currentSection.colour} />
         )}
 
-        {/* Scrollable page content */}
-        <main className="flex-1 overflow-y-auto">
-          {children}
-        </main>
+        <main className="flex-1 overflow-y-auto">{children}</main>
       </div>
     </div>
   );

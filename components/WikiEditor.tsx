@@ -29,11 +29,7 @@ import type { Database, Document } from "@/types";
 // ── Toolbar button ────────────────────────────────────────────────────────────
 
 function ToolBtn({
-  onClick,
-  active,
-  disabled,
-  title,
-  children,
+  onClick, active, disabled, title, children,
 }: {
   onClick: () => void;
   active?: boolean;
@@ -48,7 +44,7 @@ function ToolBtn({
       disabled={disabled}
       title={title}
       className={cn(
-        "flex items-center justify-center w-8 h-8 rounded-md text-sm transition-colors",
+        "flex items-center justify-center w-8 h-8 text-sm transition-colors",
         active
           ? "bg-dark text-offwhite"
           : "text-dark/60 hover:text-dark hover:bg-dark/8",
@@ -74,74 +70,32 @@ function EditorToolbar({ editor }: { editor: ReturnType<typeof useEditor> }) {
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-0.5 px-3 py-2 border-b border-dark/10 bg-white/50">
-      <ToolBtn
-        onClick={() => editor.chain().focus().toggleBold().run()}
-        active={editor.isActive("bold")}
-        title="Bold"
-      >
+    <div className="flex flex-wrap items-center gap-0.5 px-3 py-2 border-b border-stroke bg-surface">
+      <ToolBtn onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive("bold")} title="Bold">
         <Bold className="w-3.5 h-3.5" />
       </ToolBtn>
-
-      <ToolBtn
-        onClick={() => editor.chain().focus().toggleItalic().run()}
-        active={editor.isActive("italic")}
-        title="Italic"
-      >
+      <ToolBtn onClick={() => editor.chain().focus().toggleItalic().run()} active={editor.isActive("italic")} title="Italic">
         <Italic className="w-3.5 h-3.5" />
       </ToolBtn>
-
-      <div className="w-px h-5 bg-dark/15 mx-1" />
-
-      <ToolBtn
-        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-        active={editor.isActive("heading", { level: 2 })}
-        title="Heading 2"
-      >
+      <div className="w-px h-5 bg-stroke mx-1" />
+      <ToolBtn onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} active={editor.isActive("heading", { level: 2 })} title="Heading 2">
         <Heading2 className="w-3.5 h-3.5" />
       </ToolBtn>
-
-      <ToolBtn
-        onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-        active={editor.isActive("heading", { level: 3 })}
-        title="Heading 3"
-      >
+      <ToolBtn onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} active={editor.isActive("heading", { level: 3 })} title="Heading 3">
         <Heading3 className="w-3.5 h-3.5" />
       </ToolBtn>
-
-      <div className="w-px h-5 bg-dark/15 mx-1" />
-
-      <ToolBtn
-        onClick={() => editor.chain().focus().toggleBulletList().run()}
-        active={editor.isActive("bulletList")}
-        title="Bullet list"
-      >
+      <div className="w-px h-5 bg-stroke mx-1" />
+      <ToolBtn onClick={() => editor.chain().focus().toggleBulletList().run()} active={editor.isActive("bulletList")} title="Bullet list">
         <List className="w-3.5 h-3.5" />
       </ToolBtn>
-
-      <ToolBtn
-        onClick={() => editor.chain().focus().toggleOrderedList().run()}
-        active={editor.isActive("orderedList")}
-        title="Numbered list"
-      >
+      <ToolBtn onClick={() => editor.chain().focus().toggleOrderedList().run()} active={editor.isActive("orderedList")} title="Numbered list">
         <ListOrdered className="w-3.5 h-3.5" />
       </ToolBtn>
-
-      <div className="w-px h-5 bg-dark/15 mx-1" />
-
-      <ToolBtn
-        onClick={() => editor.chain().focus().toggleBlockquote().run()}
-        active={editor.isActive("blockquote")}
-        title="Blockquote"
-      >
+      <div className="w-px h-5 bg-stroke mx-1" />
+      <ToolBtn onClick={() => editor.chain().focus().toggleBlockquote().run()} active={editor.isActive("blockquote")} title="Blockquote">
         <Quote className="w-3.5 h-3.5" />
       </ToolBtn>
-
-      <ToolBtn
-        onClick={toggleCallout}
-        active={editor.isActive("callout")}
-        title="Alert block"
-      >
+      <ToolBtn onClick={toggleCallout} active={editor.isActive("callout")} title="Alert block">
         <AlertTriangle className="w-3.5 h-3.5" />
       </ToolBtn>
     </div>
@@ -152,27 +106,38 @@ function EditorToolbar({ editor }: { editor: ReturnType<typeof useEditor> }) {
 
 function LastUpdated({ updatedAt, updatedBy }: { updatedAt: string; updatedBy: string }) {
   const date = new Date(updatedAt).toLocaleDateString("en-PH", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
+    year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
   });
-
   return (
-    <p className="mt-8 pt-4 border-t border-dark/8 text-xs text-dark/35 font-medium">
-      Last updated by <span className="text-dark/50">{updatedBy}</span> on {date}
+    <p className="mt-8 pt-4 border-t border-stroke text-xs text-muted font-medium">
+      Last updated by <span className="text-dark/60">{updatedBy}</span> on {date}
     </p>
   );
+}
+
+// ── Section name formatter ────────────────────────────────────────────────────
+
+const SECTION_NAMES: Record<string, string> = {
+  "kyc":            "KYC",
+  "vip":            "VIP",
+  "fraud-payments": "Fraud & Payments",
+  "affiliate":      "Affiliate",
+  "organisation":   "Organisation",
+};
+
+function formatSectionName(slug: string, title?: string): string {
+  if (title) return title;
+  return SECTION_NAMES[slug] ?? slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 // ── Main component ────────────────────────────────────────────────────────────
 
 interface WikiEditorProps {
   document: Document;
+  sectionTitle?: string;
 }
 
-export default function WikiEditor({ document: doc }: WikiEditorProps) {
+export default function WikiEditor({ document: doc, sectionTitle }: WikiEditorProps) {
   const { role, user, session } = useAuth();
   const { showToast } = useToast();
   const isAdmin = role === "admin";
@@ -194,13 +159,10 @@ export default function WikiEditor({ document: doc }: WikiEditorProps) {
     },
   });
 
-  // Sync editor editable state
   useEffect(() => {
     if (!editor) return;
     editor.setEditable(isEditing);
-    if (isEditing) {
-      setTimeout(() => editor.commands.focus("end"), 50);
-    }
+    if (isEditing) setTimeout(() => editor.commands.focus("end"), 50);
   }, [editor, isEditing]);
 
   const handleEdit = () => {
@@ -224,11 +186,7 @@ export default function WikiEditor({ document: doc }: WikiEditorProps) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error } = await (supabase as any)
       .from("documents")
-      .update({
-        content: newContent,
-        updated_at: now,
-        updated_by: authorEmail,
-      })
+      .update({ content: newContent, updated_at: now, updated_by: authorEmail })
       .eq("id", localDoc.id);
 
     if (error) {
@@ -249,29 +207,52 @@ export default function WikiEditor({ document: doc }: WikiEditorProps) {
     showToast("Changes saved", "success");
   }, [editor, supabase, localDoc.id, user, session, showToast]);
 
+  const eyebrow = formatSectionName(localDoc.section_slug, sectionTitle);
+
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
-      {/* ── Page header ──────────────────────────────────────────────────── */}
-      <div className="flex items-start justify-between gap-4 mb-6">
-        <h1 className="text-2xl font-bold text-dark leading-tight">{localDoc.title}</h1>
-
-        {/* Admin controls */}
-        {isAdmin && !isEditing && (
-          <button
-            onClick={handleEdit}
-            className="flex items-center gap-1.5 shrink-0 px-3.5 py-2 rounded-lg bg-teal text-offwhite text-sm font-bold hover:bg-teal/85 transition-colors"
+    <div>
+      {/* ── Page hero ─────────────────────────────────────────────────────── */}
+      <div
+        className="border-b border-white/15 shrink-0"
+        style={{ backgroundColor: "var(--section-colour, #0B704E)" }}
+      >
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+          {/* Eyebrow */}
+          <p
+            className="text-[11px] font-bold uppercase tracking-[0.22em] mb-3"
+            style={{ color: "rgba(255,255,255,0.55)" }}
           >
-            <Pencil className="w-3.5 h-3.5" />
-            Edit
-          </button>
-        )}
+            {eyebrow}
+          </p>
 
+          {/* Title row */}
+          <div className="flex items-start justify-between gap-4">
+            <h1 className="text-2xl sm:text-[1.75rem] font-bold text-white leading-tight">
+              {localDoc.title}
+            </h1>
+
+            {isAdmin && !isEditing && (
+              <button
+                onClick={handleEdit}
+                className="flex items-center gap-1.5 shrink-0 px-3.5 py-2 bg-yellow text-dark text-sm font-bold hover:brightness-95 transition-colors"
+              >
+                <Pencil className="w-3.5 h-3.5" />
+                Edit
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Content area ──────────────────────────────────────────────────── */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
+        {/* Save / Cancel bar — edit mode only */}
         {isAdmin && isEditing && (
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center justify-end gap-2 mb-6 pb-4 border-b border-stroke">
             <button
               onClick={handleCancel}
               disabled={saving}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-dark/20 text-dark/70 text-sm font-semibold hover:bg-dark/6 disabled:opacity-50 transition-colors"
+              className="flex items-center gap-1.5 px-3.5 py-2 border border-stroke text-dark/70 text-sm font-semibold hover:bg-surface disabled:opacity-50 transition-colors"
             >
               <X className="w-3.5 h-3.5" />
               Cancel
@@ -279,43 +260,35 @@ export default function WikiEditor({ document: doc }: WikiEditorProps) {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-yellow text-dark text-sm font-bold hover:brightness-95 disabled:opacity-60 transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2 bg-yellow text-dark text-sm font-bold hover:brightness-95 disabled:opacity-60 transition-colors"
             >
               {saving ? (
-                <>
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  Saving…
-                </>
+                <><Loader2 className="w-3.5 h-3.5 animate-spin" />Saving…</>
               ) : (
                 "Save"
               )}
             </button>
           </div>
         )}
-      </div>
 
-      {/* ── View mode ─────────────────────────────────────────────────────── */}
-      {!isEditing && (
-        <ContentRenderer content={localDoc.content} />
-      )}
+        {/* View mode */}
+        {!isEditing && <ContentRenderer content={localDoc.content} />}
 
-      {/* ── Edit mode ─────────────────────────────────────────────────────── */}
-      {isEditing && (
-        <div className="border border-dark/15 rounded-xl overflow-hidden bg-white shadow-sm">
-          <EditorToolbar editor={editor} />
-          <div className="wiki-editor-content">
-            <EditorContent editor={editor} />
+        {/* Edit mode */}
+        {isEditing && (
+          <div className="border border-stroke bg-white shadow-sm">
+            <EditorToolbar editor={editor} />
+            <div className="wiki-editor-content">
+              <EditorContent editor={editor} />
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* ── Last updated ──────────────────────────────────────────────────── */}
-      {localDoc.updated_at && localDoc.updated_by && (
-        <LastUpdated
-          updatedAt={localDoc.updated_at}
-          updatedBy={localDoc.updated_by}
-        />
-      )}
+        {/* Last updated */}
+        {localDoc.updated_at && localDoc.updated_by && (
+          <LastUpdated updatedAt={localDoc.updated_at} updatedBy={localDoc.updated_by} />
+        )}
+      </div>
     </div>
   );
 }

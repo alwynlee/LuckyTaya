@@ -15,6 +15,7 @@
 :root {
   --background: #FEFAF5;
   --foreground: #02110A;
+  --section-colour: #0B704E; /* fallback: teal */
 }
 
 body {
@@ -27,6 +28,11 @@ body {
   display: none;
 }
 
+/* ── Bullet list markers use section accent colour ────────────────────────── */
+.wiki-content ul > li::marker {
+  color: var(--section-colour);
+}
+
 /* ── TipTap / ProseMirror editor styles ───────────────────────────────────── */
 .wiki-editor-content .ProseMirror {
   outline: none;
@@ -37,11 +43,11 @@ body {
   margin-top: 0.85rem;
 }
 
-/* Headings */
+/* Headings — use section accent colour */
 .wiki-editor-content .ProseMirror h2 {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #0B704E; /* teal */
+  color: var(--section-colour);
   margin-top: 2rem;
   margin-bottom: 0.5rem;
   line-height: 1.35;
@@ -49,11 +55,10 @@ body {
 .wiki-editor-content .ProseMirror h2:first-child {
   margin-top: 0;
 }
-
 .wiki-editor-content .ProseMirror h3 {
   font-size: 1rem;
   font-weight: 600;
-  color: #0B704E;
+  color: var(--section-colour);
   margin-top: 1.5rem;
   margin-bottom: 0.35rem;
   line-height: 1.35;
@@ -70,6 +75,9 @@ body {
   list-style-type: disc;
   padding-left: 1.5rem;
 }
+.wiki-editor-content .ProseMirror ul > li::marker {
+  color: var(--section-colour);
+}
 .wiki-editor-content .ProseMirror ol {
   list-style-type: decimal;
   padding-left: 1.5rem;
@@ -82,9 +90,19 @@ body {
   margin-top: 0.2rem;
 }
 
+/* Inline code — Outfit Regular, no monospace */
+.wiki-editor-content .ProseMirror code {
+  font-family: var(--font-outfit), sans-serif;
+  background: #F4F0E8;
+  border: 1px solid #E8E0D4;
+  color: #02110A;
+  padding: 0.1em 0.4em;
+  font-size: 0.82em;
+}
+
 /* Blockquote */
 .wiki-editor-content .ProseMirror blockquote {
-  border-left: 4px solid rgb(2 17 10 / 0.2);
+  border-left: 4px solid var(--section-colour);
   padding-left: 1rem;
   font-style: italic;
   color: rgb(2 17 10 / 0.6);
@@ -93,15 +111,16 @@ body {
 /* Callout (custom extension) */
 .wiki-editor-content .ProseMirror [data-callout] {
   border-left: 4px solid #E53C0E;
-  background: rgb(229 60 14 / 0.08);
-  color: #E53C0E;
-  border-radius: 0 0.5rem 0.5rem 0;
+  background: rgb(229 60 14 / 0.05);
+  border-top: 1px solid #E8E0D4;
+  border-right: 1px solid #E8E0D4;
+  border-bottom: 1px solid #E8E0D4;
+  color: #02110A;
   padding: 0.75rem 1rem;
 }
 .wiki-editor-content .ProseMirror [data-callout][data-variant="critical"] {
   border-left-color: #CC0B1A;
-  background: rgb(204 11 26 / 0.08);
-  color: #CC0B1A;
+  background: rgb(204 11 26 / 0.05);
 }
 
 /* Cursor placeholder */
@@ -111,9 +130,4 @@ body {
   color: rgb(2 17 10 / 0.25);
   pointer-events: none;
   height: 0;
-}
-
-/* Focus ring on the editor area */
-.wiki-editor-content:focus-within {
-  --tw-ring-color: rgb(11 112 78 / 0.15);
 }

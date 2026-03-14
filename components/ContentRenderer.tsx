@@ -35,8 +35,9 @@ function renderInline(node: JSONNode, key: number): React.ReactNode {
         el = <em key={key} className="italic">{el}</em>;
         break;
       case "code":
+        // Outfit Regular (no monospace) per design system
         el = (
-          <code key={key} className="bg-dark/8 text-dark px-1.5 py-0.5 rounded text-[0.8em] font-mono">
+          <code key={key} className="bg-surface text-dark px-1.5 py-0.5 text-[0.82em] border border-stroke">
             {el}
           </code>
         );
@@ -48,7 +49,8 @@ function renderInline(node: JSONNode, key: number): React.ReactNode {
             href={mark.attrs?.href as string}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-teal underline underline-offset-2 hover:text-teal/80 transition-colors"
+            className="underline underline-offset-2 hover:opacity-75 transition-opacity"
+            style={{ color: "var(--section-colour, #0B704E)" }}
           >
             {el}
           </a>
@@ -62,21 +64,21 @@ function renderInline(node: JSONNode, key: number): React.ReactNode {
 // ── Badge / status tag ────────────────────────────────────────────────────────
 
 const BADGE_STYLES: Record<string, string> = {
-  red:      "bg-red/12 text-red border-red/25",
-  critical: "bg-red/12 text-red border-red/25",
-  orange:   "bg-orange/12 text-orange border-orange/25",
-  warning:  "bg-orange/12 text-orange border-orange/25",
-  teal:     "bg-teal/12 text-teal border-teal/25",
+  red:      "bg-red/8 text-red border-red/25",
+  critical: "bg-red/8 text-red border-red/25",
+  orange:   "bg-orange/8 text-orange border-orange/25",
+  warning:  "bg-orange/8 text-orange border-orange/25",
+  teal:     "bg-teal/8 text-teal border-teal/25",
   yellow:   "bg-yellow/35 text-dark border-yellow/50",
-  gold:     "bg-gold/12 text-gold border-gold/25",
+  gold:     "bg-gold/8 text-gold border-gold/25",
 };
 
 function Badge({ label, color = "teal" }: { label: string; color?: string }) {
   const style = BADGE_STYLES[color.toLowerCase()] ?? BADGE_STYLES.teal;
   return (
     <span className={cn(
-      "inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold",
-      "uppercase tracking-wide border align-middle",
+      "inline-flex items-center px-2 py-0.5 text-[11px] font-bold",
+      "uppercase tracking-[0.08em] border align-middle",
       style
     )}>
       {label}
@@ -88,13 +90,13 @@ function Badge({ label, color = "teal" }: { label: string; color?: string }) {
 
 function Callout({ variant, children }: { variant?: string; children: React.ReactNode }) {
   const isCritical = variant === "critical" || variant === "error";
+  const borderColor = isCritical ? "#CC0B1A" : "#E53C0E";
+  const bgColor = isCritical ? "rgba(204,11,26,0.05)" : "rgba(229,60,14,0.05)";
   return (
-    <div className={cn(
-      "border-l-4 rounded-r-lg px-4 py-3 my-4 text-sm",
-      isCritical
-        ? "border-red bg-red/8 text-red"
-        : "border-orange bg-orange/8 text-orange"
-    )}>
+    <div
+      className="border border-stroke px-4 py-3 my-4 text-sm text-dark"
+      style={{ borderLeftWidth: "4px", borderLeftColor: borderColor, backgroundColor: bgColor }}
+    >
       {children}
     </div>
   );
@@ -105,15 +107,18 @@ function Callout({ variant, children }: { variant?: string; children: React.Reac
 function Accordion({ title, children }: { title: string; children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-dark/12 rounded-xl overflow-hidden my-4">
+    <div
+      className="border border-stroke overflow-hidden my-4"
+      style={{ borderLeftWidth: "3px", borderLeftColor: "var(--section-colour, #0B704E)" }}
+    >
       <button
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-dark/4 hover:bg-dark/8 transition-colors text-left"
+        className="w-full flex items-center justify-between px-4 py-3 bg-surface hover:bg-stroke/60 transition-colors text-left"
       >
         <span className="text-sm font-semibold text-dark">{title}</span>
         <ChevronDown
           className={cn(
-            "w-4 h-4 text-dark/40 shrink-0 transition-transform duration-200",
+            "w-4 h-4 text-muted shrink-0 transition-transform duration-200",
             open && "rotate-180"
           )}
         />
@@ -124,7 +129,7 @@ function Accordion({ title, children }: { title: string; children: React.ReactNo
           open ? "max-h-[9999px] opacity-100" : "max-h-0 opacity-0"
         )}
       >
-        <div className="px-4 py-3">{children}</div>
+        <div className="px-4 py-3 bg-white">{children}</div>
       </div>
     </div>
   );
@@ -151,13 +156,21 @@ function renderNode(node: JSONNode, key: number): React.ReactNode {
       const text = kids.map((c, i) => renderInline(c, i));
       if (level === 2) {
         return (
-          <h2 key={key} className="text-[1.2rem] font-semibold text-teal mt-8 mb-3 first:mt-0 leading-snug">
+          <h2
+            key={key}
+            className="text-[1.15rem] font-semibold mt-8 mb-3 first:mt-0 leading-snug"
+            style={{ color: "var(--section-colour, #0B704E)" }}
+          >
             {text}
           </h2>
         );
       }
       return (
-        <h3 key={key} className="text-base font-semibold text-teal mt-6 mb-2 first:mt-0 leading-snug">
+        <h3
+          key={key}
+          className="text-base font-semibold mt-5 mb-2 first:mt-0 leading-snug"
+          style={{ color: "var(--section-colour, #0B704E)" }}
+        >
           {text}
         </h3>
       );
@@ -181,7 +194,6 @@ function renderNode(node: JSONNode, key: number): React.ReactNode {
       return (
         <li key={key} className="text-dark/85 leading-relaxed pl-0.5">
           {kids.map((c, i) => {
-            // Unwrap single paragraphs in list items to avoid double spacing
             if (c.type === "paragraph") {
               return c.content?.map((t, j) => renderInline(t, j));
             }
@@ -194,7 +206,8 @@ function renderNode(node: JSONNode, key: number): React.ReactNode {
       return (
         <blockquote
           key={key}
-          className="border-l-4 border-dark/20 pl-4 my-4 italic text-dark/60"
+          className="border-l-4 pl-4 my-4 italic text-dark/60"
+          style={{ borderLeftColor: "var(--section-colour, #0B704E)" }}
         >
           {kids.map((c, i) => renderNode(c, i))}
         </blockquote>
@@ -226,7 +239,7 @@ function renderNode(node: JSONNode, key: number): React.ReactNode {
     // ── Tables ──────────────────────────────────────────────────────────────
     case "table":
       return (
-        <div key={key} className="overflow-x-auto my-5 rounded-xl border border-dark/10">
+        <div key={key} className="overflow-x-auto my-5 border border-stroke">
           <table className="w-full text-sm border-collapse">
             {kids.map((c, i) => renderNode(c, i))}
           </table>
@@ -239,7 +252,7 @@ function renderNode(node: JSONNode, key: number): React.ReactNode {
 
     case "tableRow":
       return (
-        <tr key={key} className="even:bg-dark/4 odd:bg-white">
+        <tr key={key} className="hover:bg-surface transition-colors">
           {kids.map((c, i) => renderNode(c, i))}
         </tr>
       );
@@ -248,7 +261,7 @@ function renderNode(node: JSONNode, key: number): React.ReactNode {
       return (
         <th
           key={key}
-          className="border-b border-dark/10 px-4 py-2.5 text-left text-xs font-bold uppercase tracking-wide text-dark/50 bg-dark/6"
+          className="border-b border-stroke px-4 py-2.5 text-left text-[11px] font-bold uppercase tracking-[0.08em] text-muted bg-surface"
         >
           {kids.map((c, i) => renderNode(c, i))}
         </th>
@@ -256,13 +269,13 @@ function renderNode(node: JSONNode, key: number): React.ReactNode {
 
     case "tableCell":
       return (
-        <td key={key} className="border-b border-dark/6 px-4 py-2.5 text-dark/80">
+        <td key={key} className="border-b border-stroke px-4 py-2.5 text-dark/85">
           {kids.map((c, i) => renderNode(c, i))}
         </td>
       );
 
     case "horizontalRule":
-      return <hr key={key} className="my-6 border-dark/12" />;
+      return <hr key={key} className="my-6 border-stroke" />;
 
     case "hardBreak":
       return <br key={key} />;
@@ -284,9 +297,7 @@ interface ContentRendererProps {
 
 export default function ContentRenderer({ content, className }: ContentRendererProps) {
   if (!content || Object.keys(content).length === 0) {
-    return (
-      <p className="text-dark/30 italic text-sm">No content yet.</p>
-    );
+    return <p className="text-dark/30 italic text-sm">No content yet.</p>;
   }
 
   const root = content as unknown as JSONNode;

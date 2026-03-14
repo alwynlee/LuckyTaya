@@ -27,7 +27,7 @@ export default function Toaster() {
             key={toast.id}
             className={cn(
               "pointer-events-auto flex items-center gap-3 pl-4 pr-3 py-3",
-              "rounded-xl bg-dark text-offwhite shadow-xl border border-white/10",
+              "bg-dark text-offwhite shadow-xl border border-white/10",
               "min-w-[240px] max-w-[360px] toast-enter"
             )}
           >
@@ -35,7 +35,7 @@ export default function Toaster() {
             <p className="text-sm font-medium flex-1 leading-snug">{toast.message}</p>
             <button
               onClick={() => dismiss(toast.id)}
-              className="shrink-0 p-1 rounded-md text-offwhite/40 hover:text-offwhite hover:bg-white/10 transition-colors"
+              className="shrink-0 p-1 text-offwhite/40 hover:text-offwhite hover:bg-white/10 transition-colors"
               aria-label="Dismiss"
             >
               <X className="w-3.5 h-3.5" />

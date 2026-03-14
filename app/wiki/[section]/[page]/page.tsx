@@ -26,14 +26,28 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function WikiPage({ params }: PageProps) {
   const supabase = createServerComponentClient<Database>({ cookies });
 
-  const { data: document } = await supabase
-    .from("documents")
-    .select("id, section_slug, page_slug, title, content, updated_at, updated_by")
-    .eq("section_slug", params.section)
-    .eq("page_slug", params.page)
-    .single();
+  const [{ data: documentData }, { data: sectionRaw }] = await Promise.all([
+    supabase
+      .from("documents")
+      .select("id, section_slug, page_slug, title, content, updated_at, updated_by")
+      .eq("section_slug", params.section)
+      .eq("page_slug", params.page)
+      .single(),
+    supabase
+      .from("sections")
+      .select("title")
+      .eq("slug", params.section)
+      .single(),
+  ]);
 
-  if (!document) notFound();
+  const section = sectionRaw as { title: string } | null;
 
-  return <WikiEditor document={document} />;
+  if (!documentData) notFound();
+
+  return (
+    <WikiEditor
+      document={documentData}
+      sectionTitle={section?.title ?? undefined}
+    />
+  );
 }

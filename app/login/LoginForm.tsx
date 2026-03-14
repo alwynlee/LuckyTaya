@@ -12,6 +12,14 @@ const FLASH_KEY = "__wiki_flash__";
 export default function LoginForm() {
   const { showToast } = useToast();
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const supabase = createClientComponentClient<Database>();
 
   // Show flash toast from logout redirect
   useEffect(() => {
@@ -22,18 +30,8 @@ export default function LoginForm() {
         const { message, type } = JSON.parse(raw);
         showToast(message, type);
       }
-    } catch {
-      // ignore
-    }
+    } catch { /* ignore */ }
   }, [showToast]);
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const supabase = createClientComponentClient<Database>();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -46,7 +44,6 @@ export default function LoginForm() {
     });
 
     if (authError) {
-      // Surface a consistent message — never leak whether it was email vs password
       setError("Invalid email or password. Please check your credentials and try again.");
       setLoading(false);
       return;
@@ -60,7 +57,6 @@ export default function LoginForm() {
       );
     } catch { /* ignore */ }
 
-    // Honour ?redirectTo= set by middleware, fall back to /wiki
     const redirectTo = searchParams.get("redirectTo") ?? "/wiki";
     router.push(redirectTo);
     router.refresh();
@@ -70,12 +66,12 @@ export default function LoginForm() {
     <div className="min-h-screen bg-dark flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
       <div className="w-full max-w-md">
 
-        {/* ── Card ────────────────────────────────────────────── */}
-        <div className="bg-offwhite rounded-2xl shadow-[0_8px_48px_rgba(0,0,0,0.45)] overflow-hidden">
+        {/* Card */}
+        <div className="bg-offwhite shadow-[0_8px_48px_rgba(0,0,0,0.45)] overflow-hidden">
 
           {/* Card header */}
-          <div className="px-8 pt-10 pb-7 text-center border-b border-dark/10">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-teal mb-5 shadow-sm">
+          <div className="px-8 pt-10 pb-7 text-center border-b border-stroke">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-teal mb-5">
               <BookOpen className="w-6 h-6 text-offwhite" strokeWidth={1.75} />
             </div>
 
@@ -85,7 +81,7 @@ export default function LoginForm() {
               Internal Wiki
             </h1>
 
-            <p className="mt-2 text-sm text-dark/50 font-medium">
+            <p className="mt-2 text-sm text-muted font-medium">
               Sign in to access the internal wiki
             </p>
           </div>
@@ -93,23 +89,19 @@ export default function LoginForm() {
           {/* Form */}
           <form onSubmit={handleSubmit} className="px-8 py-8 space-y-5" noValidate>
 
-            {/* ── Error banner ──────────────────────────────────── */}
             {error && (
               <div
                 role="alert"
-                className="flex items-start gap-3 bg-red/10 border border-red/25 text-red rounded-lg px-4 py-3"
+                className="flex items-start gap-3 bg-red/8 border border-red/25 text-red px-4 py-3"
               >
                 <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" strokeWidth={2} />
                 <p className="text-sm font-medium leading-snug">{error}</p>
               </div>
             )}
 
-            {/* ── Email ─────────────────────────────────────────── */}
+            {/* Email */}
             <div className="space-y-1.5">
-              <label
-                htmlFor="email"
-                className="block text-sm font-semibold text-dark"
-              >
+              <label htmlFor="email" className="block text-sm font-semibold text-dark">
                 Email address
               </label>
               <input
@@ -121,7 +113,7 @@ export default function LoginForm() {
                 autoComplete="email"
                 placeholder="you@company.com"
                 className="
-                  w-full rounded-lg border border-dark/20 bg-white
+                  w-full border border-stroke bg-white
                   px-4 py-2.5 text-sm text-dark
                   placeholder:text-dark/30
                   focus:border-teal focus:ring-2 focus:ring-teal/20 focus:outline-none
@@ -132,12 +124,9 @@ export default function LoginForm() {
               />
             </div>
 
-            {/* ── Password ──────────────────────────────────────── */}
+            {/* Password */}
             <div className="space-y-1.5">
-              <label
-                htmlFor="password"
-                className="block text-sm font-semibold text-dark"
-              >
+              <label htmlFor="password" className="block text-sm font-semibold text-dark">
                 Password
               </label>
               <div className="relative">
@@ -150,7 +139,7 @@ export default function LoginForm() {
                   autoComplete="current-password"
                   placeholder="••••••••"
                   className="
-                    w-full rounded-lg border border-dark/20 bg-white
+                    w-full border border-stroke bg-white
                     px-4 py-2.5 pr-11 text-sm text-dark
                     placeholder:text-dark/30
                     focus:border-teal focus:ring-2 focus:ring-teal/20 focus:outline-none
@@ -166,23 +155,19 @@ export default function LoginForm() {
                   className="absolute inset-y-0 right-0 flex items-center px-3 text-dark/40 hover:text-dark/70 transition-colors"
                   tabIndex={-1}
                 >
-                  {showPassword ? (
-                    <EyeOff className="w-4 h-4" />
-                  ) : (
-                    <Eye className="w-4 h-4" />
-                  )}
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
 
-            {/* ── Submit ────────────────────────────────────────── */}
+            {/* Submit */}
             <button
               type="submit"
               disabled={loading}
               className="
                 w-full mt-2 flex items-center justify-center gap-2
                 bg-yellow text-dark font-bold text-sm
-                py-3 rounded-lg
+                py-3
                 hover:brightness-95 active:brightness-90
                 focus:outline-none focus:ring-2 focus:ring-yellow/60 focus:ring-offset-2 focus:ring-offset-offwhite
                 disabled:opacity-60 disabled:cursor-not-allowed
@@ -190,10 +175,7 @@ export default function LoginForm() {
               "
             >
               {loading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Signing in…
-                </>
+                <><Loader2 className="w-4 h-4 animate-spin" />Signing in…</>
               ) : (
                 "Sign in"
               )}
@@ -201,7 +183,6 @@ export default function LoginForm() {
           </form>
         </div>
 
-        {/* ── Footer note ─────────────────────────────────────── */}
         <p className="mt-6 text-center text-xs text-offwhite/30">
           Access is restricted to authorised personnel only.
         </p>

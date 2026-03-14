@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { updateUserRole } from "./actions";
 import { cn } from "@/lib/utils";
 import type { User, UserRole } from "@/types";
@@ -12,9 +12,7 @@ interface UserTableProps {
 // ── Toggle switch ─────────────────────────────────────────────────────────────
 
 function RoleToggle({
-  userId,
-  role,
-  onToggled,
+  userId, role, onToggled,
 }: {
   userId: string;
   role: UserRole;
@@ -59,33 +57,28 @@ function RoleToggle({
 // ── Main table ────────────────────────────────────────────────────────────────
 
 export default function UserTable({ users: initialUsers }: UserTableProps) {
-  // Optimistic local state — updated immediately on toggle
   const [users, setUsers] = useState(initialUsers);
 
   const handleToggled = (id: string, newRole: UserRole) => {
-    setUsers((prev) =>
-      prev.map((u) => (u.id === id ? { ...u, role: newRole } : u))
-    );
+    setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, role: newRole } : u)));
   };
 
   if (users.length === 0) {
-    return (
-      <p className="text-sm text-dark/40 py-8 text-center">No users found.</p>
-    );
+    return <p className="text-sm text-muted py-8 text-center">No users found.</p>;
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-dark/10">
+    <div className="overflow-x-auto border border-stroke">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-dark/10 bg-dark/4">
-            <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-dark/45">
+          <tr className="border-b border-stroke bg-surface">
+            <th className="px-5 py-3 text-left text-[11px] font-bold uppercase tracking-[0.08em] text-muted">
               Email
             </th>
-            <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-dark/45">
+            <th className="px-5 py-3 text-left text-[11px] font-bold uppercase tracking-[0.08em] text-muted">
               Role
             </th>
-            <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-dark/45">
+            <th className="px-5 py-3 text-left text-[11px] font-bold uppercase tracking-[0.08em] text-muted">
               Admin access
             </th>
           </tr>
@@ -95,7 +88,7 @@ export default function UserTable({ users: initialUsers }: UserTableProps) {
             <tr
               key={user.id}
               className={cn(
-                "border-b border-dark/6 last:border-0 transition-colors",
+                "border-b border-stroke last:border-0 transition-colors hover:bg-surface",
                 i % 2 === 0 ? "bg-white" : "bg-offwhite"
               )}
             >
@@ -103,21 +96,17 @@ export default function UserTable({ users: initialUsers }: UserTableProps) {
               <td className="px-5 py-3.5">
                 <span
                   className={cn(
-                    "inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wide border",
+                    "inline-flex items-center px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.08em] border",
                     user.role === "admin"
-                      ? "bg-teal/12 text-teal border-teal/25"
-                      : "bg-dark/8 text-dark/50 border-dark/15"
+                      ? "bg-teal/8 text-teal border-teal/25"
+                      : "bg-dark/6 text-muted border-stroke"
                   )}
                 >
                   {user.role}
                 </span>
               </td>
               <td className="px-5 py-3.5">
-                <RoleToggle
-                  userId={user.id}
-                  role={user.role}
-                  onToggled={handleToggled}
-                />
+                <RoleToggle userId={user.id} role={user.role} onToggled={handleToggled} />
               </td>
             </tr>
           ))}
@@ -126,6 +115,3 @@ export default function UserTable({ users: initialUsers }: UserTableProps) {
     </div>
   );
 }
-
-// useState import needed in client component
-import { useState } from "react";

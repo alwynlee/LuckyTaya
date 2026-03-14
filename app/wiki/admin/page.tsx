@@ -77,7 +77,7 @@ export default async function AdminPage() {
         ].map(({ label, value }) => (
           <div
             key={label}
-            className="bg-white rounded-xl border border-dark/10 px-5 py-4"
+            className="bg-white border border-stroke px-5 py-4"
           >
             <p className="text-2xl font-bold text-dark">{value}</p>
             <p className="text-xs text-dark/45 font-medium mt-0.5">{label}</p>
