@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Affiliate Management Workflow · iGaming Philippines</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,600&family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #f4f1eb;
+  --bg2:      #ede9e1;
+  --surface:  #ffffff;
+  --surface2: #f9f7f3;
+  --border:   #ddd8ce;
+  --border2:  #c8c2b4;
+  --navy:     #1a2744;
+  --navy2:    #243660;
+  --coral:    #d4501e;
+  --coral2:   #e8673a;
+  --coral3:   #f2a07a;
+  --teal:     #1a6a72;
+  --teal2:    #22888f;
+  --gold:     #b8860b;
+  --gold2:    #d4a020;
+  --purple:   #5a2d7a;
+  --text:     #1a1612;
+  --text2:    #3d3428;
+  --text3:    #7a6e5a;
+  --text4:    #a89880;
+
+  /* level colours */
+  --l1: #d4501e;
+  --l2: #1a6a72;
+  --l3: #1a2744;
+  --l4: #5a2d7a;
+  --l5: #b8860b;
+
+  --l1-bg: rgba(212,80,30,0.08);
+  --l2-bg: rgba(26,106,114,0.08);
+  --l3-bg: rgba(26,39,68,0.08);
+  --l4-bg: rgba(90,45,122,0.08);
+  --l5-bg: rgba(184,134,11,0.08);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { font-size:16px; scroll-behavior:smooth; }
+
+body {
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Figtree',sans-serif;
+  font-size:15px; line-height:1.75;
+  min-height:100vh;
+}
+
+/* paper texture */
+body::before {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  opacity:0.6;
+}
+
+/* ── TOP NAV ── */
+.topnav {
+  position:sticky; top:0; z-index:200;
+  background:var(--navy);
+  display:flex; align-items:center;
+  padding:0 44px; height:60px;
+  border-bottom:3px solid var(--coral);
+}
+.nav-brand {
+  font-family:'Fraunces',serif;
+  font-size:19px; font-weight:600;
+  color:#fff; letter-spacing:0.02em;
+  margin-right:auto; text-decoration:none;
+  font-style:italic;
+}
+.nav-brand strong { color:var(--coral3); font-style:normal; font-weight:700; }
+.nav-links { display:flex; }
+.nav-link {
+  font-family:'Figtree',sans-serif;
+  font-size:13px; letter-spacing:0.12em; text-transform:uppercase; font-weight:500;
+  color:rgba(255,255,255,0.45); padding:0 18px; height:60px;
+  display:flex; align-items:center; cursor:pointer;
+  border-bottom:3px solid transparent; margin-bottom:-3px;
+  transition:all 0.2s; background:none;
+  border-top:none; border-left:none; border-right:none;
+}
+.nav-link:hover { color:rgba(255,255,255,0.8); }
+.nav-link.active { color:#fff; border-bottom-color:var(--coral); }
+
+/* ── PAGES ── */
+.page { display:none; position:relative; z-index:1; }
+.page.active { display:block; }
+
+/* ── HERO ── */
+.hero {
+  background:var(--navy);
+  padding:68px 44px 52px;
+  position:relative; overflow:hidden;
+}
+.hero::before {
+  content:'';
+  position:absolute; bottom:-60px; right:-60px;
+  width:420px; height:420px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(212,80,30,0.12) 0%, transparent 70%);
+  pointer-events:none;
+}
+.hero::after {
+  content:'AFFILIATE';
+  position:absolute; right:-10px; top:20px;
+  font-family:'Fraunces',serif;
+  font-size:180px; font-weight:800;
+  color:rgba(255,255,255,0.025);
+  line-height:1; pointer-events:none;
+  letter-spacing:-0.04em;
+}
+.hero-eyebrow {
+  font-size:12px; letter-spacing:0.3em; text-transform:uppercase;
+  color:var(--coral3); margin-bottom:16px; font-weight:600;
+  display:flex; align-items:center; gap:12px;
+}
+.hero-eyebrow::before { content:''; width:28px; height:2px; background:var(--coral); }
+h1 {
+  font-family:'Fraunces',serif;
+  font-size:clamp(34px,5vw,64px);
+  font-weight:700; line-height:1.05;
+  color:#fff; margin-bottom:16px;
+  letter-spacing:-0.01em;
+}
+h1 em { color:var(--coral2); font-style:italic; }
+.hero-desc {
+  font-size:15px; color:rgba(255,255,255,0.55);
+  max-width:600px; line-height:1.85; margin-bottom:36px;
+  font-weight:300;
+}
+.hero-stats { display:flex; gap:1px; flex-wrap:wrap; }
+.hero-stat {
+  padding:16px 24px; background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
+  text-align:center; min-width:110px;
+}
+.hero-stat-num {
+  font-family:'Fraunces',serif;
+  font-size:30px; font-weight:700; color:var(--coral2); line-height:1;
+}
+.hero-stat-label { font-size:11px; color:rgba(255,255,255,0.35); margin-top:4px; letter-spacing:0.12em; text-transform:uppercase; }
+
+/* ── MAIN ── */
+.main { max-width:1200px; margin:0 auto; padding:52px 44px; }
+
+.sec-label {
+  font-size:11px; letter-spacing:0.28em; text-transform:uppercase;
+  color:var(--coral); font-weight:700; margin-bottom:26px;
+  display:flex; align-items:center; gap:14px;
+}
+.sec-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* ── LEVEL ARCHITECTURE ── */
+.level-stack { display:flex; flex-direction:column; gap:3px; margin-bottom:52px; }
+
+.level-row {
+  display:grid;
+  grid-template-columns:220px 1fr auto;
+  gap:0;
+  border:1px solid var(--border);
+  overflow:hidden;
+  transition:border-color 0.15s;
+  background:var(--surface);
+}
+.level-row:hover { border-color:var(--lc); }
+
+.level-id {
+  background:var(--lc);
+  color:#fff;
+  padding:18px 20px;
+  display:flex; flex-direction:column; justify-content:center;
+}
+.level-id-num {
+  font-family:'Fraunces',serif;
+  font-size:42px; font-weight:800; line-height:1;
+  opacity:0.25;
+}
+.level-id-name {
+  font-size:13px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
+  margin-top:2px;
+}
+.level-id-role { font-size:12px; opacity:0.75; margin-top:3px; }
+
+.level-content { padding:18px 24px; flex:1; }
+.level-title {
+  font-family:'Fraunces',serif;
+  font-size:19px; font-weight:600; color:var(--text);
+  margin-bottom:4px;
+}
+.level-desc { font-size:13px; color:var(--text3); line-height:1.7; max-width:600px; }
+
+.level-rates {
+  padding:18px 24px;
+  display:flex; flex-direction:column; justify-content:center; gap:6px;
+  border-left:1px solid var(--border);
+  min-width:220px;
+  background:var(--surface2);
+}
+.rate-row { display:flex; align-items:center; gap:8px; }
+.rate-label {
+  font-size:11px; letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--text4); font-weight:600; width:68px; flex-shrink:0;
+}
+.rate-range {
+  font-family:'Fraunces',serif;
+  font-size:18px; font-weight:700; color:var(--lc);
+}
+.rate-unit { font-size:12px; color:var(--text3); }
+
+/* cascade arrows */
+.cascade-arrow {
+  display:flex; align-items:center; padding:6px 0 6px 44px; gap:8px;
+}
+.cascade-line { width:1px; height:16px; background:var(--border2); margin-left:108px; }
+.cascade-label {
+  font-size:11px; letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--text3); background:var(--bg); border:1px solid var(--border);
+  padding:2px 10px; margin:0;
+}
+
+/* ── COMMISSION TYPES ── */
+.comm-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; margin-bottom:52px; }
+.comm-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-top:3px solid var(--cc);
+  padding:24px;
+  transition:all 0.15s;
+}
+.comm-card:hover { border-color:var(--cc); transform:translateY(-2px); box-shadow:0 6px 24px rgba(0,0,0,0.08); }
+.comm-icon { font-size:28px; margin-bottom:12px; }
+.comm-name {
+  font-family:'Fraunces',serif;
+  font-size:21px; font-weight:600; color:var(--text);
+  margin-bottom:6px;
+}
+.comm-sub { font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:var(--cc); font-weight:700; margin-bottom:12px; }
+.comm-desc { font-size:13px; color:var(--text2); line-height:1.75; }
+.comm-formula {
+  margin-top:14px; padding:10px 14px;
+  background:var(--bg2); border:1px solid var(--border);
+  font-size:12px; color:var(--text2); line-height:1.7;
+  font-family:'Figtree',monospace;
+}
+.comm-formula strong { color:var(--cc); }
+
+/* ── FLOW BLOCKS ── */
+.flow-block {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-left:4px solid var(--bc, var(--coral));
+  margin-bottom:4px; overflow:hidden;
+}
+.flow-block:hover { border-color:var(--bc,var(--coral)); border-left-color:var(--bc,var(--coral)); }
+.fb-header {
+  padding:18px 22px;
+  display:flex; align-items:center; gap:16px;
+  cursor:pointer; user-select:none;
+  transition:background 0.12s;
+}
+.fb-header:hover { background:var(--surface2); }
+.fb-num {
+  font-family:'Fraunces',serif;
+  font-size:30px; font-weight:800; line-height:1;
+  color:var(--bc,var(--coral)); opacity:0.35;
+  flex-shrink:0; width:40px;
+}
+.fb-info { flex:1; }
+.fb-title { font-family:'Fraunces',serif; font-size:19px; font-weight:600; color:var(--text); }
+.fb-sub { font-size:13px; color:var(--text3); margin-top:2px; }
+.fb-tag {
+  font-size:11px; letter-spacing:0.15em; text-transform:uppercase; font-weight:700;
+  padding:4px 12px; border:1px solid;
+  border-color:color-mix(in srgb, var(--bc,var(--coral)) 35%, transparent);
+  background:color-mix(in srgb, var(--bc,var(--coral)) 8%, transparent);
+  color:var(--bc,var(--coral)); white-space:nowrap; flex-shrink:0;
+}
+.fb-toggle { font-size:16px; color:var(--text3); transition:transform 0.2s; flex-shrink:0; }
+.flow-block.open .fb-toggle { transform:rotate(180deg); }
+.fb-body { display:none; padding:0 22px 22px; }
+.flow-block.open .fb-body { display:block; }
+
+.fb-cols { display:grid; grid-template-columns:1fr 1fr; gap:22px; padding-top:18px; border-top:1px solid var(--border); margin-top:2px; }
+@media(max-width:720px) { .fb-cols { grid-template-columns:1fr; } }
+
+.col-hd {
+  font-size:11px; letter-spacing:0.2em; text-transform:uppercase;
+  color:var(--text3); font-weight:700; margin-bottom:12px;
+  padding-bottom:8px; border-bottom:1px solid var(--border);
+}
+
+.act-list { list-style:none; display:flex; flex-direction:column; gap:10px; }
+.act-list li {
+  display:flex; gap:10px; align-items:flex-start;
+  font-size:14px; color:var(--text2); line-height:1.7;
+}
+.act-list li::before {
+  content:'→';
+  color:var(--bc,var(--coral));
+  flex-shrink:0; font-weight:700; margin-top:1px;
+}
+
+.out-stack { display:flex; flex-direction:column; gap:8px; }
+.out {
+  padding:12px 16px; border:1px solid; border-left:3px solid;
+  font-size:14px; line-height:1.7;
+  display:flex; gap:12px; align-items:flex-start;
+  border-radius:0;
+}
+.oc-coral  { border-color:rgba(212,80,30,0.2);  border-left-color:var(--coral);  background:rgba(212,80,30,0.04);  color:var(--coral); }
+.oc-teal   { border-color:rgba(26,106,114,0.2); border-left-color:var(--teal);   background:rgba(26,106,114,0.04); color:var(--teal); }
+.oc-navy   { border-color:rgba(26,39,68,0.2);   border-left-color:var(--navy);   background:rgba(26,39,68,0.04);   color:var(--navy); }
+.oc-purple { border-color:rgba(90,45,122,0.2);  border-left-color:var(--purple); background:rgba(90,45,122,0.04);  color:var(--purple); }
+.oc-red    { border-color:rgba(180,30,30,0.2);  border-left-color:#c04030;       background:rgba(180,30,30,0.04);  color:#c04030; }
+.oc-gold   { border-color:rgba(184,134,11,0.2); border-left-color:var(--gold);   background:rgba(184,134,11,0.04); color:var(--gold); }
+.out-ico { font-size:16px; flex-shrink:0; margin-top:1px; }
+.out-txt strong { display:block; font-weight:700; font-size:14px; margin-bottom:2px; color:inherit; }
+.out-txt span { color:var(--text2); }
+
+.ph-note {
+  margin-top:14px; padding:12px 16px;
+  background:rgba(212,80,30,0.05);
+  border:1px solid rgba(212,80,30,0.18);
+  border-left:3px solid var(--coral);
+  font-size:13px; color:var(--text2); line-height:1.8;
+}
+.ph-note strong { color:var(--coral); font-weight:700; }
+
+.tool-row { margin-top:14px; padding-top:12px; border-top:1px solid var(--border); display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.tool-lbl { font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:var(--text3); font-weight:600; margin-right:2px; }
+.tool-chip { font-size:12px; padding:3px 10px; background:var(--bg2); border:1px solid var(--border); color:var(--text2); }
+
+/* conn */
+.conn { padding:4px 0 4px 44px; display:flex; flex-direction:column; }
+.conn-line { width:1px; height:14px; background:var(--border2); margin-left:16px; }
+.conn-lbl { font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--text3); background:var(--bg); border:1px solid var(--border); padding:2px 10px; margin:2px 0; display:inline-block; }
+
+/* ── MULTI-LEVEL CALC TABLE ── */
+.calc-intro {
+  background:var(--navy);
+  color:#fff;
+  padding:24px 28px;
+  margin-bottom:4px;
+}
+.calc-intro-title { font-family:'Fraunces',serif; font-size:22px; font-weight:600; margin-bottom:8px; }
+.calc-intro-desc { font-size:14px; color:rgba(255,255,255,0.55); line-height:1.8; max-width:700px; }
+
+.calc-table { width:100%; border-collapse:collapse; font-size:14px; background:var(--surface); border:1px solid var(--border2); margin-bottom:4px; }
+.calc-table th { padding:12px 16px; text-align:left; font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--text3); font-weight:700; border-bottom:2px solid var(--border); background:var(--surface2); }
+.calc-table td { padding:12px 16px; border-bottom:1px solid var(--border); color:var(--text2); vertical-align:top; line-height:1.7; }
+.calc-table tr:last-child td { border-bottom:none; }
+.calc-table tr:hover td { background:var(--surface2); }
+
+.lvl-chip {
+  display:inline-block; padding:3px 10px; font-size:12px; font-weight:700;
+  letter-spacing:0.06em; text-transform:uppercase; border:1px solid; white-space:nowrap;
+}
+.lc-1 { color:var(--l1); border-color:rgba(212,80,30,0.3); background:var(--l1-bg); }
+.lc-2 { color:var(--l2); border-color:rgba(26,106,114,0.3); background:var(--l2-bg); }
+.lc-3 { color:var(--l3); border-color:rgba(26,39,68,0.3); background:var(--l3-bg); }
+.lc-4 { color:var(--l4); border-color:rgba(90,45,122,0.3); background:var(--l4-bg); }
+.lc-5 { color:var(--l5); border-color:rgba(184,134,11,0.3); background:var(--l5-bg); }
+
+.atag { display:inline-block; padding:2px 8px; font-size:12px; border:1px solid; margin-top:3px; }
+.at-c  { color:var(--coral);  border-color:rgba(212,80,30,0.25);  background:rgba(212,80,30,0.05); }
+.at-t  { color:var(--teal);   border-color:rgba(26,106,114,0.25); background:rgba(26,106,114,0.05); }
+.at-n  { color:var(--navy);   border-color:rgba(26,39,68,0.25);   background:rgba(26,39,68,0.05); }
+.at-p  { color:var(--purple); border-color:rgba(90,45,122,0.25);  background:rgba(90,45,122,0.05); }
+.at-r  { color:#c04030;       border-color:rgba(192,64,48,0.25);  background:rgba(192,64,48,0.05); }
+.at-g  { color:var(--gold);   border-color:rgba(184,134,11,0.25); background:rgba(184,134,11,0.05); }
+
+/* ── MATRIX TABLE ── */
+.mtable { width:100%; border-collapse:collapse; font-size:14px; background:var(--surface); border:1px solid var(--border2); }
+.mtable th { padding:12px 16px; text-align:left; font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--text3); font-weight:700; border-bottom:2px solid var(--border); background:var(--surface2); }
+.mtable td { padding:12px 16px; border-bottom:1px solid var(--border); color:var(--text2); vertical-align:top; line-height:1.7; }
+.mtable tr:last-child td { border-bottom:none; }
+.mtable tr:hover td { background:var(--surface2); }
+.sc-name { font-weight:700; color:var(--text); font-size:14px; }
+.sc-sub  { font-size:12px; color:var(--text3); margin-top:2px; }
+
+.bdg { display:inline-block; padding:2px 9px; font-size:11px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; border:1px solid; white-space:nowrap; }
+.bdg-c  { color:var(--coral);  border-color:rgba(212,80,30,0.3);  background:rgba(212,80,30,0.07); }
+.bdg-t  { color:var(--teal);   border-color:rgba(26,106,114,0.3); background:rgba(26,106,114,0.07); }
+.bdg-n  { color:var(--navy);   border-color:rgba(26,39,68,0.3);   background:rgba(26,39,68,0.07); }
+.bdg-p  { color:var(--purple); border-color:rgba(90,45,122,0.3);  background:rgba(90,45,122,0.07); }
+.bdg-r  { color:#c04030;       border-color:rgba(192,64,48,0.3);  background:rgba(192,64,48,0.07); }
+
+/* ── SLA CARDS ── */
+.sla-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:14px; margin-bottom:40px; }
+.sla-card { background:var(--surface); border:1px solid var(--border); overflow:hidden; border-top:3px solid var(--sc,var(--coral)); }
+.sla-top { padding:18px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:14px; }
+.sla-num { font-family:'Fraunces',serif; font-size:36px; font-weight:800; line-height:1; color:var(--sc,var(--coral)); }
+.sla-name { font-family:'Fraunces',serif; font-size:17px; font-weight:600; color:var(--text); }
+.sla-sub  { font-size:12px; color:var(--text3); margin-top:2px; }
+.sla-body { padding:16px 20px; }
+.sla-desc { font-size:13px; color:var(--text2); line-height:1.75; margin-bottom:12px; }
+.sla-rules { list-style:none; display:flex; flex-direction:column; gap:7px; }
+.sla-rules li { font-size:13px; color:var(--text3); display:flex; gap:8px; line-height:1.6; }
+.sla-rules li::before { content:'·'; font-size:20px; line-height:1.1; color:var(--coral); flex-shrink:0; }
+
+/* ── GLOSSARY ── */
+.gloss-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:12px; }
+.gloss-card { background:var(--surface); border:1px solid var(--border); padding:18px 20px; transition:border-color 0.15s; }
+.gloss-card:hover { border-color:var(--border2); }
+.gloss-term { font-family:'Fraunces',serif; font-size:19px; font-weight:600; color:var(--text); margin-bottom:3px; }
+.gloss-abbr { font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--coral); font-weight:700; margin-bottom:9px; }
+.gloss-def  { font-size:13px; color:var(--text2); line-height:1.75; }
+.gloss-ph   { display:inline-block; margin-top:8px; font-size:11px; padding:2px 9px; background:rgba(212,80,30,0.07); border:1px solid rgba(212,80,30,0.2); color:var(--coral); font-weight:700; letter-spacing:0.1em; text-transform:uppercase; }
+
+/* alert */
+.alert-box {
+  padding:18px 22px; margin-bottom:28px;
+  background:rgba(184,134,11,0.06);
+  border:1px solid rgba(184,134,11,0.25);
+  border-left:4px solid var(--gold);
+  font-size:14px; color:var(--text2); line-height:1.8;
+  display:flex; gap:14px; align-items:flex-start;
+}
+.alert-icon { font-size:20px; flex-shrink:0; }
+
+footer {
+  background:var(--navy);
+  border-top:3px solid var(--coral);
+  text-align:center; padding:22px;
+  font-size:13px; color:rgba(255,255,255,0.35);
+  letter-spacing:0.08em; position:relative; z-index:1;
+}
+footer strong { color:var(--coral2); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <a href="index.html" class="nav-brand"><strong>iGaming</strong> Affiliate Ops</a>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="showPage('levels',this)">Multi-Level Structure</button>
+    <button class="nav-link" onclick="showPage('onboarding',this)">Partner Onboarding</button>
+    <button class="nav-link" onclick="showPage('operations',this)">Operations</button>
+    <button class="nav-link" onclick="showPage('matrix',this)">Decision Matrix</button>
+    <button class="nav-link" onclick="showPage('sla',this)">SLA & Payments</button>
+    <button class="nav-link" onclick="showPage('glossary',this)">Glossary</button>
+  </div>
+</nav>
+
+
+<!-- ══════════════════════════════
+     PAGE 1 — MULTI-LEVEL STRUCTURE
+══════════════════════════════ -->
+<div id="page-levels" class="page active">
+  <div class="hero">
+    <div class="hero-eyebrow">Philippines · PAGCOR Licensed · Up to 5 Levels</div>
+    <h1>Affiliate <em>Multi-Level</em><br>Commission Structure</h1>
+    <p class="hero-desc">Flexible commission architecture supporting up to 5 referral levels — from direct media partners to deep sub-affiliate networks. Covers RevShare, CPA, and Hybrid structures with configurable rates per level, negative carryover policy, and full Philippines regulatory context.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-num">5</div><div class="hero-stat-label">Max Levels</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">3</div><div class="hero-stat-label">Commission Types</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">40%</div><div class="hero-stat-label">Max L1 RevShare</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">₱2k</div><div class="hero-stat-label">Min CPA Payout</div></div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- COMMISSION TYPES -->
+    <div class="sec-label">Commission Structures</div>
+    <div class="comm-grid">
+      <div class="comm-card" style="--cc:var(--coral)">
+        <div class="comm-icon">📊</div>
+        <div class="comm-name">Revenue Share</div>
+        <div class="comm-sub">RevShare · Recurring</div>
+        <div class="comm-desc">Affiliate earns a percentage of the net gaming revenue (NGR) generated by players they refer — for the lifetime of the player's activity on the platform. The most common long-term affiliate model.</div>
+        <div class="comm-formula">
+          <strong>L1 NGR</strong> = Deposits − Withdrawals − Bonuses − Platform Costs<br>
+          <strong>L1 Commission</strong> = L1 NGR × L1 RevShare Rate<br>
+          <strong>L2 Override</strong> = L1 Commission × L2 Sub-Aff Rate
+        </div>
+      </div>
+      <div class="comm-card" style="--cc:var(--teal)">
+        <div class="comm-icon">💰</div>
+        <div class="comm-name">Cost Per Acquisition</div>
+        <div class="comm-sub">CPA · One-time</div>
+        <div class="comm-desc">Affiliate earns a fixed flat fee for each new player that registers, completes KYC, and makes a qualifying first deposit above the minimum threshold. Payment is made once per qualifying player.</div>
+        <div class="comm-formula">
+          <strong>Qualifying Trigger</strong> = KYC Complete + FTD ≥ ₱500<br>
+          <strong>CPA Payment</strong> = Fixed rate per qualified player<br>
+          <strong>L2 CPA Override</strong> = Fixed sub-override per qualified player
+        </div>
+      </div>
+      <div class="comm-card" style="--cc:var(--navy)">
+        <div class="comm-icon">⚖️</div>
+        <div class="comm-name">Hybrid</div>
+        <div class="comm-sub">RevShare + CPA · Combined</div>
+        <div class="comm-desc">A negotiated combination of CPA (paid on qualifying first deposit) plus a reduced RevShare rate on ongoing NGR. Preferred by high-volume partners who want immediate income and long-term upside.</div>
+        <div class="comm-formula">
+          <strong>Hybrid CPA</strong> = Reduced fixed rate per FTD<br>
+          <strong>Hybrid RevShare</strong> = Reduced % NGR (typically 50–70% of standard rate)<br>
+          <strong>Must be individually negotiated and documented</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5-LEVEL ARCHITECTURE -->
+    <div class="sec-label">5-Level Partner Architecture</div>
+    <div class="level-stack">
+
+      <div class="level-row" style="--lc:var(--l1)">
+        <div class="level-id">
+          <div class="level-id-num">L1</div>
+          <div class="level-id-name">Level 1</div>
+          <div class="level-id-role">Direct Partner</div>
+        </div>
+        <div class="level-content">
+          <div class="level-title">Direct Affiliate Partner</div>
+          <div class="level-desc">The primary affiliate who has a signed agreement directly with the operator. Has direct access to the affiliate portal, tracking links, real-time reporting, and their dedicated Affiliate Manager. Earns on all players they directly refer plus an override on any sub-affiliates they recruit below them.</div>
+        </div>
+        <div class="level-rates" style="--lc:var(--l1)">
+          <div class="rate-row">
+            <div class="rate-label">RevShare</div>
+            <div class="rate-range">25–40%</div>
+            <div class="rate-unit">of NGR</div>
+          </div>
+          <div class="rate-row">
+            <div class="rate-label">CPA</div>
+            <div class="rate-range">₱2,000–₱5,000</div>
+            <div class="rate-unit">per FTD</div>
+          </div>
+          <div class="rate-row">
+            <div class="rate-label">L2 Override</div>
+            <div class="rate-range">5–10%</div>
+            <div class="rate-unit">of L2 earnings</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 0 4px 60px;"><div style="width:1px;height:16px;background:var(--border2);"></div><span style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);background:var(--bg);border:1px solid var(--border);padding:2px 10px;">L1 recruits → L2 sub-affiliate</span></div>
+
+      <div class="level-row" style="--lc:var(--l2)">
+        <div class="level-id">
+          <div class="level-id-num">L2</div>
+          <div class="level-id-name">Level 2</div>
+          <div class="level-id-role">Sub-Affiliate</div>
+        </div>
+        <div class="level-content">
+          <div class="level-title">Sub-Affiliate (Recruited by L1)</div>
+          <div class="level-desc">An affiliate recruited into the network by an L1 partner. L2 earns on players they directly refer. L1 earns an override on L2's commissions. L2 may also recruit L3 sub-affiliates and earn a further override. L2 partners typically have portal access at a read-level determined by the L1 partner's agreement.</div>
+        </div>
+        <div class="level-rates" style="--lc:var(--l2)">
+          <div class="rate-row">
+            <div class="rate-label">RevShare</div>
+            <div class="rate-range">20–30%</div>
+            <div class="rate-unit">of NGR</div>
+          </div>
+          <div class="rate-row">
+            <div class="rate-label">CPA</div>
+            <div class="rate-range">₱1,500–₱3,000</div>
+            <div class="rate-unit">per FTD</div>
+          </div>
+          <div class="rate-row">
+            <div class="rate-label">L3 Override</div>
+            <div class="rate-range">3–6%</div>
+            <div class="rate-unit">of L3 earnings</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 0 4px 60px;"><div style="width:1px;height:16px;background:var(--border2);"></div><span style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);background:var(--bg);border:1px solid var(--border);padding:2px 10px;">L2 recruits → L3 sub-affiliate</span></div>
+
+      <div class="level-row" style="--lc:var(--l3)">
+        <div class="level-id">
+          <div class="level-id-num">L3</div>
+          <div class="level-id-name">Level 3</div>
+          <div class="level-id-role">Sub-Sub-Affiliate</div>
+        </div>
+        <div class="level-content">
+          <div class="level-title">Third-Level Sub-Affiliate</div>
+          <div class="level-desc">Recruited by an L2 partner. Earns on direct player referrals. Both L1 and L2 earn overrides on L3's commissions in a cascading structure. L3 partners typically operate on a simplified portal view. May recruit L4 if enabled in the programme configuration.</div>
+        </div>
+        <div class="level-rates" style="--lc:var(--l3)">
+          <div class="rate-row">
+            <div class="rate-label">RevShare</div>
+            <div class="rate-range">15–25%</div>
+            <div class="rate-unit">of NGR</div>
+          </div>
+          <div class="rate-row">
+            <div class="rate-label">CPA</div>
+            <div class="rate-range">₱1,000–₱2,000</div>
+            <div class="rate-unit">per FTD</div>
+          </div>
+          <div class="rate-row">
+            <div class="rate-label">L4 Override</div>
+            <div class="rate-range">2–4%</div>
+            <div class="rate-unit">of L4 earnings</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 0 4px 60px;"><div style="width:1px;height:16px;background:var(--border2);"></div><span style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);background:var(--bg);border:1px solid var(--border);padding:2px 10px;">L3 recruits → L4 · Requires Affiliate Manager approval</span></div>
+
+      <div class="level-row" style="--lc:var(--l4)">
+        <div class="level-id">
+          <div class="level-id-num">L4</div>
+          <div class="level-id-name">Level 4</div>
+          <div class="level-id-role">Deep Network</div>
+        </div>
+        <div class="level-content">
+          <div class="level-title">Fourth-Level Partner</div>
+          <div class="level-desc">L4 recruitment requires explicit Affiliate Manager approval before being enabled. The cascading override structure becomes thinner at this level to maintain operator margin. L4 partners earn reduced RevShare rates and smaller per-FTD CPAs. Overrides from L1, L2, and L3 cascade down. L4 may recruit L5 only with Head of Affiliates sign-off.</div>
+        </div>
+        <div class="level-rates" style="--lc:var(--l4)">
+          <div class="rate-row">
+            <div class="rate-label">RevShare</div>
+            <div class="rate-range">10–18%</div>
+            <div class="rate-unit">of NGR</div>
+          </div>
+          <div class="rate-row">
+            <div class="rate-label">CPA</div>
+            <div class="rate-range">₱500–₱1,200</div>
+            <div class="rate-unit">per FTD</div>
+          </div>
+          <div class="rate-row">
+            <div class="rate-label">L5 Override</div>
+            <div class="rate-range">1–2%</div>
+            <div class="rate-unit">of L5 earnings</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 0 4px 60px;"><div style="width:1px;height:16px;background:var(--border2);"></div><span style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);background:var(--bg);border:1px solid var(--border);padding:2px 10px;">L4 recruits → L5 · Head of Affiliates sign-off required</span></div>
+
+      <div class="level-row" style="--lc:var(--l5)">
+        <div class="level-id">
+          <div class="level-id-num">L5</div>
+          <div class="level-id-name">Level 5</div>
+          <div class="level-id-role">Max Depth</div>
+        </div>
+        <div class="level-content">
+          <div class="level-title">Fifth-Level Partner — Maximum Depth</div>
+          <div class="level-desc">The deepest level of the network. L5 earns only on direct player referrals — cannot recruit further sub-affiliates. The programme does not support a Level 6. L5 rates are the most conservative to ensure the total override chain across all 5 levels remains within sustainable operator margin. All 4 upstream levels earn cascading overrides on L5's commissions.</div>
+        </div>
+        <div class="level-rates" style="--lc:var(--l5)">
+          <div class="rate-row">
+            <div class="rate-label">RevShare</div>
+            <div class="rate-range">8–12%</div>
+            <div class="rate-unit">of NGR</div>
+          </div>
+          <div class="rate-row">
+            <div class="rate-label">CPA</div>
+            <div class="rate-range">₱300–₱700</div>
+            <div class="rate-unit">per FTD</div>
+          </div>
+          <div class="rate-row">
+            <div class="rate-label">Sub-Recruit</div>
+            <div class="rate-range">Not Permitted</div>
+            <div class="rate-unit">max depth</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MARGIN HEALTH NOTE -->
+    <div class="alert-box">
+      <div class="alert-icon">⚖️</div>
+      <div>
+        <strong style="display:block;color:var(--gold);font-size:13px;letter-spacing:0.1em;text-transform:uppercase;font-weight:700;margin-bottom:6px;">Margin Health — Total Override Cap Principle</strong>
+        The sum of all RevShare rates and override percentages across the full 5-level chain for any single player's NGR must not exceed 65% of that NGR. The Affiliate Manager is responsible for verifying this ceiling is not breached when approving new sub-affiliate agreements or rate negotiations. If a proposed structure would push total payouts above this threshold, rates at the lower levels must be reduced before the agreement is signed.
+      </div>
+    </div>
+
+    <!-- COMMISSION CALC TABLE -->
+    <div class="sec-label">Example Cascade Calculation</div>
+    <div class="calc-intro">
+      <div class="calc-intro-title">Worked Example — ₱100,000 NGR from a single L5-referred player</div>
+      <div class="calc-intro-desc">Assumes a full 5-level chain is active. Each upstream level earns an override on the level directly below them. Total payouts cascade upward simultaneously — they are not deducted sequentially from the player's NGR.</div>
+    </div>
+    <table class="calc-table">
+      <thead>
+        <tr>
+          <th>Level</th>
+          <th>Partner Role</th>
+          <th>Basis</th>
+          <th>Rate</th>
+          <th>Calculation</th>
+          <th>Earnings</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="lvl-chip lc-5">L5</span></td>
+          <td>Referring partner (direct referral)</td>
+          <td>Player NGR</td>
+          <td>10% RevShare</td>
+          <td>₱100,000 × 10%</td>
+          <td><strong>₱10,000</strong></td>
+        </tr>
+        <tr>
+          <td><span class="lvl-chip lc-4">L4</span></td>
+          <td>L5's recruiter</td>
+          <td>L5 Earnings</td>
+          <td>2% override on L5</td>
+          <td>₱10,000 × 2%</td>
+          <td><strong>₱200</strong></td>
+        </tr>
+        <tr>
+          <td><span class="lvl-chip lc-3">L3</span></td>
+          <td>L4's recruiter</td>
+          <td>L4 + L5 Earnings</td>
+          <td>3% override on downstream</td>
+          <td>(₱10,000 + ₱200) × 3%</td>
+          <td><strong>₱306</strong></td>
+        </tr>
+        <tr>
+          <td><span class="lvl-chip lc-2">L2</span></td>
+          <td>L3's recruiter</td>
+          <td>L3 + L4 + L5 Earnings</td>
+          <td>4% override on downstream</td>
+          <td>(₱10,000 + ₱200 + ₱306) × 4%</td>
+          <td><strong>₱420</strong></td>
+        </tr>
+        <tr>
+          <td><span class="lvl-chip lc-1">L1</span></td>
+          <td>L2's recruiter</td>
+          <td>L2 + L3 + L4 + L5 Earnings</td>
+          <td>5% override on downstream</td>
+          <td>(₱10,000 + ₱200 + ₱306 + ₱420) × 5%</td>
+          <td><strong>₱546</strong></td>
+        </tr>
+        <tr style="background:var(--surface2);">
+          <td colspan="5"><strong>Total payout on ₱100,000 NGR (all levels combined)</strong></td>
+          <td><strong style="color:var(--coral);font-size:16px;">₱11,472</strong><br><span style="font-size:12px;color:var(--text3);">= 11.47% of NGR</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="background:var(--surface);border:1px solid var(--border);padding:16px 20px;font-size:13px;color:var(--text2);line-height:1.8;margin-top:2px;">
+      <strong style="color:var(--text);">Note on override calculation method:</strong> Two methods exist — <em>flat NGR override</em> (all levels calculate their override as a % of the player's original NGR) or <em>cascading earnings override</em> (each level earns a % of the level directly below). The example above uses cascading earnings. The flat NGR method results in higher upstream payouts. The chosen method must be explicitly documented in every affiliate agreement to avoid disputes. The Affiliate Manager selects the method at programme setup.
+    </div>
+
+  </div>
+</div><!-- /page-levels -->
+
+
+<!-- ══════════════════════════════
+     PAGE 2 — PARTNER ONBOARDING
+══════════════════════════════ -->
+<div id="page-onboarding" class="page">
+  <div class="hero" style="padding-bottom:44px;">
+    <div class="hero-eyebrow">Partner Application to First Commission</div>
+    <h1>Partner <em>Onboarding</em><br>Workflow</h1>
+    <p class="hero-desc">End-to-end process from affiliate application through compliance review, contract signing, portal access, tracking link generation, and first player referral.</p>
+  </div>
+
+  <div class="main">
+    <div class="sec-label">Onboarding Flow — 6 Stages</div>
+
+    <!-- STAGE 1 -->
+    <div class="flow-block open" id="ob1" style="--bc:var(--coral)">
+      <div class="fb-header" onclick="tog('ob1')">
+        <div class="fb-num">01</div>
+        <div class="fb-info">
+          <div class="fb-title">Application & Initial Screening</div>
+          <div class="fb-sub">Affiliate submits application · Automated pre-screen · Affiliate Manager triage</div>
+        </div>
+        <div class="fb-tag">SLA: 48 HOURS</div>
+        <div class="fb-toggle">▾</div>
+      </div>
+      <div class="fb-body">
+        <div class="fb-cols">
+          <div>
+            <div class="col-hd">Application Actions</div>
+            <ul class="act-list">
+              <li>Affiliate completes the online application form: company name or individual name, website URL or social/digital channel, traffic sources (SEO, paid, social, influencer, community), target audience, estimated monthly player referral volume, and preferred commission structure</li>
+              <li>Automated pre-screen runs immediately: check website URL against blacklisted domain list, verify the traffic source category is permitted under PAGCOR affiliate marketing guidelines, confirm the applicant is not on the AMLC blacklist or sanctions list</li>
+              <li>Affiliate Manager receives the application and reviews within 48 hours. Checks: traffic quality, relevance to PH iGaming audience, channel authenticity (no fake follower signals), and absence of competing operator agreements that would create a conflict</li>
+              <li>If initial screening passes: send an acknowledgement email confirming receipt and a 48-hour review timeline</li>
+              <li>If initial screening fails: send a decline notification with the reason code (e.g. prohibited traffic source, non-PH audience, policy conflict) — do not give detailed rejection reasons that could be gamed</li>
+            </ul>
+            <div class="ph-note">
+              <strong>🇵🇭 PAGCOR Affiliate Marketing Rules:</strong> PAGCOR prohibits licensed operators from working with affiliates who target minors, use prohibited advertising channels (near schools, churches, or government buildings), or misrepresent the nature of gaming. Affiliate traffic sources must be documented and retained for PAGCOR audit purposes. Influencer and social media affiliates must comply with PAGCOR's responsible gambling messaging requirements in all content.
+            </div>
+          </div>
+          <div>
+            <div class="col-hd">Screening Outcomes</div>
+            <div class="out-stack">
+              <div class="out oc-teal"><div class="out-ico">✓</div><div class="out-txt"><strong>Passes Screening</strong><span>Advance to KYC / Compliance Review (Stage 2). Send acknowledgement with document requirements.</span></div></div>
+              <div class="out oc-coral"><div class="out-ico">◷</div><div class="out-txt"><strong>Pending — More Information</strong><span>Traffic source unclear or volume claim requires verification. Request additional documentation (screenshots, analytics access, channel stats).</span></div></div>
+              <div class="out oc-red"><div class="out-ico">✗</div><div class="out-txt"><strong>Declined</strong><span>Prohibited channel, PAGCOR non-compliant content, or conflict of interest. Send decline with reason code. Log in CRM.</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="conn"><div class="conn-line"></div><div class="conn-lbl">Application passes → KYC & compliance review</div></div>
+
+    <!-- STAGE 2 -->
+    <div class="flow-block open" id="ob2" style="--bc:var(--teal)">
+      <div class="fb-header" onclick="tog('ob2')">
+        <div class="fb-num">02</div>
+        <div class="fb-info">
+          <div class="fb-title">KYC & Compliance Review</div>
+          <div class="fb-sub">Identity verification · AML check · PAGCOR compliance · BIR tax registration</div>
+        </div>
+        <div class="fb-tag">SLA: 5 BUSINESS DAYS</div>
+        <div class="fb-toggle">▾</div>
+      </div>
+      <div class="fb-body">
+        <div class="fb-cols">
+          <div>
+            <div class="col-hd">KYC Requirements</div>
+            <ul class="act-list">
+              <li><strong>Individual affiliate:</strong> Government-issued ID (Philippine passport, driver's licence, UMID, SSS), proof of address (utility bill or bank statement within 90 days), selfie with ID, TIN (Tax Identification Number) from BIR</li>
+              <li><strong>Corporate affiliate:</strong> SEC registration certificate, BIR Certificate of Registration (COR), Articles of Incorporation, ID of authorised signatory, proof of business address, and bank details for commission payments</li>
+              <li>KYC Analyst runs PEP and sanctions screening on all individual signatories and beneficial owners. Any PEP match requires KYC Senior review before the affiliate agreement can be activated</li>
+              <li>Verify that the affiliate's payment account (GCash, Maya, or bank) is registered in the same name as the KYC identity documents — mismatches must be resolved before commissions are ever paid</li>
+              <li>For corporate affiliates with majority foreign ownership: confirm whether a PAGCOR Special Affiliate Licence is required under current regulations</li>
+            </ul>
+            <div class="ph-note">
+              <strong>🇵🇭 BIR Tax Obligations:</strong> Affiliate commission payments in the Philippines are subject to withholding tax. Individual affiliates: 10% CWT (Creditable Withholding Tax) on commissions if registered professional, or 8% if under the 8% income tax option. Corporate affiliates: 2% EWT (Expanded Withholding Tax). The operator is responsible for withholding and remitting the correct tax to BIR. All affiliates must provide a valid TIN before the first commission payment is processed.
+            </div>
+          </div>
+          <div>
+            <div class="col-hd">Compliance Outcomes</div>
+            <div class="out-stack">
+              <div class="out oc-teal"><div class="out-ico">✓</div><div class="out-txt"><strong>KYC Approved</strong><span>All documents verified, screening clear, TIN received. Advance to contract negotiation (Stage 3).</span></div></div>
+              <div class="out oc-coral"><div class="out-ico">◷</div><div class="out-txt"><strong>Pending Documents</strong><span>Missing items. Send document checklist with 10-business-day response window. If no response: decline application.</span></div></div>
+              <div class="out oc-purple"><div class="out-ico">⚑</div><div class="out-txt"><strong>EDD Required</strong><span>High-volume affiliate or PEP-adjacent. KYC Senior reviews. Source of funds declaration required for corporate affiliates expecting &gt;₱500k monthly commissions.</span></div></div>
+              <div class="out oc-red"><div class="out-ico">✗</div><div class="out-txt"><strong>KYC Failed</strong><span>Forged documents, sanctions hit, or unresolvable mismatch. Decline. Log in compliance register. Do not re-engage.</span></div></div>
+            </div>
+            <div class="tool-row">
+              <span class="tool-lbl">Tools:</span>
+              <span class="tool-chip">KYC Case System</span>
+              <span class="tool-chip">World-Check / ComplyAdvantage</span>
+              <span class="tool-chip">BIR TIN Verification</span>
+              <span class="tool-chip">SEC Business Registry</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="conn"><div class="conn-line"></div><div class="conn-lbl">KYC approved → rate negotiation & contract</div></div>
+
+    <!-- STAGE 3 -->
+    <div class="flow-block" id="ob3" style="--bc:var(--navy)">
+      <div class="fb-header" onclick="tog('ob3')">
+        <div class="fb-num">03</div>
+        <div class="fb-info">
+          <div class="fb-title">Rate Negotiation & Contract</div>
+          <div class="fb-sub">Commission structure selection · Level assignment · Negative carryover policy · Contract signing</div>
+        </div>
+        <div class="fb-tag">SLA: 5 BUSINESS DAYS</div>
+        <div class="fb-toggle">▾</div>
+      </div>
+      <div class="fb-body">
+        <div class="fb-cols">
+          <div>
+            <div class="col-hd">Negotiation Process</div>
+            <ul class="act-list">
+              <li>Affiliate Manager presents the standard rate card based on the affiliate's estimated monthly player volume and traffic quality tier</li>
+              <li>Determine the commission structure: RevShare, CPA, or Hybrid. Hybrid structures require Head of Affiliates approval before presentation to the partner</li>
+              <li>Assign the affiliate's starting level (L1 for all new direct partners). If the affiliate is being recruited by an existing L1/L2 partner as a sub-affiliate, assign the appropriate sub-level and ensure the total override chain does not breach the 65% margin cap</li>
+              <li>Agree the negative carryover policy: whether a monthly negative NGR balance (operator loss from a player who wins more than they deposit) is carried forward and deducted from future earnings, or reset to zero each month. Default policy: negative carryover applies. This must be explicitly stated in the contract</li>
+              <li>Agree the cookie window: the period during which a player referral is attributed to the affiliate after clicking a tracking link. Standard: 30 days last-click attribution. Premium partners: up to 90 days negotiable</li>
+              <li>Affiliate Manager submits finalised terms to Legal for contract generation. Standard template used for L1–L3. Custom contract required for L4–L5 (approved by Head of Affiliates)</li>
+            </ul>
+          </div>
+          <div>
+            <div class="col-hd">Key Contract Terms to Confirm</div>
+            <ul class="act-list">
+              <li>Commission structure type and rate (RevShare %, CPA amount, or Hybrid combination)</li>
+              <li>Level assignment (L1 direct or L2–L5 sub-affiliate under named upline partner)</li>
+              <li>Sub-affiliate recruitment rights — which downstream levels the partner is permitted to recruit</li>
+              <li>Negative carryover policy: applies / does not apply. If applies: cap on maximum monthly carry (e.g. maximum 3 months carry before reset)</li>
+              <li>Cookie window duration and attribution method (last-click)</li>
+              <li>Minimum monthly payment threshold: commissions below ₱500 rolled to next month</li>
+              <li>Payment method and schedule (monthly, within 15 days of month-end)</li>
+              <li>Prohibited marketing practices per PAGCOR guidelines</li>
+              <li>BIR withholding tax rate and operator's responsibility to remit</li>
+              <li>Termination, clawback, and fraud provisions</li>
+            </ul>
+            <div class="out-stack" style="margin-top:14px;">
+              <div class="out oc-navy"><div class="out-ico">✓</div><div class="out-txt"><strong>Contract Signed</strong><span>Digital signature via DocuSign or wet signature for corporate affiliates. Advance to portal setup (Stage 4).</span></div></div>
+              <div class="out oc-coral"><div class="out-ico">◷</div><div class="out-txt"><strong>Negotiation Pending</strong><span>Affiliate requests non-standard terms. Affiliate Manager escalates to Head of Affiliates within 48h with recommendation.</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="conn"><div class="conn-line"></div><div class="conn-lbl">Contract signed → portal access & tracking setup</div></div>
+
+    <!-- STAGE 4 -->
+    <div class="flow-block" id="ob4" style="--bc:var(--purple)">
+      <div class="fb-header" onclick="tog('ob4')">
+        <div class="fb-num">04</div>
+        <div class="fb-info">
+          <div class="fb-title">Portal Access & Tracking Link Generation</div>
+          <div class="fb-sub">Affiliate portal account creation · Tracking link setup · Creative assets · First referral test</div>
+        </div>
+        <div class="fb-tag">SLA: 24 HOURS</div>
+        <div class="fb-toggle">▾</div>
+      </div>
+      <div class="fb-body">
+        <div class="fb-cols">
+          <div>
+            <div class="col-hd">Portal Setup Actions</div>
+            <ul class="act-list">
+              <li>Create the affiliate's portal account within 24 hours of contract signing. Set commission structure, level, and rate configuration exactly as per the signed contract</li>
+              <li>Generate unique tracking links with the affiliate's ID embedded. Create separate tracking links for each traffic source or campaign the affiliate runs (SEO landing page, Facebook ads, Viber group, TikTok — each should have a distinct link for attribution reporting)</li>
+              <li>Set the cookie window duration in the tracking system to match the contracted period (30 or 90 days)</li>
+              <li>If the affiliate has a sub-affiliate who is also being onboarded simultaneously: link the sub-affiliate account in the portal under the correct upline hierarchy before generating tracking links</li>
+              <li>Provide the affiliate with the creative asset library: banners (various sizes for web and mobile), social media templates, branded landing page access, and PAGCOR-compliant responsible gambling messaging inserts</li>
+              <li>Conduct a test referral: have the affiliate click their tracking link and register a test account to confirm attribution is recording correctly in the portal before going live</li>
+            </ul>
+          </div>
+          <div>
+            <div class="col-hd">Affiliate Portal Access Levels by Level</div>
+            <ul class="act-list">
+              <li><strong style="color:var(--l1)">L1:</strong> Full portal access — player activity (anonymised), commission reports, sub-affiliate management, tracking link generator, creative library, payment history</li>
+              <li><strong style="color:var(--l2)">L2:</strong> Standard access — own player activity, own commission reports, own tracking links, creative library. Can view (but not modify) sub-affiliate count if L3 recruitment is permitted</li>
+              <li><strong style="color:var(--l3)">L3:</strong> Limited access — own player stats, own commission summary, own tracking links. No sub-affiliate management view by default</li>
+              <li><strong style="color:var(--l4)">L4–L5:</strong> Basic access — commission balance, tracking links, and payment history only. No sub-affiliate management unless explicitly enabled by Head of Affiliates</li>
+            </ul>
+            <div class="out-stack" style="margin-top:14px;">
+              <div class="out oc-teal"><div class="out-ico">✓</div><div class="out-txt"><strong>Portal Live — Ready to Refer</strong><span>Test referral confirmed. Tracking links distributed. Affiliate is live.</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="conn"><div class="conn-line"></div><div class="conn-lbl">Portal live → affiliate begins referring players → monthly reporting cycle</div></div>
+
+    <!-- STAGE 5 -->
+    <div class="flow-block" id="ob5" style="--bc:var(--gold)">
+      <div class="fb-header" onclick="tog('ob5')">
+        <div class="fb-num">05</div>
+        <div class="fb-info">
+          <div class="fb-title">Player Attribution & Commission Accrual</div>
+          <div class="fb-sub">First click tracking · FTD qualification · RevShare accrual · CPA trigger logic</div>
+        </div>
+        <div class="fb-tag">ONGOING · MONTHLY</div>
+        <div class="fb-toggle">▾</div>
+      </div>
+      <div class="fb-body">
+        <div class="fb-cols">
+          <div>
+            <div class="col-hd">Attribution Logic</div>
+            <ul class="act-list">
+              <li><strong>Cookie tracking:</strong> when a player clicks the affiliate's tracking link, a cookie is stored in their browser. If the player registers within the cookie window (30 or 90 days), the registration is attributed to that affiliate</li>
+              <li><strong>Last-click attribution:</strong> if a player clicks links from multiple affiliates, the last affiliate's link before registration takes credit. This is the standard model — first-click attribution may be negotiated for specific high-value partners on request</li>
+              <li><strong>FTD qualification for CPA:</strong> a player qualifies for a CPA payment only when: (a) KYC is fully approved, (b) the player makes a first deposit of at least ₱500, and (c) the deposit is not reversed or charged back within 30 days</li>
+              <li><strong>RevShare accrual:</strong> begins from the calendar month in which the player makes their first deposit. NGR is calculated monthly. Commission accrues continuously for as long as the player is active and the affiliate agreement is in force</li>
+              <li><strong>Negative NGR:</strong> if a player's monthly NGR is negative (operator pays out more than it receives), this negative amount is applied to the affiliate's account per the agreed negative carryover policy</li>
+            </ul>
+          </div>
+          <div>
+            <div class="col-hd">Multi-Level Attribution Rules</div>
+            <ul class="act-list">
+              <li>A referred player is permanently attributed to the affiliate who generated the tracking link click that led to their registration — this attribution does not change even if the affiliate's level or rate changes later</li>
+              <li>Override commissions cascade upward simultaneously in the same monthly processing run — upstream partners do not need to wait for downstream commissions to be paid first</li>
+              <li>If an affiliate is terminated, their direct player attributions remain active. Players continue to generate RevShare that is held by the operator. Pending commissions at termination are paid per the termination clause in the contract</li>
+              <li>If a player was referred by an affiliate who was later found to have engaged in fraud (fake traffic, self-referral), all commissions generated by that player referral are subject to clawback regardless of how far upstream the override chain goes</li>
+            </ul>
+            <div class="ph-note">
+              <strong>🇵🇭 GCash / Maya Attribution Note:</strong> Some PH players use GCash to register and deposit without clicking a tracked link (direct URL entry). Ensure the affiliate platform supports server-side tracking in addition to browser cookies, particularly for mobile-first players who use GCash's in-app browser, which may block third-party cookies. This is a common attribution gap in the PH market.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /page-onboarding -->
+
+
+<!-- ══════════════════════════════
+     PAGE 3 — OPERATIONS
+══════════════════════════════ -->
+<div id="page-operations" class="page">
+  <div class="hero" style="padding-bottom:44px;">
+    <div class="hero-eyebrow">Monthly Cycle · Payments · Disputes · Termination</div>
+    <h1>Affiliate <em>Operations</em><br>Workflow</h1>
+    <p class="hero-desc">Ongoing operational management covering the monthly commission processing cycle, payment disbursement, dispute resolution, fraud detection, and partner termination.</p>
+  </div>
+
+  <div class="main">
+    <div class="sec-label">Monthly Commission Processing Cycle</div>
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-bottom:48px;">
+      <div style="background:var(--navy);color:#fff;padding:18px 20px;border-top:3px solid var(--coral);">
+        <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--coral3);margin-bottom:8px;font-weight:700;">Day 1–Last</div>
+        <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:600;margin-bottom:6px;">Accrual Period</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.7;">NGR accrues daily per player. CPA triggers record when FTD qualifications are met. Override chain calculates in real time in the portal.</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--teal);padding:18px 20px;">
+        <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);margin-bottom:8px;font-weight:700;">Day 1–3 (Next Month)</div>
+        <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:600;color:var(--text);margin-bottom:6px;">Report Generation</div>
+        <div style="font-size:13px;color:var(--text3);line-height:1.7;">CRM Analyst runs monthly commission report. All levels calculated. Negative carryover applied. Report locked — no further changes after Day 3.</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--navy);padding:18px 20px;">
+        <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--navy);margin-bottom:8px;font-weight:700;">Day 4–7</div>
+        <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:600;color:var(--text);margin-bottom:6px;">Review & Dispute Window</div>
+        <div style="font-size:13px;color:var(--text3);line-height:1.7;">Affiliates review their portal statement. Any disputes raised within this window are investigated. Adjustments approved by Affiliate Manager before payment run.</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--gold);padding:18px 20px;">
+        <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;font-weight:700;">Day 8–15</div>
+        <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:600;color:var(--text);margin-bottom:6px;">Commission Payment</div>
+        <div style="font-size:13px;color:var(--text3);line-height:1.7;">Payments processed to affiliate's registered account. BIR withholding tax deducted at source. Payment confirmation sent. Finance team remits WHT to BIR.</div>
+      </div>
+    </div>
+
+    <div class="sec-label">Fraud Detection — Affiliate-Specific Patterns</div>
+    <div class="flow-block open" id="fr1" style="--bc:var(--coral)">
+      <div class="fb-header" onclick="tog('fr1')">
+        <div class="fb-num">FR</div>
+        <div class="fb-info">
+          <div class="fb-title">Affiliate Fraud Detection & Response</div>
+          <div class="fb-sub">Fake traffic · Self-referral · Bonus stacking · Commission manipulation · Sub-affiliate fraud</div>
+        </div>
+        <div class="fb-tag">ZERO TOLERANCE</div>
+        <div class="fb-toggle">▾</div>
+      </div>
+      <div class="fb-body">
+        <div class="fb-cols">
+          <div>
+            <div class="col-hd">Fraud Signals to Monitor</div>
+            <ul class="act-list">
+              <li><strong>Self-referral:</strong> affiliate registers a player account using their own device, IP, or payment method and generates commissions on their own deposits. Cross-check all FTD qualifications against the affiliate's own KYC data</li>
+              <li><strong>Fake traffic / incentivised registration:</strong> affiliate pays third parties to register and make a small FTD to trigger CPA payouts, with no genuine intention to play. Indicators: very low deposit amounts at exactly the minimum threshold, immediate withdrawal after FTD, high FTD-to-churn rate</li>
+              <li><strong>Bonus abuse through referrals:</strong> affiliate sends players who are in coordinated bonus abuse rings. Monitor for high volumes of player referrals from a single affiliate who all claim the same promotion and never return</li>
+              <li><strong>Commission manipulation:</strong> affiliate with sub-affiliate recruitment rights creates fictitious sub-affiliates to generate override commissions without any real traffic being sent. Cross-reference sub-affiliate KYC against affiliate's own identity documents</li>
+              <li><strong>Cookie stuffing:</strong> affiliate uses technical methods to drop tracking cookies on browsers of users who never saw or clicked an affiliate link — inflating attribution counts without genuine referrals</li>
+            </ul>
+          </div>
+          <div>
+            <div class="col-hd">Response Actions</div>
+            <ul class="act-list">
+              <li>Affiliate Manager flags the suspicious pattern and raises a formal investigation case — do not immediately terminate without evidence</li>
+              <li>Coordinate with the Fraud team (Tier 2 Senior Analyst) to review the player accounts associated with the affiliate's tracking links</li>
+              <li>If fraud is confirmed: withhold the current month's commission payment pending Head of Affiliates review. Do not inform the affiliate at this stage</li>
+              <li>Head of Affiliates reviews evidence and makes the final call: (a) commission clawback and formal warning, (b) immediate termination with full clawback of all fraudulent commissions, or (c) legal action if scale warrants</li>
+              <li>Clawback is applied to all commissions traceable to fraudulent activity — including override commissions paid to upstream levels if they were knowingly complicit. Document all clawback actions in the affiliate's CRM record</li>
+            </ul>
+            <div class="out-stack" style="margin-top:14px;">
+              <div class="out oc-coral"><div class="out-ico">⚠</div><div class="out-txt"><strong>Warning + Clawback</strong><span>Minor or first-time violation. Commissions from fraudulent referrals reversed. Final warning issued in writing.</span></div></div>
+              <div class="out oc-red"><div class="out-ico">⛔</div><div class="out-txt"><strong>Termination + Full Clawback</strong><span>Systematic fraud. Agreement terminated. All fraudulent commissions clawed back. Account permanently closed. Platform and tracking links deactivated.</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:32px;"></div>
+
+    <div class="sec-label">Dispute Resolution Process</div>
+    <div style="background:var(--surface);border:1px solid var(--border);overflow:hidden;margin-bottom:4px;">
+      <div style="background:var(--navy);padding:16px 22px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+        <div style="color:#fff;">
+          <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--coral3);margin-bottom:6px;font-weight:700;">Step 1</div>
+          <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:600;">Affiliate Raises Dispute</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-top:4px;line-height:1.7;">Via portal ticket within the 4-day dispute window. Must specify: month, amount disputed, reason, and supporting evidence.</div>
+        </div>
+        <div style="color:#fff;">
+          <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--coral3);margin-bottom:6px;font-weight:700;">Step 2</div>
+          <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:600;">Affiliate Manager Reviews</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-top:4px;line-height:1.7;">Checks portal reports against the CRM source data within 3 business days. Identifies any system error, tracking failure, or legitimate discrepancy.</div>
+        </div>
+        <div style="color:#fff;">
+          <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--coral3);margin-bottom:6px;font-weight:700;">Step 3</div>
+          <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:600;">Resolution & Adjustment</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-top:4px;line-height:1.7;">If valid: adjustment approved by Affiliate Manager, applied to next payment run. If rejected: written explanation sent with evidence. Affiliate may escalate to Head of Affiliates within 5 days.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-label" style="margin-top:36px;">Partner Termination</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--teal);padding:20px 22px;">
+        <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--text);margin-bottom:10px;">Voluntary Termination</div>
+        <ul class="act-list" style="font-size:13px;">
+          <li>Affiliate provides 30-day written notice via the portal or email to the Affiliate Manager</li>
+          <li>During the 30-day notice period: tracking links remain active, player attributions continue, and RevShare accrues normally</li>
+          <li>Final commission statement issued within 15 days of the termination effective date. All earned and unpaid commissions paid in the final payment run</li>
+          <li>Player attributions for direct referrals are retained by the operator — the terminated affiliate forfeits future RevShare on those players from the termination date</li>
+          <li>If the affiliate had active sub-affiliates: sub-affiliate contracts must be reviewed. Sub-affiliates may be migrated to direct L1 agreements with the operator at the Affiliate Manager's discretion</li>
+        </ul>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--coral);padding:20px 22px;">
+        <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--text);margin-bottom:10px;">Involuntary Termination (Breach)</div>
+        <ul class="act-list" style="font-size:13px;">
+          <li>Immediate termination: fraud confirmed, PAGCOR marketing violations, KYC document forgery, or material breach of the affiliate agreement</li>
+          <li>Tracking links deactivated immediately. Portal access suspended. No further commission accrual from termination date</li>
+          <li>Pending commissions withheld pending clawback assessment. Any fraudulent commissions already paid are subject to recovery action</li>
+          <li>Head of Affiliates approves all involuntary terminations. Legal team engaged if clawback value exceeds ₱50,000 or if criminal activity is suspected</li>
+          <li>Compliance team notified if termination is related to AML or KYC concerns — may trigger AMLC STR process if warranted</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /page-operations -->
+
+
+<!-- ══════════════════════════════
+     PAGE 4 — DECISION MATRIX
+══════════════════════════════ -->
+<div id="page-matrix" class="page">
+  <div class="hero" style="padding-bottom:44px;">
+    <div class="hero-eyebrow">Internal Reference</div>
+    <h1>Affiliate <em>Decision</em><br>Matrix</h1>
+    <p class="hero-desc">Scenario-to-action mapping for the Affiliate team covering onboarding decisions, commission disputes, fraud responses, and escalation routing.</p>
+  </div>
+  <div class="main">
+    <div class="sec-label">Onboarding & Commission Scenarios</div>
+    <div style="overflow-x:auto;margin-bottom:40px;">
+      <table class="mtable">
+        <thead>
+          <tr>
+            <th style="width:20%">Scenario</th>
+            <th style="width:12%">First Owner</th>
+            <th style="width:12%">Escalate To</th>
+            <th style="width:22%">Required Actions</th>
+            <th style="width:14%">Resolution</th>
+            <th style="width:10%">Compliance</th>
+            <th style="width:10%">SLA</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="sc-name">New affiliate application received</div><div class="sc-sub">Standard direct application via portal</div></td>
+            <td><span class="bdg bdg-c">Aff Manager</span></td>
+            <td>No escalation if standard</td>
+            <td>Run automated pre-screen (PAGCOR compliance, blacklist check). Affiliate Manager reviews within 48h. Send acknowledgement or decline</td>
+            <td><span class="atag at-t">Pass → KYC stage</span><br><span class="atag at-r">Fail → Decline</span></td>
+            <td>PAGCOR channel compliance check</td>
+            <td>48h review</td>
+          </tr>
+          <tr>
+            <td><div class="sc-name">Affiliate requests non-standard rate</div><div class="sc-sub">Above rate card, or custom Hybrid structure</div></td>
+            <td><span class="bdg bdg-c">Aff Manager</span></td>
+            <td><span class="bdg bdg-t">Head of Affiliates</span></td>
+            <td>Affiliate Manager prepares a rate recommendation with traffic quality evidence and projected NGR. Escalate to Head for approval. Do not present non-standard terms without sign-off</td>
+            <td><span class="atag at-t">Approved → contract update</span><br><span class="atag at-r">Declined → standard rate offered</span></td>
+            <td>Margin cap verification required</td>
+            <td>48h escalation · 5d contract update</td>
+          </tr>
+          <tr>
+            <td><div class="sc-name">L4 or L5 sub-affiliate recruitment request</div><div class="sc-sub">Existing L3 or L4 partner wants to recruit a further level</div></td>
+            <td><span class="bdg bdg-c">Aff Manager</span></td>
+            <td><span class="bdg bdg-t">Head of Affiliates</span></td>
+            <td>Affiliate Manager runs total override chain calculation to confirm total payout remains below 65% of NGR. Prepare recommendation for Head. Head approves or rejects. If approved: generate sub-affiliate agreement and add to hierarchy in portal</td>
+            <td><span class="atag at-t">Approved → sub-aff onboarding</span><br><span class="atag at-r">Rejected → notify L3/L4</span></td>
+            <td>65% margin cap check mandatory</td>
+            <td>5d for Head decision</td>
+          </tr>
+          <tr>
+            <td><div class="sc-name">Commission dispute raised by affiliate</div><div class="sc-sub">Affiliate claims portal report differs from expected earnings</div></td>
+            <td><span class="bdg bdg-c">Aff Manager</span></td>
+            <td><span class="bdg bdg-t">Head of Affiliates</span> if unresolved</td>
+            <td>Affiliate Manager cross-checks portal data against CRM source within 3 business days. If system error: raise tech ticket and apply adjustment to next payment run. If data is correct: send written explanation with supporting evidence</td>
+            <td><span class="atag at-t">Valid → adjustment in next payment</span><br><span class="atag at-n">Invalid → explanation sent</span></td>
+            <td>None unless clawback involved</td>
+            <td>3d review · adjustment next payment run</td>
+          </tr>
+          <tr>
+            <td><div class="sc-name">Negative carryover dispute</div><div class="sc-sub">Affiliate contests negative NGR deduction</div></td>
+            <td><span class="bdg bdg-c">Aff Manager</span></td>
+            <td><span class="bdg bdg-t">Head of Affiliates</span></td>
+            <td>Review the contract to confirm whether negative carryover is applicable. If applicable: confirm the calculation is correct and explain to affiliate. If the contract is ambiguous: escalate to Head for an ad hoc decision. Update contract template to clarify for future</td>
+            <td><span class="atag at-t">Contract confirms carryover → uphold</span><br><span class="atag at-g">Ambiguous contract → goodwill reset</span></td>
+            <td>None</td>
+            <td>5d decision</td>
+          </tr>
+          <tr>
+            <td><div class="sc-name">BIR withholding tax query from affiliate</div><div class="sc-sub">Affiliate questions tax deduction on commission statement</div></td>
+            <td><span class="bdg bdg-c">Aff Manager</span></td>
+            <td>Finance Team</td>
+            <td>Affiliate Manager refers to Finance for tax clarification. Finance confirms the applicable WHT rate (10% individual CWT or 2% corporate EWT) and provides the BIR Form 2307 (Certificate of Creditable Tax Withheld) as required by BIR regulations</td>
+            <td><span class="atag at-t">BIR Form 2307 issued</span></td>
+            <td>BIR mandatory — Form 2307 issued quarterly or on request</td>
+            <td>5d from request</td>
+          </tr>
+          <tr>
+            <td><div class="sc-name">Affiliate refers a VIP-level player</div><div class="sc-sub">Referred player qualifies for VIP programme</div></td>
+            <td><span class="bdg bdg-c">Aff Manager</span></td>
+            <td>VIP Manager</td>
+            <td>Affiliate Manager notifies VIP Manager of the referred player's VIP qualification. Player attribution to the affiliate remains active. Affiliate continues to earn RevShare on VIP player NGR. VIP Manager does not disclose player's VIP details to the affiliate (player privacy)</td>
+            <td><span class="atag at-t">RevShare continues on VIP NGR</span></td>
+            <td>Player data privacy — affiliate cannot see individual player details</td>
+            <td>Immediate notification to VIP team</td>
+          </tr>
+          <tr>
+            <td><div class="sc-name">Affiliate's referred player self-excludes</div><div class="sc-sub">KYC-approved player on affiliate's portfolio enters RG exclusion</div></td>
+            <td><span class="bdg bdg-c">Aff Manager</span></td>
+            <td>RG Specialist</td>
+            <td>RG Specialist handles the player exclusion per the RG workflow. Affiliate Manager is notified that the player's commission accrual has ended — no reason given (player privacy). RevShare from that player stops from the exclusion date</td>
+            <td><span class="atag at-n">RevShare stops — no clawback</span></td>
+            <td>PAGCOR GPAP compliance · No player data shared with affiliate</td>
+            <td>Immediate</td>
+          </tr>
+          <tr>
+            <td><div class="sc-name">Suspected affiliate fraud</div><div class="sc-sub">Fake traffic, self-referral, or commission manipulation detected</div></td>
+            <td><span class="bdg bdg-t">Head of Affiliates</span></td>
+            <td>Fraud Team + Legal</td>
+            <td>Head of Affiliates initiates investigation with Fraud team. Withhold commission payment pending outcome. Do not inform the affiliate. Compile evidence. Head makes final termination and clawback decision</td>
+            <td><span class="atag at-r">Termination + clawback</span><br><span class="atag at-n">Warning if minor / first incident</span></td>
+            <td>AMLC if financial fraud suspected · PAGCOR notification</td>
+            <td>Immediate hold · 5d investigation</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- /page-matrix -->
+
+
+<!-- ══════════════════════════════
+     PAGE 5 — SLA & PAYMENTS
+══════════════════════════════ -->
+<div id="page-sla" class="page">
+  <div class="hero" style="padding-bottom:44px;">
+    <div class="hero-eyebrow">Service Standards · Payment Schedule</div>
+    <h1>SLA &amp; <em>Payment</em><br>Standards</h1>
+    <p class="hero-desc">Response time standards for affiliate management operations, monthly commission payment schedule, payment method options, and BIR withholding tax reference.</p>
+  </div>
+  <div class="main">
+
+    <div class="sec-label">Affiliate Operations SLAs</div>
+    <div class="sla-grid" style="margin-bottom:40px;">
+      <div class="sla-card" style="--sc:var(--coral)">
+        <div class="sla-top">
+          <div class="sla-num">48h</div>
+          <div><div class="sla-name">Application Review</div><div class="sla-sub">Affiliate Manager</div></div>
+        </div>
+        <div class="sla-body">
+          <div class="sla-desc">Initial screening and triage of new affiliate applications from submission to acknowledgement or decline.</div>
+          <ul class="sla-rules">
+            <li>Automated pre-screen: immediate on submission</li>
+            <li>Affiliate Manager review: 48 hours</li>
+            <li>Acknowledgement or decline sent: 48 hours</li>
+            <li>KYC document request sent: within 48h of approval</li>
+          </ul>
+        </div>
+      </div>
+      <div class="sla-card" style="--sc:var(--teal)">
+        <div class="sla-top">
+          <div class="sla-num">5d</div>
+          <div><div class="sla-name">KYC Review</div><div class="sla-sub">KYC Analyst</div></div>
+        </div>
+        <div class="sla-body">
+          <div class="sla-desc">Full identity verification, compliance screening, and document review for new affiliate partners.</div>
+          <ul class="sla-rules">
+            <li>Document review: 5 business days</li>
+            <li>PEP/sanctions screening: within 2 days of receipt</li>
+            <li>EDD (if required): additional 5 business days</li>
+            <li>KYC outcome communicated: within 5 days</li>
+          </ul>
+        </div>
+      </div>
+      <div class="sla-card" style="--sc:var(--navy)">
+        <div class="sla-top">
+          <div class="sla-num">5d</div>
+          <div><div class="sla-name">Contract Execution</div><div class="sla-sub">Aff Manager + Legal</div></div>
+        </div>
+        <div class="sla-body">
+          <div class="sla-desc">From rate negotiation sign-off to signed contract returned and filed.</div>
+          <ul class="sla-rules">
+            <li>Rate negotiation: 2–3 business days</li>
+            <li>Contract draft generated: 1 business day</li>
+            <li>Affiliate signing window: 5 business days</li>
+            <li>Non-standard terms: Head of Affiliates sign-off within 48h</li>
+          </ul>
+        </div>
+      </div>
+      <div class="sla-card" style="--sc:var(--purple)">
+        <div class="sla-top">
+          <div class="sla-num">24h</div>
+          <div><div class="sla-name">Portal Setup</div><div class="sla-sub">Aff Manager + Tech</div></div>
+        </div>
+        <div class="sla-body">
+          <div class="sla-desc">From contract signing to portal live with tracking links active and test referral confirmed.</div>
+          <ul class="sla-rules">
+            <li>Portal account creation: 24 hours post-signing</li>
+            <li>Tracking link generation: same day</li>
+            <li>Test referral confirmed: within 24 hours</li>
+            <li>Creative assets delivered: within 24 hours</li>
+          </ul>
+        </div>
+      </div>
+      <div class="sla-card" style="--sc:var(--gold)">
+        <div class="sla-top">
+          <div class="sla-num">3d</div>
+          <div><div class="sla-name">Dispute Resolution</div><div class="sla-sub">Aff Manager</div></div>
+        </div>
+        <div class="sla-body">
+          <div class="sla-desc">Commission dispute raised by affiliate — from receipt to investigation outcome.</div>
+          <ul class="sla-rules">
+            <li>Dispute acknowledgement: 24 hours</li>
+            <li>Investigation and data check: 3 business days</li>
+            <li>Outcome communicated: 3 business days</li>
+            <li>Escalation to Head: if unresolved at 3 days</li>
+          </ul>
+        </div>
+      </div>
+      <div class="sla-card" style="--sc:var(--coral)">
+        <div class="sla-top">
+          <div class="sla-num">15d</div>
+          <div><div class="sla-name">Commission Payment</div><div class="sla-sub">Finance + Payments</div></div>
+        </div>
+        <div class="sla-body">
+          <div class="sla-desc">Monthly commission payments processed within 15 days of the reporting month end.</div>
+          <ul class="sla-rules">
+            <li>Report locked: Day 3 of following month</li>
+            <li>Dispute window: Day 4–7</li>
+            <li>Payment run: by Day 15 of following month</li>
+            <li>WHT remitted to BIR: by the 10th of the following month</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-label">Commission Payment Methods</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:3px;margin-bottom:40px;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--coral);padding:18px 20px;">
+        <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:600;color:var(--text);margin-bottom:6px;">GCash</div>
+        <div style="font-size:12px;color:var(--coral);font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Primary · Instant</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.7;">Near-instant settlement. Best for individual affiliates. Maximum single transfer: ₱100,000 (personal GCash). For affiliates earning &gt;₱100k/month: GCash Business account or alternative method required.</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--teal);padding:18px 20px;">
+        <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:600;color:var(--text);margin-bottom:6px;">Maya</div>
+        <div style="font-size:12px;color:var(--teal);font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Primary · Instant</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.7;">Near-instant. Maya Business accounts support higher limits. Preferred by affiliates who also receive player deposits through Maya and want consolidated accounts.</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--navy);padding:18px 20px;">
+        <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:600;color:var(--text);margin-bottom:6px;">Bank Transfer (PESONet)</div>
+        <div style="font-size:12px;color:var(--navy);font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Standard · Next Day</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.7;">Required for corporate affiliates and high-value payments. UnionBank, BDO, BPI supported. PESONet batch settlement — submitted by Day 12 for Day 14–15 settlement. No maximum transfer limit.</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--gold);padding:18px 20px;">
+        <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:600;color:var(--text);margin-bottom:6px;">USDT / Crypto</div>
+        <div style="font-size:12px;color:var(--gold);font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Optional · Case-by-Case</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.7;">Available only for non-PH resident affiliates by exception. Requires Head of Affiliates + CCO sign-off. Enhanced AML review of the crypto wallet required. BSP and BIR implications must be reviewed by Legal before enabling.</div>
+      </div>
+    </div>
+
+    <div class="sec-label">BIR Withholding Tax Reference</div>
+    <div style="overflow-x:auto;">
+      <table class="mtable">
+        <thead>
+          <tr>
+            <th>Affiliate Type</th>
+            <th>Tax Type</th>
+            <th>Rate</th>
+            <th>BIR Form</th>
+            <th>Remittance Deadline</th>
+            <th>Documentation Required</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Individual — Registered Professional / Self-employed</strong></td>
+            <td>Creditable Withholding Tax (CWT)</td>
+            <td><strong style="color:var(--coral);">10%</strong></td>
+            <td>BIR Form 1601-EQ (quarterly) + Form 2307 (certificate)</td>
+            <td>10th day of the month following the quarter</td>
+            <td>Valid TIN, COR (BIR Certificate of Registration), government ID</td>
+          </tr>
+          <tr>
+            <td><strong>Individual — 8% Income Tax Option</strong></td>
+            <td>Creditable Withholding Tax (CWT)</td>
+            <td><strong style="color:var(--coral);">8%</strong></td>
+            <td>BIR Form 1601-EQ + Form 2307</td>
+            <td>10th day of the month following the quarter</td>
+            <td>ITR showing 8% election, valid TIN, government ID</td>
+          </tr>
+          <tr>
+            <td><strong>Domestic Corporation / Partnership</strong></td>
+            <td>Expanded Withholding Tax (EWT)</td>
+            <td><strong style="color:var(--coral);">2%</strong></td>
+            <td>BIR Form 1601-EQ + Form 2307</td>
+            <td>10th day of the month following the quarter</td>
+            <td>SEC registration, BIR COR, Articles of Incorporation, authorised signatory ID</td>
+          </tr>
+          <tr>
+            <td><strong>Non-resident foreign affiliate</strong></td>
+            <td>Final Withholding Tax</td>
+            <td><strong style="color:var(--coral);">25% (or treaty rate)</strong></td>
+            <td>BIR Form 1601-FQ</td>
+            <td>10th day of the month following the quarter</td>
+            <td>Tax residency certificate, applicable tax treaty documentation — refer to Legal</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="background:rgba(184,134,11,0.06);border:1px solid rgba(184,134,11,0.2);border-left:4px solid var(--gold);padding:14px 18px;margin-top:4px;font-size:13px;color:var(--text2);line-height:1.8;">
+      <strong style="color:var(--gold);">BIR Form 2307</strong> (Certificate of Creditable Tax Withheld at Source) must be issued to each affiliate quarterly, or upon request. Affiliates use Form 2307 as a tax credit when filing their own BIR income tax return. Failure to issue Form 2307 is a BIR compliance violation. Finance team is responsible for generating and distributing Form 2307 within 20 days of the end of each quarter.
+    </div>
+
+  </div>
+</div><!-- /page-sla -->
+
+
+<!-- ══════════════════════════════
+     PAGE 6 — GLOSSARY
+══════════════════════════════ -->
+<div id="page-glossary" class="page">
+  <div class="hero" style="padding-bottom:44px;">
+    <div class="hero-eyebrow">Reference Document</div>
+    <h1>Affiliate <em>Glossary</em></h1>
+    <p class="hero-desc">Key terms, commission mechanics, Philippines regulatory definitions, and payment infrastructure references for the Affiliate Management workflow.</p>
+  </div>
+  <div class="main">
+
+    <div class="sec-label">Commission & Programme Terms</div>
+    <div class="gloss-grid" style="margin-bottom:40px;">
+      <div class="gloss-card">
+        <div class="gloss-term">RevShare</div>
+        <div class="gloss-abbr">Revenue Share</div>
+        <div class="gloss-def">A commission model where the affiliate earns a percentage of the net gaming revenue (NGR) generated by their referred players on an ongoing monthly basis. Rates are expressed as a percentage of NGR and vary by affiliate level (L1–L5) and traffic quality tier.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">CPA</div>
+        <div class="gloss-abbr">Cost Per Acquisition</div>
+        <div class="gloss-def">A flat-fee commission paid once per qualifying player — defined as a player who completes KYC and makes a first-time deposit (FTD) above the minimum threshold. CPA is not recurring. If the player never deposits again, no further CPA commission is generated.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">NGR</div>
+        <div class="gloss-abbr">Net Gaming Revenue</div>
+        <div class="gloss-def">The revenue used as the basis for RevShare calculations. Calculated as: player deposits minus player withdrawals minus bonuses paid minus platform operating costs (payment fees, game licensing costs). If NGR is negative in a given month (operator pays out more than it receives), this affects the affiliate's earnings per the negative carryover policy.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">FTD</div>
+        <div class="gloss-abbr">First-Time Deposit</div>
+        <div class="gloss-def">A player's very first deposit after completing KYC registration. The FTD is the trigger event for CPA commission payment. The minimum qualifying FTD amount is defined in the affiliate agreement (standard: ₱500). FTDs that are charged back within 30 days do not qualify for CPA.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Negative Carryover</div>
+        <div class="gloss-abbr">Monthly Negative Balance Policy</div>
+        <div class="gloss-def">When a player wins significantly in a given month, the affiliate's NGR for that player goes negative. Under a negative carryover policy, this negative balance is carried forward and deducted from future months' earnings before the affiliate receives any commission. Without negative carryover (monthly reset), the affiliate's balance resets to zero each month regardless of negative outcomes.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Cookie Window</div>
+        <div class="gloss-abbr">Attribution Tracking Period</div>
+        <div class="gloss-def">The period during which a player who clicks an affiliate tracking link will be attributed to that affiliate if they register. Standard: 30 days. Premium partners: up to 90 days. If the cookie expires before the player registers, no attribution is recorded for that affiliate.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Sub-Affiliate</div>
+        <div class="gloss-abbr">Downstream Network Partner</div>
+        <div class="gloss-def">An affiliate recruited into the network by an existing affiliate partner (their upline). Sub-affiliates earn commissions on their own direct player referrals. Their upline earns an override commission on the sub-affiliate's earnings — this is the mechanism that creates the multi-level structure.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Override</div>
+        <div class="gloss-abbr">Upstream Commission on Downstream Earnings</div>
+        <div class="gloss-def">The commission earned by an upline affiliate on the earnings of the affiliates they recruited. For example: an L1 partner earns a 5% override on L2's RevShare commissions. Overrides cascade through all active levels simultaneously in the monthly processing run.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Clawback</div>
+        <div class="gloss-abbr">Commission Reversal</div>
+        <div class="gloss-def">The recovery of commissions already paid when a player's FTD is reversed (chargeback), or when fraud is confirmed in the affiliate's referral activity. Clawback provisions must be explicitly stated in the affiliate agreement and specify the time window within which clawback can be applied (typically up to 6 months).</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Last-Click Attribution</div>
+        <div class="gloss-abbr">Default Attribution Model</div>
+        <div class="gloss-def">The affiliate whose tracking link was clicked most recently before a player registered receives 100% of the commission credit for that player. This is the industry default. If a player clicks L1 affiliate A's link on Day 1, then clicks L1 affiliate B's link on Day 3 and registers, affiliate B receives full attribution.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Hybrid</div>
+        <div class="gloss-abbr">Combined CPA + RevShare</div>
+        <div class="gloss-def">A bespoke commission structure offering both a reduced CPA on qualifying FTDs and a reduced RevShare rate on ongoing NGR. Provides the affiliate with immediate income and long-term upside. Hybrid terms must be individually negotiated and require Head of Affiliates approval before being offered.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Cookie Stuffing</div>
+        <div class="gloss-abbr">Affiliate Fraud Technique</div>
+        <div class="gloss-def">A fraudulent technique where an affiliate uses hidden scripts or iframes to drop tracking cookies on users' browsers without those users ever seeing or clicking an affiliate link. Results in false attribution of player registrations. Grounds for immediate termination and full clawback.</div>
+      </div>
+    </div>
+
+    <div class="sec-label">Philippines Regulatory Terms</div>
+    <div class="gloss-grid">
+      <div class="gloss-card">
+        <div class="gloss-term">CWT</div>
+        <div class="gloss-abbr">Creditable Withholding Tax</div>
+        <div class="gloss-def">BIR tax withheld by the operator from commission payments to individual Filipino affiliates. Rate: 10% (standard professional rate) or 8% (if affiliate has elected the 8% income tax option). The operator remits CWT to BIR on the affiliate's behalf. The affiliate receives BIR Form 2307 as proof of withholding to use as a tax credit in their annual ITR.</div>
+        <span class="gloss-ph">🇵🇭 BIR Requirement</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">EWT</div>
+        <div class="gloss-abbr">Expanded Withholding Tax</div>
+        <div class="gloss-def">BIR tax withheld from commission payments to corporate affiliate partners (domestic corporations and partnerships). Rate: 2% on commission amounts. Same remittance and Form 2307 requirements apply as for CWT.</div>
+        <span class="gloss-ph">🇵🇭 BIR Requirement</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">BIR Form 2307</div>
+        <div class="gloss-abbr">Certificate of Creditable Tax Withheld</div>
+        <div class="gloss-def">A BIR document issued by the operator to the affiliate each quarter confirming the amount of withholding tax deducted from their commissions. Affiliates use this form to claim a tax credit against their own income tax liability. Failure to issue Form 2307 is a BIR compliance violation with potential penalties.</div>
+        <span class="gloss-ph">🇵🇭 BIR — Quarterly</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">SEC Registration</div>
+        <div class="gloss-abbr">Securities & Exchange Commission</div>
+        <div class="gloss-def">Corporate affiliates (companies, partnerships) must be registered with the Philippine SEC. SEC registration documents are part of the KYC requirement for corporate affiliate onboarding. The SEC registration number must be included in the affiliate agreement for corporate partners.</div>
+        <span class="gloss-ph">🇵🇭 Corporate Requirement</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">PAGCOR Affiliate Rules</div>
+        <div class="gloss-abbr">Marketing Compliance Framework</div>
+        <div class="gloss-def">PAGCOR imposes specific restrictions on how licensed operators may market through affiliates. Key requirements: no targeting of minors, no advertising near schools or churches, responsible gambling messaging required in all affiliate content, affiliate channel documentation must be available for PAGCOR audit. Non-compliant affiliate activity is the operator's liability under the licence.</div>
+        <span class="gloss-ph">🇵🇭 PAGCOR Compliance</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">TIN</div>
+        <div class="gloss-abbr">Tax Identification Number</div>
+        <div class="gloss-def">A unique number issued by the BIR to all taxpayers in the Philippines. Both individual and corporate affiliates must provide a valid TIN before the first commission payment is processed. Commission payments cannot be made to affiliates without a TIN on file — this is an operator obligation, not merely a best practice.</div>
+        <span class="gloss-ph">🇵🇭 BIR Mandatory</span>
+      </div>
+    </div>
+  </div>
+</div><!-- /page-glossary -->
+
+<footer>
+  <strong>Affiliate Management Workflow</strong> · iGaming Philippines Operations · PAGCOR · BIR · AMLC Compliant · Internal Use Only
+</footer>
+
+<script>
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+function tog(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+</script>
+</body>
+</html>

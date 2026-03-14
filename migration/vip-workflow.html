@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIP Management Workflow · iGaming Philippines</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Josefin+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #0d0b08;
+  --bg2:      #131008;
+  --surface:  #1a1610;
+  --surface2: #211d14;
+  --border:   #2e2818;
+  --border2:  #3d3420;
+  --gold:     #c9a84c;
+  --gold2:    #e8c96a;
+  --gold3:    #f5e4a8;
+  --gold-dim: rgba(201,168,76,0.15);
+  --text:     #f0e8d8;
+  --text2:    #c8baa0;
+  --text3:    #8a7d65;
+
+  /* tier colours */
+  --bronze:   #cd7f32;
+  --silver:   #a8a9ad;
+  --g-gold:   #c9a84c;
+  --platinum: #9eb4c8;
+  --elite:    #e8c96a;
+
+  --green:  #4a9a6a;
+  --red:    #a04a3a;
+  --amber:  #b8860b;
+  --blue:   #3a6a9a;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { font-size:21px; scroll-behavior:smooth; }
+
+body {
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Josefin Sans',sans-serif;
+  font-size:18px; line-height:1.7;
+  min-height:100vh;
+}
+
+/* subtle noise overlay */
+body::after {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:9999;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  opacity:0.5;
+}
+
+/* gold divider line utility */
+.gold-line { width:40px; height:1px; background:var(--gold); display:inline-block; }
+
+/* ── TOP NAV ── */
+.topnav {
+  position:sticky; top:0; z-index:200;
+  background:rgba(13,11,8,0.97);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border2);
+  display:flex; align-items:center;
+  padding:0 48px; height:60px;
+  gap:0;
+}
+.topnav::after {
+  content:''; position:absolute; bottom:0; left:0; right:0;
+  height:1px;
+  background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity:0.4;
+}
+.nav-brand {
+  font-family:'Cormorant Garamond',serif;
+  font-size:26px; font-weight:600;
+  color:var(--text); letter-spacing:0.05em;
+  margin-right:auto;
+}
+.nav-brand span { color:var(--gold); font-style:italic; }
+.nav-links { display:flex; }
+.nav-link {
+  font-size:14px; letter-spacing:0.2em; text-transform:uppercase; font-weight:400;
+  color:var(--text3); padding:0 20px; height:60px;
+  display:flex; align-items:center; cursor:pointer;
+  border-bottom:1px solid transparent; margin-bottom:-1px;
+  transition:all 0.2s; background:none;
+  border-top:none; border-left:none; border-right:none;
+  font-family:'Josefin Sans',sans-serif;
+}
+.nav-link:hover { color:var(--text2); }
+.nav-link.active { color:var(--gold); border-bottom-color:var(--gold); }
+
+/* ── PAGES ── */
+.page { display:none; }
+.page.active { display:block; }
+
+/* ── HERO ── */
+.hero {
+  background:var(--bg2);
+  padding:72px 48px 56px;
+  position:relative; overflow:hidden;
+  border-bottom:1px solid var(--border2);
+}
+.hero::before {
+  content:'';
+  position:absolute; top:-80px; right:-80px;
+  width:500px; height:500px;
+  background:radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%);
+  pointer-events:none;
+}
+.hero::after {
+  content:'';
+  position:absolute; bottom:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity:0.3;
+}
+.hero-eyebrow {
+  font-size:13px; letter-spacing:0.35em; text-transform:uppercase;
+  color:var(--gold); margin-bottom:18px;
+  display:flex; align-items:center; gap:12px; font-weight:600;
+}
+.hero h1 {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(47px,5vw,88px);
+  font-weight:600; line-height:1.05;
+  letter-spacing:-0.01em;
+  margin-bottom:18px;
+}
+.hero h1 em { color:var(--gold); font-style:italic; }
+.hero-desc {
+  font-size:18px; color:var(--text2);
+  max-width:580px; line-height:1.9; margin-bottom:36px;
+}
+.hero-stats { display:flex; gap:0; flex-wrap:wrap; border:1px solid var(--border2); display:inline-flex; }
+.hero-stat {
+  padding:16px 28px; border-right:1px solid var(--border2);
+  text-align:center;
+}
+.hero-stat:last-child { border-right:none; }
+.hero-stat-num {
+  font-family:'Cormorant Garamond',serif;
+  font-size:42px; font-weight:600; color:var(--gold); line-height:1;
+}
+.hero-stat-label { font-size:13px; letter-spacing:0.15em; text-transform:uppercase; color:var(--text3); margin-top:4px; }
+
+/* ── MAIN ── */
+.main { max-width:1200px; margin:0 auto; padding:52px 48px; }
+
+.section-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:14px; font-weight:600;
+  letter-spacing:0.3em; text-transform:uppercase;
+  color:var(--gold); margin-bottom:28px;
+  display:flex; align-items:center; gap:14px;
+}
+.section-title::after { content:''; flex:1; height:1px; background:var(--border2); }
+
+/* ── VIP TIERS ── */
+.tiers-row {
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:2px; margin-bottom:52px;
+}
+@media(max-width:900px) { .tiers-row { grid-template-columns:repeat(3,1fr); } }
+@media(max-width:600px) { .tiers-row { grid-template-columns:1fr 1fr; } }
+
+.tier-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  padding:20px 16px;
+  text-align:center;
+  position:relative; overflow:hidden;
+  transition:all 0.2s;
+}
+.tier-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:var(--tc);
+}
+.tier-card:hover { border-color:var(--tc); transform:translateY(-2px); }
+.tier-crown { font-size:29px; margin-bottom:10px; }
+.tier-name {
+  font-family:'Cormorant Garamond',serif;
+  font-size:23px; font-weight:600;
+  color:var(--tc); letter-spacing:0.05em;
+}
+.tier-deposit { font-size:14px; color:var(--text3); margin-top:5px; letter-spacing:0.05em; }
+.tier-perks { font-size:16px; color:var(--text2); margin-top:10px; line-height:1.8; }
+.tier-host { font-size:13px; letter-spacing:0.12em; text-transform:uppercase; color:var(--text3); margin-top:10px; padding-top:10px; border-top:1px solid var(--border); }
+
+/* ── FLOW STEPS ── */
+.flow-step {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-left:3px solid var(--step-color, var(--gold));
+  border-radius:0;
+  margin-bottom:4px;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+.flow-step:hover { border-color:var(--step-color, var(--gold)); border-left-color:var(--step-color, var(--gold)); }
+
+.step-header {
+  padding:18px 24px;
+  display:flex; align-items:center; gap:16px;
+  cursor:pointer; user-select:none;
+  transition:background 0.15s;
+}
+.step-header:hover { background:var(--surface2); }
+
+.step-num {
+  font-family:'Cormorant Garamond',serif;
+  font-size:42px; font-weight:600; line-height:1;
+  color:var(--step-color, var(--gold));
+  opacity:0.5; flex-shrink:0; width:44px;
+}
+.step-info { flex:1; }
+.step-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:26px; font-weight:600; color:var(--text);
+  line-height:1.2;
+}
+.step-subtitle { font-size:16px; color:var(--text3); margin-top:3px; letter-spacing:0.05em; }
+.step-owner {
+  font-size:14px; letter-spacing:0.15em; text-transform:uppercase;
+  padding:4px 12px; border:1px solid;
+  border-color:rgba(var(--step-rgb, 201,168,76),0.3);
+  background:rgba(var(--step-rgb, 201,168,76),0.06);
+  color:var(--step-color, var(--gold));
+  white-space:nowrap; flex-shrink:0;
+}
+.step-toggle { font-size:21px; color:var(--text3); transition:transform 0.2s; flex-shrink:0; }
+.flow-step.open .step-toggle { transform:rotate(180deg); }
+
+.step-body { display:none; padding:0 24px 24px; }
+.flow-step.open .step-body { display:block; }
+
+.step-cols {
+  display:grid; grid-template-columns:1fr 1fr; gap:24px;
+  padding-top:20px; border-top:1px solid var(--border);
+  margin-top:4px;
+}
+@media(max-width:700px) { .step-cols { grid-template-columns:1fr; } }
+
+.col-title {
+  font-size:13px; letter-spacing:0.25em; text-transform:uppercase;
+  color:var(--text3); margin-bottom:12px;
+  padding-bottom:8px; border-bottom:1px solid var(--border);
+}
+
+.action-list { list-style:none; display:flex; flex-direction:column; gap:10px; }
+.action-list li {
+  display:flex; gap:10px; align-items:flex-start;
+  font-size:17px; color:var(--text2); line-height:1.7;
+}
+.action-list li::before {
+  content:'◆';
+  font-size:8px; color:var(--step-color, var(--gold));
+  flex-shrink:0; margin-top:6px;
+}
+
+.outcome-stack { display:flex; flex-direction:column; gap:8px; }
+.outcome {
+  padding:12px 16px; border:1px solid; border-radius:0;
+  font-size:17px; line-height:1.7; display:flex; gap:12px; align-items:flex-start;
+}
+.oc-gold   { border-color:rgba(201,168,76,0.25); background:rgba(201,168,76,0.05); color:var(--gold2); }
+.oc-green  { border-color:rgba(74,154,106,0.25); background:rgba(74,154,106,0.05); color:#6abf8a; }
+.oc-amber  { border-color:rgba(184,134,11,0.25); background:rgba(184,134,11,0.05); color:#d4a820; }
+.oc-red    { border-color:rgba(160,74,58,0.25);  background:rgba(160,74,58,0.05);  color:#c07060; }
+.oc-blue   { border-color:rgba(58,106,154,0.25); background:rgba(58,106,154,0.05); color:#6a9abf; }
+.oc-icon { font-size:21px; flex-shrink:0; }
+.oc-text strong { display:block; font-weight:600; margin-bottom:2px; font-size:17px; }
+
+.ph-note {
+  margin-top:16px; padding:12px 16px;
+  background:rgba(201,168,76,0.05);
+  border:1px solid rgba(201,168,76,0.18);
+  border-left:3px solid var(--gold);
+  font-size:16px; color:var(--text2); line-height:1.8;
+}
+.ph-note strong { color:var(--gold); }
+
+.tool-row {
+  margin-top:16px; padding-top:14px; border-top:1px solid var(--border);
+  display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+}
+.tool-lbl { font-size:13px; letter-spacing:0.18em; text-transform:uppercase; color:var(--text3); margin-right:4px; }
+.tool-chip {
+  font-size:14px; padding:3px 10px;
+  background:var(--surface2); border:1px solid var(--border2);
+  color:var(--text2);
+}
+
+/* connector */
+.connector {
+  display:flex; flex-direction:column; align-items:flex-start;
+  padding:6px 0 6px 58px; gap:0;
+}
+.conn-line { width:1px; height:16px; background:var(--border2); margin-left:16px; }
+.conn-label {
+  font-size:13px; letter-spacing:0.15em; text-transform:uppercase;
+  color:var(--text3); background:var(--bg);
+  padding:3px 12px; border:1px solid var(--border);
+  margin:3px 0;
+}
+.conn-arrow { font-size:21px; color:var(--border2); line-height:1; margin-left:8px; }
+
+/* ── MATRIX TABLE ── */
+.mtable {
+  width:100%; border-collapse:collapse;
+  font-size:17px;
+  background:var(--surface);
+  border:1px solid var(--border2);
+}
+.mtable th {
+  padding:12px 16px; text-align:left;
+  font-size:13px; letter-spacing:0.2em; text-transform:uppercase;
+  color:var(--text3); border-bottom:1px solid var(--border2);
+  background:var(--surface2); font-family:'Josefin Sans',sans-serif;
+  font-weight:600;
+}
+.mtable td {
+  padding:12px 16px; border-bottom:1px solid var(--border);
+  color:var(--text2); vertical-align:top; line-height:1.7;
+}
+.mtable tr:last-child td { border-bottom:none; }
+.mtable tr:hover td { background:var(--surface2); }
+.scenario-name { font-weight:600; color:var(--text); font-size:17px; }
+.scenario-sub { font-size:16px; color:var(--text3); margin-top:2px; }
+
+.badge {
+  display:inline-block; padding:2px 9px; font-size:13px;
+  letter-spacing:0.1em; text-transform:uppercase; font-weight:600;
+  border:1px solid; white-space:nowrap;
+}
+.badge-vam  { color:#b8860b; border-color:rgba(184,134,11,0.35); background:rgba(184,134,11,0.08); }
+.badge-vm   { color:var(--gold); border-color:rgba(201,168,76,0.35); background:rgba(201,168,76,0.08); }
+.badge-mgr  { color:#9eb4c8; border-color:rgba(158,180,200,0.35); background:rgba(158,180,200,0.08); }
+.badge-coo  { color:#c07060; border-color:rgba(192,112,96,0.35); background:rgba(192,112,96,0.08); }
+
+.act-tag {
+  display:inline-block; padding:2px 8px; font-size:14px;
+  border:1px solid; margin-top:3px;
+}
+.at-g  { color:#6abf8a; border-color:rgba(106,191,138,0.3); background:rgba(106,191,138,0.05); }
+.at-a  { color:#d4a820; border-color:rgba(212,168,32,0.3); background:rgba(212,168,32,0.05); }
+.at-r  { color:#c07060; border-color:rgba(192,112,96,0.3); background:rgba(192,112,96,0.05); }
+.at-b  { color:#6a9abf; border-color:rgba(106,154,191,0.3); background:rgba(106,154,191,0.05); }
+.at-gold { color:var(--gold); border-color:rgba(201,168,76,0.3); background:rgba(201,168,76,0.05); }
+
+/* ── SLA PAGE ── */
+.sla-cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; margin-bottom:40px; }
+.sla-card { background:var(--surface); border:1px solid var(--border2); overflow:hidden; }
+.sla-card-top { padding:18px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:14px; }
+.sla-card-num { font-family:'Cormorant Garamond',serif; font-size:52px; font-weight:600; line-height:1; }
+.sla-card-name { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:600; color:var(--text); }
+.sla-card-sub { font-size:14px; color:var(--text3); margin-top:2px; letter-spacing:0.05em; }
+.sla-card-body { padding:16px 20px; }
+.sla-card-desc { font-size:17px; color:var(--text2); line-height:1.7; margin-bottom:12px; }
+.sla-rules { list-style:none; display:flex; flex-direction:column; gap:7px; }
+.sla-rules li { font-size:16px; color:var(--text3); display:flex; gap:8px; line-height:1.6; }
+.sla-rules li::before { content:'·'; font-size:26px; line-height:1.1; color:var(--gold); flex-shrink:0; }
+
+.churn-box {
+  margin-top:36px; padding:24px;
+  background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(13,11,8,0));
+  border:1px solid var(--border2);
+  border-left:3px solid var(--gold);
+}
+.churn-title { font-family:'Cormorant Garamond',serif; font-size:26px; font-weight:600; color:var(--gold); margin-bottom:14px; }
+.churn-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
+.churn-item { font-size:17px; color:var(--text2); line-height:1.7; }
+.churn-item strong { display:block; color:var(--text); font-size:16px; letter-spacing:0.05em; text-transform:uppercase; margin-bottom:3px; }
+
+/* ── GLOSSARY ── */
+.gloss-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; }
+.gloss-card { background:var(--surface); border:1px solid var(--border); padding:18px 20px; }
+.gloss-term { font-family:'Cormorant Garamond',serif; font-size:25px; font-weight:600; color:var(--text); margin-bottom:4px; }
+.gloss-abbr { font-size:13px; letter-spacing:0.15em; text-transform:uppercase; color:var(--text3); margin-bottom:10px; }
+.gloss-def { font-size:17px; color:var(--text2); line-height:1.7; }
+.gloss-ph { display:inline-block; margin-top:8px; font-size:13px; padding:2px 9px; background:rgba(201,168,76,0.08); border:1px solid rgba(201,168,76,0.25); color:var(--gold); letter-spacing:0.1em; text-transform:uppercase; }
+
+/* FOOTER */
+footer {
+  background:var(--bg2);
+  border-top:1px solid var(--border2);
+  text-align:center; padding:24px;
+  font-size:16px; color:var(--text3);
+  letter-spacing:0.08em; position:relative;
+}
+footer::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  opacity:0.3;
+}
+footer strong { color:var(--gold); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <a href="index.html" class="nav-brand" style="text-decoration:none;cursor:pointer;" title="Back to Hub">iGaming <span>VIP</span> Ops</a>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="showPage('lifecycle',this)">Player Lifecycle</button>
+    <button class="nav-link" onclick="showPage('escalation',this)">Escalation Flow</button>
+    <button class="nav-link" onclick="showPage('tiers',this)">Tiers & Benefits</button>
+    <button class="nav-link" onclick="showPage('sla',this)">SLA & Touchpoints</button>
+    <button class="nav-link" onclick="showPage('glossary',this)">Glossary</button>
+  </div>
+</nav>
+
+
+<!-- ══════════════════════════════════════
+     PAGE 1 — VIP LIFECYCLE
+══════════════════════════════════════ -->
+<div id="page-lifecycle" class="page active">
+  <div class="hero">
+    <div class="hero-eyebrow"><span class="gold-line"></span> Philippines · PAGCOR Licensed · Private Members</div>
+    <h1>VIP Player<br><em>Management Workflow</em></h1>
+    <p class="hero-desc">End-to-end lifecycle for identifying, onboarding, managing, and retaining high-value players in the Philippines iGaming market. Covers identification signals, host assignment, touchpoint cadence, escalation paths, and compliance obligations.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-num">5</div><div class="hero-stat-label">VIP Tiers</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">24h</div><div class="hero-stat-label">Onboarding SLA</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">7</div><div class="hero-stat-label">Lifecycle Stages</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">₱500k</div><div class="hero-stat-label">AMLC CTR Threshold</div></div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- TIER OVERVIEW STRIP -->
+    <div class="section-title">VIP Tier Structure</div>
+    <div class="tiers-row" style="margin-bottom:52px;">
+      <div class="tier-card" style="--tc:var(--bronze)">
+        <div class="tier-crown">🥉</div>
+        <div class="tier-name">Bronze</div>
+        <div class="tier-deposit">₱50k–₱150k / month</div>
+        <div class="tier-perks">Weekly cashback<br>Priority CS queue<br>Birthday bonus</div>
+        <div class="tier-host">No dedicated host</div>
+      </div>
+      <div class="tier-card" style="--tc:var(--silver)">
+        <div class="tier-crown">🥈</div>
+        <div class="tier-name">Silver</div>
+        <div class="tier-deposit">₱150k–₱500k / month</div>
+        <div class="tier-perks">Bi-weekly cashback<br>Reload bonuses<br>Faster withdrawals</div>
+        <div class="tier-host">Shared host (1:20)</div>
+      </div>
+      <div class="tier-card" style="--tc:var(--g-gold)">
+        <div class="tier-crown">🥇</div>
+        <div class="tier-name">Gold</div>
+        <div class="tier-deposit">₱500k–₱2M / month</div>
+        <div class="tier-perks">Daily cashback<br>Personal gift budget<br>Event invitations</div>
+        <div class="tier-host">Dedicated host (1:10)</div>
+      </div>
+      <div class="tier-card" style="--tc:var(--platinum)">
+        <div class="tier-crown">💎</div>
+        <div class="tier-name">Platinum</div>
+        <div class="tier-deposit">₱2M–₱10M / month</div>
+        <div class="tier-perks">Custom cashback rate<br>Concierge services<br>Local event hosting</div>
+        <div class="tier-host">Dedicated host (1:5)</div>
+      </div>
+      <div class="tier-card" style="--tc:var(--elite)">
+        <div class="tier-crown">👑</div>
+        <div class="tier-name">Elite</div>
+        <div class="tier-deposit">₱10M+ / month</div>
+        <div class="tier-perks">Bespoke terms<br>Travel & lifestyle perks<br>CCO relationship</div>
+        <div class="tier-host">Senior VIP Manager</div>
+      </div>
+    </div>
+
+    <!-- LIFECYCLE FLOW -->
+    <div class="section-title">Player Lifecycle — 7 Stages</div>
+
+    <!-- STEP 1: IDENTIFICATION -->
+    <div class="flow-step open" id="s1" style="--step-color:var(--gold);--step-rgb:201,168,76;">
+      <div class="step-header" onclick="toggleStep('s1')">
+        <div class="step-num">01</div>
+        <div class="step-info">
+          <div class="step-title">Identification & Nomination</div>
+          <div class="step-subtitle">System flags or manual nomination · Before any VIP contact is made</div>
+        </div>
+        <div class="step-owner">CRM / Analyst</div>
+        <div class="step-toggle">▾</div>
+      </div>
+      <div class="step-body">
+        <div class="step-cols">
+          <div>
+            <div class="col-title">Identification Triggers</div>
+            <ul class="action-list">
+              <li>Automated system flag: player deposits ≥ ₱50,000 in a single session or reaches monthly volume threshold for Bronze tier or above</li>
+              <li>Deposit velocity: 5 or more deposits within 7 days with aggregate value qualifying for Silver or above</li>
+              <li>Manual nomination by CS Team Lead or CRM Manager based on observed player behaviour — high engagement, large bet sizes, frequent play</li>
+              <li>Reactivation signal: previously inactive VIP returns and deposits at qualifying volume within their first 14 days back</li>
+              <li>Referral: an existing VIP refers a friend who deposits at qualifying levels — escalate referral for review</li>
+              <li>Cross-product play: player active across sportsbook, casino, and specialty games — indicates higher LTV potential even if single-product deposit is below threshold</li>
+            </ul>
+            <div class="ph-note"><strong>🇵🇭 Philippines:</strong> A significant proportion of PH high-value players prefer GCash and Maya for deposits. Ensure the identification system tracks e-wallet deposit aggregates — not only bank transfers — as these are often split across multiple smaller transactions to avoid attention.</div>
+          </div>
+          <div>
+            <div class="col-title">Nomination Process</div>
+            <ul class="action-list">
+              <li>CRM Analyst reviews the flagged player profile — verify KYC status is fully approved and EDD is complete if applicable before any VIP contact</li>
+              <li>Pull a 30-day play summary: total deposits, net gaming revenue (NGR), game mix, session frequency, and average session value</li>
+              <li>Assign a provisional VIP tier based on the deposit volume table and risk score from the Compliance team</li>
+              <li>Create a VIP nomination record in the CRM system with the supporting data and provisional tier — submit for VIP Manager approval</li>
+              <li>VIP Manager reviews the nomination within 4 hours and approves, declines, or adjusts the provisional tier</li>
+              <li>If approved: assign the player to an available VIP Account Manager and trigger the onboarding workflow (Stage 2)</li>
+            </ul>
+            <div class="outcome-stack" style="margin-top:14px;">
+              <div class="outcome oc-gold"><div class="oi-icon">✓</div><div class="oc-text"><strong>Approved for VIP</strong>Tier assigned, host assigned, onboarding begins within 24h</div></div>
+              <div class="outcome oc-amber"><div class="oi-icon">◷</div><div class="oc-text"><strong>Watchlist — Monitor</strong>Promising but below threshold — add to watchlist for 30-day review</div></div>
+              <div class="outcome oc-red"><div class="oi-icon">✗</div><div class="oc-text"><strong>Not Eligible</strong>KYC incomplete, flagged by Compliance, or volume not sustained — no VIP contact</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="tool-row">
+          <span class="tool-lbl">Tools:</span>
+          <span class="tool-chip">CRM Platform</span>
+          <span class="tool-chip">Deposit Analytics Dashboard</span>
+          <span class="tool-chip">KYC Status API</span>
+          <span class="tool-chip">Risk Score Feed</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="connector"><div class="conn-line"></div><div class="conn-label">Nomination approved → Assign host → Begin onboarding</div><div class="conn-arrow">▼</div></div>
+
+    <!-- STEP 2: ONBOARDING -->
+    <div class="flow-step open" id="s2" style="--step-color:#c8baa0;--step-rgb:200,186,160;">
+      <div class="step-header" onclick="toggleStep('s2')">
+        <div class="step-num">02</div>
+        <div class="step-info">
+          <div class="step-title">VIP Onboarding</div>
+          <div class="step-subtitle">First contact within 24h of nomination approval · Preference capture · Relationship foundation</div>
+        </div>
+        <div class="step-owner">VIP Account Manager</div>
+        <div class="step-toggle">▾</div>
+      </div>
+      <div class="step-body">
+        <div class="step-cols">
+          <div>
+            <div class="col-title">Onboarding Actions</div>
+            <ul class="action-list">
+              <li>Assigned VIP Account Manager (VAM) makes first contact within 24 hours of nomination approval — preferred channel is SMS or direct call depending on player preference</li>
+              <li>Introduce yourself by name, state your role as their dedicated host, and confirm the player's VIP tier and what this means for them specifically</li>
+              <li>Conduct a preference capture conversation: preferred contact time, preferred channel (SMS, Viber, WhatsApp, email), game preferences, favourite sports, birthdays and anniversaries</li>
+              <li>Confirm the player's preferred withdrawal method and note any preference for GCash, Maya, or bank transfer — flag to Payments team if a priority withdrawal lane is needed</li>
+              <li>Explain the cashback structure, withdrawal priority, and any immediate welcome gift or bonus available at their tier</li>
+              <li>Record all captured preferences in the VIP CRM profile within 2 hours of the conversation</li>
+              <li>Trigger the welcome gift or bonus within 24 hours of onboarding call completion</li>
+              <li>Schedule the first 7-day check-in in the host calendar</li>
+            </ul>
+            <div class="ph-note"><strong>🇵🇭 Philippines:</strong> Viber is the dominant messaging platform for personal communication in the Philippines — not WhatsApp. Most PH VIP players will prefer Viber or SMS over email. Use the player's first name and a warm, respectful tone. Filipino culture values pakikisama (camaraderie) — building genuine rapport is more effective than a purely transactional approach.</div>
+          </div>
+          <div>
+            <div class="col-title">Preference Capture Checklist</div>
+            <ul class="action-list">
+              <li>Preferred contact channel: Viber / SMS / WhatsApp / Email / Phone</li>
+              <li>Best contact time: morning / afternoon / evening</li>
+              <li>Game preferences: sportsbook, casino, specialty games, specific titles</li>
+              <li>Favourite sports and leagues (PBA, NBA, Premier League, boxing)</li>
+              <li>Birthday, wedding anniversary, and other key dates</li>
+              <li>Preferred withdrawal method and target turnaround expectation</li>
+              <li>Languages spoken: Filipino / English / regional dialect</li>
+              <li>Lifestyle interests for gifting: food, electronics, experiences, travel</li>
+              <li>Any responsible gambling preferences or limits to respect</li>
+            </ul>
+            <div class="outcome-stack" style="margin-top:14px;">
+              <div class="outcome oc-green"><div class="oi-icon">✓</div><div class="oc-text"><strong>Onboarding Complete</strong>Preferences captured, welcome gift triggered, 7-day check-in scheduled</div></div>
+              <div class="outcome oc-amber"><div class="oi-icon">◷</div><div class="oc-text"><strong>No Response within 48h</strong>Follow up via alternative channel. Log attempt. Escalate to VIP Manager if 3 contact attempts fail</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="tool-row">
+          <span class="tool-lbl">Tools:</span>
+          <span class="tool-chip">VIP CRM Profile</span>
+          <span class="tool-chip">Viber / SMS Gateway</span>
+          <span class="tool-chip">Bonus Engine</span>
+          <span class="tool-chip">Host Calendar</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="connector"><div class="conn-line"></div><div class="conn-label">Onboarding complete → Enter regular touchpoint cadence</div><div class="conn-arrow">▼</div></div>
+
+    <!-- STEP 3: ACTIVE MANAGEMENT -->
+    <div class="flow-step open" id="s3" style="--step-color:var(--g-gold);--step-rgb:201,168,76;">
+      <div class="step-header" onclick="toggleStep('s3')">
+        <div class="step-num">03</div>
+        <div class="step-info">
+          <div class="step-title">Active Relationship Management</div>
+          <div class="step-subtitle">Ongoing touchpoint cadence · Personalised offers · Proactive engagement</div>
+        </div>
+        <div class="step-owner">VIP Account Manager</div>
+        <div class="step-toggle">▾</div>
+      </div>
+      <div class="step-body">
+        <div class="step-cols">
+          <div>
+            <div class="col-title">Touchpoint Cadence by Tier</div>
+            <ul class="action-list">
+              <li><strong style="color:var(--bronze)">Bronze:</strong> Monthly check-in message. Automated CRM campaign. No personal host outreach required unless player initiates</li>
+              <li><strong style="color:var(--silver)">Silver:</strong> Bi-weekly personal message from shared host. Monthly personalised bonus offer. Key date acknowledgement (birthday)</li>
+              <li><strong style="color:var(--g-gold)">Gold:</strong> Weekly personal check-in via Viber/SMS. Bi-weekly personalised offer. Monthly gift (within budget). Quarterly invitation to VIP event or experience</li>
+              <li><strong style="color:var(--platinum)">Platinum:</strong> 2–3 personal contacts per week. Monthly gift and cashback review. Bi-annual in-person event or experience. Concierge assistance available on request</li>
+              <li><strong style="color:var(--elite)">Elite:</strong> Daily availability from Senior VIP Manager. Bespoke monthly terms review. Priority on all services. Annual overseas experience or trip within approved budget</li>
+            </ul>
+          </div>
+          <div>
+            <div class="col-title">Proactive Engagement Triggers</div>
+            <ul class="action-list">
+              <li>Large win: contact within 2 hours to congratulate. Confirm withdrawal timeline and ensure experience is smooth</li>
+              <li>Large loss session: contact within 4 hours with a genuine check-in. Do not immediately offer a bonus — prioritise player welfare first. Offer cashback only if appropriate and within RG guidelines</li>
+              <li>Key dates: birthday, anniversary — send a personalised message and a tier-appropriate gift within the approved budget 1–2 days before</li>
+              <li>Withdrawal delay: if a VIP withdrawal is delayed beyond their tier SLA, proactively contact before the player complains — explain the delay and provide a revised ETA</li>
+              <li>New product launch: personally inform Gold+ players of new games or sportsbook markets before the general announcement — make them feel like insiders</li>
+              <li>Inactivity signal: if a Gold+ player has not logged in for 7 days, trigger a personal re-engagement message — do not wait for 14-day automated CRM trigger</li>
+            </ul>
+            <div class="ph-note"><strong>🇵🇭 Philippines:</strong> Major local events and occasions to track for personalised outreach: PBA seasons, Pacquiao fight nights, UAAP basketball, Sinulog and Pasko season (Christmas is culturally significant for gifting), payday periods (15th and 30th of each month — highest deposit volumes), and local municipal fiestas for regional players.</div>
+          </div>
+        </div>
+        <div class="tool-row">
+          <span class="tool-lbl">Tools:</span>
+          <span class="tool-chip">Host Calendar & Task Manager</span>
+          <span class="tool-chip">Viber Business</span>
+          <span class="tool-chip">CRM Activity Log</span>
+          <span class="tool-chip">Win/Loss Alert Feed</span>
+          <span class="tool-chip">Bonus Engine</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="connector"><div class="conn-line"></div><div class="conn-label">Monitor for tier upgrade, downgrade, churn risk, or complaint triggers</div><div class="conn-arrow">▼</div></div>
+
+    <!-- STEP 4: TIER REVIEW -->
+    <div class="flow-step" id="s4" style="--step-color:#9eb4c8;--step-rgb:158,180,200;">
+      <div class="step-header" onclick="toggleStep('s4')">
+        <div class="step-num">04</div>
+        <div class="step-info">
+          <div class="step-title">Tier Review & Adjustment</div>
+          <div class="step-subtitle">Monthly review cycle · Upgrade, maintain, or downgrade · Player communication required</div>
+        </div>
+        <div class="step-owner">VIP Manager + CRM Analyst</div>
+        <div class="step-toggle">▾</div>
+      </div>
+      <div class="step-body">
+        <div class="step-cols">
+          <div>
+            <div class="col-title">Monthly Review Process</div>
+            <ul class="action-list">
+              <li>CRM Analyst runs the monthly VIP tier review report on the last business day of each month — pulls 30-day deposit volumes for all active VIP players</li>
+              <li>Compare each player's actual 30-day NGR against their current tier threshold. Flag players who are eligible for upgrade or are at risk of downgrade</li>
+              <li>VIP Manager reviews the report and approves upgrade, maintain, or downgrade decisions within 2 business days</li>
+              <li>For downgrades: VAM must notify the player at least 7 days before the downgrade takes effect — explain the threshold, acknowledge their loyalty, and present a path back to their current tier</li>
+              <li>For upgrades: VAM notifies the player immediately and triggers the tier upgrade welcome package within 24 hours</li>
+              <li>Update the VIP CRM profile with the new tier, effective date, and the reviewing manager's name</li>
+            </ul>
+          </div>
+          <div>
+            <div class="col-title">Tier Decision Outcomes</div>
+            <div class="outcome-stack">
+              <div class="outcome oc-green"><div class="oi-icon">↑</div><div class="oc-text"><strong>Upgrade</strong>Volume exceeds next tier threshold for 2 consecutive months. Immediate upgrade. Welcome package triggered within 24h. Host ratio adjusted if required</div></div>
+              <div class="outcome oc-gold"><div class="oi-icon">→</div><div class="oc-text"><strong>Maintain</strong>Volume within acceptable range. No action required. Log in monthly review record</div></div>
+              <div class="outcome oc-amber"><div class="oi-icon">↓</div><div class="oc-text"><strong>Downgrade Warning</strong>Volume below threshold for 1 month. 7-day advance notice sent. Offer a 30-day retention challenge to avoid downgrade</div></div>
+              <div class="outcome oc-red"><div class="oi-icon">↓↓</div><div class="oc-text"><strong>Downgrade Confirmed</strong>Volume below threshold for 2 consecutive months. Tier reduced. Player notified. Benefits adjusted on effective date</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="tool-row">
+          <span class="tool-lbl">Tools:</span>
+          <span class="tool-chip">Monthly VIP Tier Report</span>
+          <span class="tool-chip">CRM Profile Editor</span>
+          <span class="tool-chip">Bonus Engine</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="connector"><div class="conn-line"></div><div class="conn-label">Triggers: churn risk · large loss · complaint · withdrawal issue · EDD flag</div><div class="conn-arrow">▼</div></div>
+
+    <!-- STEP 5: CHURN RISK & REACTIVATION -->
+    <div class="flow-step" id="s5" style="--step-color:#c07060;--step-rgb:192,112,96;">
+      <div class="step-header" onclick="toggleStep('s5')">
+        <div class="step-num">05</div>
+        <div class="step-info">
+          <div class="step-title">Churn Risk & Reactivation</div>
+          <div class="step-subtitle">Early warning signals · Retention intervention · Reactivation campaign for lapsed VIPs</div>
+        </div>
+        <div class="step-owner">VAM + VIP Manager</div>
+        <div class="step-toggle">▾</div>
+      </div>
+      <div class="step-body">
+        <div class="step-cols">
+          <div>
+            <div class="col-title">Churn Risk Signals</div>
+            <ul class="action-list">
+              <li><strong style="color:var(--text)">7-day inactivity</strong> (Gold+): VAM sends personal check-in within 24h — ask if everything is okay, not just a bonus push</li>
+              <li><strong style="color:var(--text)">14-day inactivity</strong> (Silver and below): automated CRM trigger. VAM personal outreach for Gold+</li>
+              <li><strong style="color:var(--text)">Deposit volume drop &gt;50%</strong> month-over-month: VAM proactively reaches out to understand reason — player lifecycle event, competition, or product dissatisfaction</li>
+              <li><strong style="color:var(--text)">Unresolved complaint:</strong> any open CS or VIP complaint older than 48 hours is an immediate churn risk. Escalate to VIP Manager same day</li>
+              <li><strong style="color:var(--text)">Withdrawal delay complaint:</strong> treat as critical. VIP withdrawals delayed beyond SLA are the single biggest churn driver for high-value players</li>
+              <li><strong style="color:var(--text)">Social signal:</strong> player mentions competitor platform or product in communication — flag immediately to VIP Manager</li>
+            </ul>
+          </div>
+          <div>
+            <div class="col-title">Retention & Reactivation Actions</div>
+            <ul class="action-list">
+              <li>Immediate personal outreach from VAM — warm, genuine, not scripted. Ask open questions rather than pushing offers</li>
+              <li>Identify the root cause: product issue, personal circumstance, competitive offer, or unresolved problem. Document in CRM</li>
+              <li>If competitive offer cited: VAM escalates to VIP Manager with a counter-offer recommendation within 4 hours — approval required before any offer is made</li>
+              <li>If product complaint: VAM logs a formal product feedback ticket and informs the player that their feedback is being escalated to the product team</li>
+              <li>For lapsed VIPs (30+ days inactive): VIP Manager designs a personalised reactivation package — targeted free bet, cashback offer, or experience — to be presented by VAM in a personal call</li>
+              <li>All retention offers must be logged in the bonus engine with the player ID, offer value, VAM authorisation, and VIP Manager approval reference</li>
+            </ul>
+            <div class="ph-note"><strong>🇵🇭 Philippines:</strong> Withdrawal friction is the highest churn driver for PH VIP players. GCash and Maya withdrawals should settle within 2–4 hours for Gold+ players. If a bank transfer is delayed, a personal explanation from the host with a cashback gesture goes a long way. Never let a VIP player chase a withdrawal without proactive contact first.</div>
+          </div>
+        </div>
+        <div class="tool-row">
+          <span class="tool-lbl">Tools:</span>
+          <span class="tool-chip">Churn Prediction Model</span>
+          <span class="tool-chip">CRM Activity Log</span>
+          <span class="tool-chip">Bonus Approval Workflow</span>
+          <span class="tool-chip">Payments Priority Queue</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="connector"><div class="conn-line"></div><div class="conn-label">Compliance gate — EDD, CTR, and responsible gambling review</div><div class="conn-arrow">▼</div></div>
+
+    <!-- STEP 6: COMPLIANCE -->
+    <div class="flow-step" id="s6" style="--step-color:#c07060;--step-rgb:192,112,96;">
+      <div class="step-header" onclick="toggleStep('s6')">
+        <div class="step-num">06</div>
+        <div class="step-info">
+          <div class="step-title">Compliance & Regulatory Obligations</div>
+          <div class="step-subtitle">EDD for high-value players · AMLC CTR filing · Responsible gambling · PAGCOR requirements</div>
+        </div>
+        <div class="step-owner">KYC Senior + CCO</div>
+        <div class="step-toggle">▾</div>
+      </div>
+      <div class="step-body">
+        <div class="step-cols">
+          <div>
+            <div class="col-title">Compliance Obligations</div>
+            <ul class="action-list">
+              <li><strong style="color:var(--text)">EDD Trigger:</strong> Any player nominated for Gold tier or above must have a completed Enhanced Due Diligence (EDD) file before VIP benefits are activated — no exceptions. VAM must not make first contact until KYC Senior confirms EDD is complete</li>
+              <li><strong style="color:var(--text)">AMLC CTR:</strong> Single or linked transactions ≥ ₱500,000 in any banking day must be reported to AMLC as a Cash Transaction Report. VIP team must alert Compliance immediately when a player hits this threshold</li>
+              <li><strong style="color:var(--text)">AMLC STR:</strong> If the VIP team observes unusual transaction patterns (e.g. large deposits followed by immediate withdrawals without play, third-party deposits, unexplained source of funds), raise a Suspicious Activity flag to the KYC Senior within 24 hours. Do not confront the player</li>
+              <li><strong style="color:var(--text)">Periodic EDD Review:</strong> All Gold+ players undergo a full EDD refresh every 12 months, or immediately if deposit volume increases by &gt;100% in any 30-day period</li>
+              <li><strong style="color:var(--text)">PAGCOR VEP Check:</strong> Re-run PAGCOR Voluntary Exclusion Programme check at each tier upgrade — not only at initial KYC. A self-excluded player must never receive VIP benefits</li>
+            </ul>
+          </div>
+          <div>
+            <div class="col-title">Responsible Gambling Obligations</div>
+            <ul class="action-list">
+              <li>VAM must complete the internal RG awareness training before managing any VIP player</li>
+              <li>Large loss sessions: if a player loses ≥ ₱100,000 in a single session, the VAM check-in must include a welfare question. Do not offer a bonus as the first message — lead with genuine concern</li>
+              <li>If a player asks to set a deposit limit or expresses distress: immediately escalate to the Responsible Gambling Specialist. Do not attempt to retain the player before RG has spoken with them</li>
+              <li>Any VIP player who self-excludes must be removed from the VIP programme immediately. No contact, no re-engagement, no bonuses. Forward to RG Specialist for proper offboarding</li>
+              <li>Monitor for PAGCOR GPAP (Gaming Protection and Awareness Programme) compliance requirements — all VIP interactions must comply with PAGCOR RG standards</li>
+            </ul>
+            <div class="ph-note"><strong>🇵🇭 PAGCOR:</strong> PAGCOR requires that licensed operators have documented RG procedures for high-value players. The VIP team's approach to large loss sessions must be recorded in the CRM. PAGCOR auditors may request evidence of player welfare actions during licence renewal reviews.</div>
+          </div>
+        </div>
+        <div class="tool-row">
+          <span class="tool-lbl">Regulators:</span>
+          <span class="tool-chip">AMLC — CTR/STR Portal</span>
+          <span class="tool-chip">PAGCOR — VEP Check</span>
+          <span class="tool-chip">KYC Case Management</span>
+          <span class="tool-chip">RG Specialist Handoff</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="connector"><div class="conn-line"></div><div class="conn-label">Final stage — offboarding or formal exit from VIP programme</div><div class="conn-arrow">▼</div></div>
+
+    <!-- STEP 7: OFFBOARDING -->
+    <div class="flow-step" id="s7" style="--step-color:var(--text3);--step-rgb:138,125,101;">
+      <div class="step-header" onclick="toggleStep('s7')">
+        <div class="step-num">07</div>
+        <div class="step-info">
+          <div class="step-title">VIP Offboarding</div>
+          <div class="step-subtitle">Graceful downgrade · Voluntary exit · Compliance-triggered closure · Self-exclusion</div>
+        </div>
+        <div class="step-owner">VIP Manager + Compliance</div>
+        <div class="step-toggle">▾</div>
+      </div>
+      <div class="step-body">
+        <div class="step-cols">
+          <div>
+            <div class="col-title">Offboarding Scenarios</div>
+            <ul class="action-list">
+              <li><strong style="color:var(--text)">Natural downgrade:</strong> Volume drops below Bronze threshold for 2 consecutive months. Player transitions to standard player status. VAM sends a farewell message acknowledging their time as a VIP and explaining how they can rejoin</li>
+              <li><strong style="color:var(--text)">Player request:</strong> Player asks to be removed from VIP programme or personal host contact. Honour immediately. Remove from all VIP CRM campaigns. Log reason. Do not re-enrol without player's explicit opt-in</li>
+              <li><strong style="color:var(--text)">Self-exclusion / RG exit:</strong> Immediate removal from all VIP benefits and communications. Forward to RG Specialist. No re-engagement permitted under any circumstances while exclusion is active</li>
+              <li><strong style="color:var(--text)">Compliance closure:</strong> Account closed by Compliance (AML, fraud, or KYC failure). VIP programme access terminated immediately. VAM must not contact the player once a compliance hold is placed — refer all queries to Compliance team</li>
+            </ul>
+          </div>
+          <div>
+            <div class="col-title">Offboarding Checklist</div>
+            <ul class="action-list">
+              <li>Remove player from all active VIP bonus campaigns and scheduled touchpoints in the CRM</li>
+              <li>Cancel any outstanding scheduled gifts or event invitations</li>
+              <li>Ensure all pending cashback is calculated and paid out per the player's entitlement at exit date</li>
+              <li>Log the exit reason, date, and responsible manager in the VIP CRM profile</li>
+              <li>Notify the Payments team to process any outstanding withdrawal at standard priority (or priority if RG-related)</li>
+              <li>Archive the VIP preference profile for potential future reactivation (unless compliance or RG closure — in which case, flag profile as permanently closed)</li>
+              <li>Conduct a brief internal debrief if the player was Platinum or Elite — capture learning points for the VIP team</li>
+            </ul>
+            <div class="outcome-stack" style="margin-top:14px;">
+              <div class="outcome oc-gold"><div class="oi-icon">↩</div><div class="oc-text"><strong>Archived — Reactivation Eligible</strong>Profile kept for 12 months. Automated re-engagement trigger if player returns and deposits at qualifying volume</div></div>
+              <div class="outcome oc-red"><div class="oi-icon">⛔</div><div class="oc-text"><strong>Permanently Closed</strong>RG self-exclusion or compliance closure. Profile flagged. No re-enrolment. Stored per AMLC 5-year retention requirement</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /page-lifecycle -->
+
+
+<!-- ══════════════════════════════════════
+     PAGE 2 — ESCALATION FLOW
+══════════════════════════════════════ -->
+<div id="page-escalation" class="page">
+  <div class="hero" style="padding-bottom:40px;">
+    <div class="hero-eyebrow"><span class="gold-line"></span> Internal Escalation Framework</div>
+    <h1>VIP <em>Escalation</em><br>Decision Matrix</h1>
+    <p class="hero-desc">Mapping of specific VIP situations to the correct internal escalation path, responsible owner, required actions, and resolution outcome.</p>
+  </div>
+  <div class="main">
+    <div class="section-title">Who Owns What</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:2px;margin-bottom:36px;">
+      <div style="background:var(--surface);border:1px solid var(--border);padding:16px 18px;border-top:2px solid var(--bronze);">
+        <div style="font-size:13px;letter-spacing:0.2em;text-transform:uppercase;color:var(--bronze);margin-bottom:6px;">Level 1</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--text);">VIP Account Manager</div>
+        <div style="font-size:16px;color:var(--text2);margin-top:6px;line-height:1.7;">Day-to-day player management. Touchpoints, gifts, standard offers, check-ins, routine complaint handling</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);padding:16px 18px;border-top:2px solid var(--g-gold);">
+        <div style="font-size:13px;letter-spacing:0.2em;text-transform:uppercase;color:var(--g-gold);margin-bottom:6px;">Level 2</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--text);">VIP Manager</div>
+        <div style="font-size:16px;color:var(--text2);margin-top:6px;line-height:1.7;">Tier decisions, counter-offers, budget approvals, escalated complaints, reactivation packages, host reassignment</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);padding:16px 18px;border-top:2px solid var(--platinum);">
+        <div style="font-size:13px;letter-spacing:0.2em;text-transform:uppercase;color:var(--platinum);margin-bottom:6px;">Level 3</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--text);">COO / Head of VIP</div>
+        <div style="font-size:16px;color:var(--text2);margin-top:6px;line-height:1.7;">Elite player management, bespoke commercial terms, major retention crises, senior relationship disputes</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);padding:16px 18px;border-top:2px solid var(--red);">
+        <div style="font-size:13px;letter-spacing:0.2em;text-transform:uppercase;color:var(--red);margin-bottom:6px;">Compliance</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--text);">KYC Senior / CCO</div>
+        <div style="font-size:16px;color:var(--text2);margin-top:6px;line-height:1.7;">EDD decisions, AMLC CTR/STR, account restrictions, compliance holds — VIP team must not interfere once compliance takes ownership</div>
+      </div>
+    </div>
+
+    <div class="section-title">Escalation Matrix</div>
+    <div style="overflow-x:auto;">
+      <table class="mtable">
+        <thead>
+          <tr>
+            <th style="width:20%">Situation</th>
+            <th style="width:13%">First Owner</th>
+            <th style="width:13%">Escalate To</th>
+            <th style="width:20%">Required Actions</th>
+            <th style="width:13%">Resolution</th>
+            <th style="width:11%">SLA</th>
+            <th style="width:10%">Compliance Flag</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="scenario-name">Routine check-in / offer</div><div class="scenario-sub">Standard touchpoint within tier cadence</div></td>
+            <td><span class="badge badge-vam">VAM</span></td>
+            <td>No escalation</td>
+            <td>VAM conducts per schedule. Logs in CRM</td>
+            <td><span class="act-tag at-g">Routine</span></td>
+            <td>Per tier cadence</td>
+            <td>None</td>
+          </tr>
+          <tr>
+            <td><div class="scenario-name">Player requests larger cashback</div><div class="scenario-sub">Above standard tier entitlement</div></td>
+            <td><span class="badge badge-vam">VAM</span></td>
+            <td><span class="badge badge-vm">VIP Manager</span></td>
+            <td>VAM logs request with player's 30-day NGR and current tier. VIP Manager approves or rejects counter-offer within 4h. VAM communicates to player</td>
+            <td><span class="act-tag at-gold">Approved offer</span><br><span class="act-tag at-a">Declined with alternative</span></td>
+            <td>4h approval decision</td>
+            <td>None — log bonus engine</td>
+          </tr>
+          <tr>
+            <td><div class="scenario-name">Withdrawal delayed beyond SLA</div><div class="scenario-sub">VIP payment not settled on time</div></td>
+            <td><span class="badge badge-vam">VAM</span></td>
+            <td><span class="badge badge-vm">VIP Manager</span></td>
+            <td>VAM contacts player proactively before they complain. Escalates to Payments team immediately. VIP Manager ensures withdrawal is prioritised. Offer compensatory cashback if delay exceeds 2× SLA</td>
+            <td><span class="act-tag at-g">Withdrawal processed</span><br><span class="act-tag at-gold">Cashback offered</span></td>
+            <td>Immediate action · resolve within 4h</td>
+            <td>None unless fraud flag</td>
+          </tr>
+          <tr>
+            <td><div class="scenario-name">Player makes a formal complaint</div><div class="scenario-sub">Written or escalated dissatisfaction</div></td>
+            <td><span class="badge badge-vam">VAM</span></td>
+            <td><span class="badge badge-vm">VIP Manager</span></td>
+            <td>VAM acknowledges within 1h, logs formal complaint ticket. VIP Manager reviews and takes ownership within 2h. Respond with resolution or update within 24h. If Gold+ player: VIP Manager makes personal contact</td>
+            <td><span class="act-tag at-g">Resolved</span><br><span class="act-tag at-b">Escalate to COO if unresolved at 48h</span></td>
+            <td>1h acknowledgement · 24h resolution</td>
+            <td>Log in complaints register per PAGCOR requirements</td>
+          </tr>
+          <tr>
+            <td><div class="scenario-name">Player cites competitor offer</div><div class="scenario-sub">Churn risk — competitive threat</div></td>
+            <td><span class="badge badge-vam">VAM</span></td>
+            <td><span class="badge badge-vm">VIP Manager</span></td>
+            <td>VAM does not make a counter-offer without approval. Immediately flags to VIP Manager with player NGR, tenure, and competitor offer details. VIP Manager designs retention package within 4h and approves budget</td>
+            <td><span class="act-tag at-gold">Counter-offer approved</span><br><span class="act-tag at-r">Accept loss — log exit reason</span></td>
+            <td>4h to counter-offer decision</td>
+            <td>None</td>
+          </tr>
+          <tr>
+            <td><div class="scenario-name">Large loss session ≥ ₱100,000</div><div class="scenario-sub">Welfare and retention event</div></td>
+            <td><span class="badge badge-vam">VAM</span></td>
+            <td>RG Specialist if concern raised</td>
+            <td>VAM contacts within 4h — welfare check first, no immediate bonus offer. Document contact in CRM with player's response. If player expresses distress or regret: hand off to RG Specialist immediately, do not retain</td>
+            <td><span class="act-tag at-g">Player okay — log and monitor</span><br><span class="act-tag at-b">RG handoff if distress</span></td>
+            <td>4h post-session contact</td>
+            <td>Log per PAGCOR RG requirements</td>
+          </tr>
+          <tr>
+            <td><div class="scenario-name">Suspicious transaction pattern</div><div class="scenario-sub">Large deposits + immediate withdrawals without play, third-party deposits</div></td>
+            <td><span class="badge badge-vam">VAM</span></td>
+            <td><span class="badge badge-vm">KYC Senior → CCO</span></td>
+            <td>VAM raises a Suspicious Activity flag in the CRM immediately — do not confront the player. KYC Senior takes over within 2h. CCO notified. Standard VIP service continues until Compliance instructs otherwise to avoid tipping-off</td>
+            <td><span class="act-tag at-b">KYC/Compliance investigation</span><br><span class="act-tag at-r">Possible STR to AMLC</span></td>
+            <td>Flag within 2h of observation</td>
+            <td>AMLC STR if confirmed · No tipping-off</td>
+          </tr>
+          <tr>
+            <td><div class="scenario-name">Player requests self-exclusion or expresses gambling harm</div><div class="scenario-sub">RG event — highest priority</div></td>
+            <td><span class="badge badge-vam">VAM</span></td>
+            <td>RG Specialist immediately</td>
+            <td>VAM stops all commercial engagement immediately. Transfers call or conversation to RG Specialist. VIP access suspended pending RG review. Do not offer a retention bonus under any circumstances</td>
+            <td><span class="act-tag at-r">VIP programme suspended</span><br><span class="act-tag at-b">RG takes full ownership</span></td>
+            <td>Immediate — zero delay</td>
+            <td>PAGCOR RG reporting · GPAP compliance</td>
+          </tr>
+          <tr>
+            <td><div class="scenario-name">Elite player at risk of leaving</div><div class="scenario-sub">Highest-value relationship crisis</div></td>
+            <td><span class="badge badge-vm">VIP Manager</span></td>
+            <td><span class="badge badge-mgr">COO / Head of VIP</span></td>
+            <td>VIP Manager escalates to COO within 2h. COO reviews player value, relationship history, and competitor intelligence. COO personally contacts the player if appropriate. Bespoke retention terms require COO sign-off</td>
+            <td><span class="act-tag at-gold">Bespoke terms approved</span><br><span class="act-tag at-r">Graceful exit with door open</span></td>
+            <td>2h escalation · 24h COO response</td>
+            <td>None unless compliance trigger</td>
+          </tr>
+          <tr>
+            <td><div class="scenario-name">AMLC CTR threshold reached (₱500k+ in a day)</div><div class="scenario-sub">Mandatory regulatory filing</div></td>
+            <td><span class="badge badge-vm">VIP Manager</span></td>
+            <td><span class="badge badge-mgr">KYC Senior → CCO</span></td>
+            <td>VIP Manager alerts Compliance immediately when a player's daily transaction total reaches ₱500,000. Do not wait until end of day. Compliance team files CTR with AMLC. Standard VIP service continues unless STR is also triggered</td>
+            <td><span class="act-tag at-b">CTR filed with AMLC</span></td>
+            <td>Alert to Compliance same banking day</td>
+            <td>AMLC CTR mandatory — same banking day</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- /page-escalation -->
+
+
+<!-- ══════════════════════════════════════
+     PAGE 3 — TIERS & BENEFITS
+══════════════════════════════════════ -->
+<div id="page-tiers" class="page">
+  <div class="hero" style="padding-bottom:40px;">
+    <div class="hero-eyebrow"><span class="gold-line"></span> Benefits & Entitlements</div>
+    <h1>VIP <em>Tiers</em> &amp;<br>Benefits Structure</h1>
+    <p class="hero-desc">Detailed breakdown of benefits, thresholds, host ratios, and budget guidance for each VIP tier. All monetary values in Philippine Peso (₱).</p>
+  </div>
+  <div class="main">
+    <div class="section-title">Tier Benefits Detail</div>
+    <div style="display:flex;flex-direction:column;gap:2px;margin-bottom:48px;">
+
+      <!-- BRONZE -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--bronze);padding:20px 24px;display:grid;grid-template-columns:160px 1fr 1fr 1fr;gap:24px;align-items:start;">
+        <div>
+          <div style="font-size:13px;letter-spacing:0.2em;text-transform:uppercase;color:var(--bronze);margin-bottom:6px;">Bronze</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:var(--bronze);">🥉</div>
+          <div style="font-size:16px;color:var(--text2);margin-top:8px;line-height:1.7;">₱50k–₱150k<br>per month</div>
+          <div style="font-size:14px;color:var(--text3);margin-top:6px;">No dedicated host</div>
+        </div>
+        <div><div class="col-title">Cash & Bonuses</div><div style="font-size:17px;color:var(--text2);line-height:1.8;">Weekly cashback: 5%<br>Birthday free bet: ₱1,000<br>Monthly reload: up to ₱2,000</div></div>
+        <div><div class="col-title">Service</div><div style="font-size:17px;color:var(--text2);line-height:1.8;">Priority CS queue (2h response SLA)<br>Standard withdrawal SLA<br>Automated CRM campaigns</div></div>
+        <div><div class="col-title">Withdrawals</div><div style="font-size:17px;color:var(--text2);line-height:1.8;">GCash / Maya: 4h<br>Bank transfer: 24h<br>Standard processing queue</div></div>
+      </div>
+
+      <!-- SILVER -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--silver);padding:20px 24px;display:grid;grid-template-columns:160px 1fr 1fr 1fr;gap:24px;align-items:start;">
+        <div>
+          <div style="font-size:13px;letter-spacing:0.2em;text-transform:uppercase;color:var(--silver);margin-bottom:6px;">Silver</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:var(--silver);">🥈</div>
+          <div style="font-size:16px;color:var(--text2);margin-top:8px;line-height:1.7;">₱150k–₱500k<br>per month</div>
+          <div style="font-size:14px;color:var(--text3);margin-top:6px;">Shared host (1:20 ratio)</div>
+        </div>
+        <div><div class="col-title">Cash & Bonuses</div><div style="font-size:17px;color:var(--text2);line-height:1.8;">Bi-weekly cashback: 7%<br>Birthday gift: ₱3,000 value<br>Monthly reload: up to ₱5,000<br>Payday bonus (15th &amp; 30th)</div></div>
+        <div><div class="col-title">Service</div><div style="font-size:17px;color:var(--text2);line-height:1.8;">Shared VIP host (bi-weekly contact)<br>Priority CS queue (1h SLA)<br>Personal birthday outreach</div></div>
+        <div><div class="col-title">Withdrawals</div><div style="font-size:17px;color:var(--text2);line-height:1.8;">GCash / Maya: 2h<br>Bank transfer: 12h<br>Faster processing queue</div></div>
+      </div>
+
+      <!-- GOLD -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--g-gold);padding:20px 24px;display:grid;grid-template-columns:160px 1fr 1fr 1fr;gap:24px;align-items:start;">
+        <div>
+          <div style="font-size:13px;letter-spacing:0.2em;text-transform:uppercase;color:var(--g-gold);margin-bottom:6px;">Gold</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:var(--g-gold);">🥇</div>
+          <div style="font-size:16px;color:var(--text2);margin-top:8px;line-height:1.7;">₱500k–₱2M<br>per month</div>
+          <div style="font-size:14px;color:var(--text3);margin-top:6px;">Dedicated host (1:10 ratio)</div>
+        </div>
+        <div><div class="col-title">Cash & Bonuses</div><div style="font-size:17px;color:var(--text2);line-height:1.8;">Daily cashback: 10%<br>Monthly gift budget: ₱10,000<br>Event invitations<br>Loss rebate: 5% on monthly losses</div></div>
+        <div><div class="col-title">Service</div><div style="font-size:17px;color:var(--text2);line-height:1.8;">Dedicated VAM (weekly contact)<br>Priority CS (30min SLA)<br>Personal event invitations<br>Proactive win/loss outreach</div></div>
+        <div><div class="col-title">Withdrawals</div><div style="font-size:17px;color:var(--text2);line-height:1.8;">GCash / Maya: 1h<br>Bank transfer: 6h<br>Priority processing lane</div></div>
+      </div>
+
+      <!-- PLATINUM -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--platinum);padding:20px 24px;display:grid;grid-template-columns:160px 1fr 1fr 1fr;gap:24px;align-items:start;">
+        <div>
+          <div style="font-size:13px;letter-spacing:0.2em;text-transform:uppercase;color:var(--platinum);margin-bottom:6px;">Platinum</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:var(--platinum);">💎</div>
+          <div style="font-size:16px;color:var(--text2);margin-top:8px;line-height:1.7;">₱2M–₱10M<br>per month</div>
+          <div style="font-size:14px;color:var(--text3);margin-top:6px;">Dedicated host (1:5 ratio)</div>
+        </div>
+        <div><div class="col-title">Cash & Bonuses</div><div style="font-size:17px;color:var(--text2);line-height:1.8;">Custom cashback rate (negotiated)<br>Monthly gift budget: ₱30,000<br>Bi-annual experience event<br>Concierge service access</div></div>
+        <div><div class="col-title">Service</div><div style="font-size:17px;color:var(--text2);line-height:1.8;">Dedicated VAM (2–3× weekly)<br>Concierge assistance<br>VIP event hosting<br>Local experience curation (Manila, Cebu, Davao)</div></div>
+        <div><div class="col-title">Withdrawals</div><div style="font-size:17px;color:var(--text2);line-height:1.8;">GCash / Maya: 30 min<br>Bank transfer: 2h<br>Top priority queue</div></div>
+      </div>
+
+      <!-- ELITE -->
+      <div style="background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border2);border-left:3px solid var(--elite);padding:20px 24px;display:grid;grid-template-columns:160px 1fr 1fr 1fr;gap:24px;align-items:start;">
+        <div>
+          <div style="font-size:13px;letter-spacing:0.2em;text-transform:uppercase;color:var(--elite);margin-bottom:6px;">Elite</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:var(--elite);">👑</div>
+          <div style="font-size:16px;color:var(--text2);margin-top:8px;line-height:1.7;">₱10M+<br>per month</div>
+          <div style="font-size:14px;color:var(--text3);margin-top:6px;">Senior VIP Manager direct</div>
+        </div>
+        <div><div class="col-title">Cash & Bonuses</div><div style="font-size:17px;color:var(--text2);line-height:1.8;">Fully bespoke terms — individually negotiated<br>No pre-set cashback cap<br>Annual experience budget: ₱200,000+<br>Lifestyle and travel perks</div></div>
+        <div><div class="col-title">Service</div><div style="font-size:17px;color:var(--text2);line-height:1.8;">Senior VIP Manager + COO relationship<br>Daily availability<br>Overseas experience trips<br>Exclusive product previews<br>Personal event curation</div></div>
+        <div><div class="col-title">Withdrawals</div><div style="font-size:17px;color:var(--text2);line-height:1.8;">GCash / Maya: immediate<br>Bank transfer: 1h<br>Instant approval queue<br>No maximum single withdrawal</div></div>
+      </div>
+    </div>
+
+    <div class="section-title">Gift & Budget Guidelines</div>
+    <div style="background:var(--surface);border:1px solid var(--border2);padding:24px;margin-bottom:16px;">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;font-size:17px;color:var(--text2);line-height:1.8;">
+        <div><strong style="display:block;color:var(--gold);font-size:14px;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px;">Approved Gift Categories</strong>Food and dining vouchers (high cultural value in PH) · Electronics and gadgets · Sports merchandise (PBA, boxing) · Grocery and mall credits (SM, Robinsons, Ayala) · Spa and wellness experiences · Travel credits</div>
+        <div><strong style="display:block;color:var(--gold);font-size:14px;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px;">Approval Process</strong>Gold: VAM selects within ₱10k monthly budget — no pre-approval needed · Platinum: VAM proposes, VIP Manager approves within 24h · Elite: VIP Manager proposes, COO approves · Any single gift &gt; ₱20,000 requires COO sign-off regardless of tier</div>
+        <div><strong style="display:block;color:var(--gold);font-size:14px;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px;">Prohibited Gifts</strong>Cash equivalents (GCash top-up, bank transfers) unless structured as formal cashback through bonus engine · Gifts that could be construed as inducements to continue gambling after a large loss session · Any gift to a player under RG review or with a complaint open</div>
+        <div><strong style="display:block;color:var(--gold);font-size:14px;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px;">Record-Keeping</strong>All gifts must be logged in the VIP CRM with: player ID, gift description, monetary value, occasion, VAM name, and approver name. Required for PAGCOR audit readiness and internal budget tracking.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- /page-tiers -->
+
+
+<!-- ══════════════════════════════════════
+     PAGE 4 — SLA & TOUCHPOINTS
+══════════════════════════════════════ -->
+<div id="page-sla" class="page">
+  <div class="hero" style="padding-bottom:40px;">
+    <div class="hero-eyebrow"><span class="gold-line"></span> Service Standards</div>
+    <h1>SLA &amp; <em>Touchpoint</em><br>Standards</h1>
+    <p class="hero-desc">Response time standards, touchpoint frequency, breach consequences, and churn risk signal reference for all VIP tiers.</p>
+  </div>
+  <div class="main">
+    <div class="section-title">Response Time SLAs by Tier</div>
+    <div class="sla-cards">
+      <div class="sla-card" style="border-top:2px solid var(--bronze);">
+        <div class="sla-card-top">
+          <div class="sla-card-num" style="color:var(--bronze)">2h</div>
+          <div><div class="sla-card-name">Bronze</div><div class="sla-card-sub">Automated + Shared CS</div></div>
+        </div>
+        <div class="sla-card-body">
+          <div class="sla-card-desc">CS priority queue response. No personal host. CRM automated campaign cadence.</div>
+          <ul class="sla-rules">
+            <li>CS response: 2 hours</li>
+            <li>Withdrawal (GCash/Maya): 4 hours</li>
+            <li>Withdrawal (bank): 24 hours</li>
+            <li>Complaint acknowledgement: 4 hours</li>
+          </ul>
+        </div>
+      </div>
+      <div class="sla-card" style="border-top:2px solid var(--silver);">
+        <div class="sla-card-top">
+          <div class="sla-card-num" style="color:var(--silver)">1h</div>
+          <div><div class="sla-card-name">Silver</div><div class="sla-card-sub">Shared Host</div></div>
+        </div>
+        <div class="sla-card-body">
+          <div class="sla-card-desc">Shared host bi-weekly contact. Faster CS queue. Priority withdrawal lane.</div>
+          <ul class="sla-rules">
+            <li>CS response: 1 hour</li>
+            <li>Withdrawal (GCash/Maya): 2 hours</li>
+            <li>Withdrawal (bank): 12 hours</li>
+            <li>Complaint acknowledgement: 2 hours</li>
+            <li>Host check-in: bi-weekly</li>
+          </ul>
+        </div>
+      </div>
+      <div class="sla-card" style="border-top:2px solid var(--g-gold);">
+        <div class="sla-card-top">
+          <div class="sla-card-num" style="color:var(--g-gold)">30m</div>
+          <div><div class="sla-card-name">Gold</div><div class="sla-card-sub">Dedicated VAM</div></div>
+        </div>
+        <div class="sla-card-body">
+          <div class="sla-card-desc">Dedicated VAM. Weekly personal contact. Priority lane on all services.</div>
+          <ul class="sla-rules">
+            <li>CS response: 30 minutes</li>
+            <li>Withdrawal (GCash/Maya): 1 hour</li>
+            <li>Withdrawal (bank): 6 hours</li>
+            <li>Complaint acknowledgement: 1 hour</li>
+            <li>Host check-in: weekly</li>
+            <li>Win/loss outreach: within 2–4 hours</li>
+          </ul>
+        </div>
+      </div>
+      <div class="sla-card" style="border-top:2px solid var(--platinum);">
+        <div class="sla-card-top">
+          <div class="sla-card-num" style="color:var(--platinum)">15m</div>
+          <div><div class="sla-card-name">Platinum</div><div class="sla-card-sub">Dedicated VAM + Concierge</div></div>
+        </div>
+        <div class="sla-card-body">
+          <div class="sla-card-desc">Dedicated VAM 2–3× per week. Concierge services. Top withdrawal priority.</div>
+          <ul class="sla-rules">
+            <li>CS / VAM response: 15 minutes</li>
+            <li>Withdrawal (GCash/Maya): 30 minutes</li>
+            <li>Withdrawal (bank): 2 hours</li>
+            <li>Complaint resolution target: 4 hours</li>
+            <li>Host check-in: 2–3× per week</li>
+          </ul>
+        </div>
+      </div>
+      <div class="sla-card" style="border-top:2px solid var(--elite);background:linear-gradient(135deg,var(--surface),var(--surface2));">
+        <div class="sla-card-top">
+          <div class="sla-card-num" style="color:var(--elite)">Now</div>
+          <div><div class="sla-card-name">Elite</div><div class="sla-card-sub">Senior VIP Manager</div></div>
+        </div>
+        <div class="sla-card-body">
+          <div class="sla-card-desc">Senior VIP Manager direct. COO relationship. Instant on all services. Zero wait expectation.</div>
+          <ul class="sla-rules">
+            <li>Response: immediate during business hours</li>
+            <li>Withdrawal (GCash/Maya): immediate</li>
+            <li>Withdrawal (bank): 1 hour</li>
+            <li>Complaint: resolved same day</li>
+            <li>Daily availability from Senior Manager</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="churn-box">
+      <div class="churn-title">Churn Risk Signal Reference</div>
+      <div class="churn-grid">
+        <div class="churn-item"><strong>7-day inactivity (Gold+)</strong>VAM personal outreach within 24h. Warm check-in — not a bonus push. Log outcome.</div>
+        <div class="churn-item"><strong>14-day inactivity (Silver)</strong>Automated CRM trigger first. VAM follows up if no re-engagement within 48h.</div>
+        <div class="churn-item"><strong>Deposit drop &gt;50% month-on-month</strong>VAM proactively contacts within 3 days of month-end report. Understand root cause before offering anything.</div>
+        <div class="churn-item"><strong>Withdrawal complaint open &gt;24h</strong>Treat as critical churn risk. VIP Manager takes direct ownership. Resolve or explain same day.</div>
+        <div class="churn-item"><strong>Competitor mention in communication</strong>Immediate flag to VIP Manager. Do not counter-offer without approval. 4h to decision.</div>
+        <div class="churn-item"><strong>3 consecutive declining sessions</strong>Loss pattern flag. Welfare check required before any retention offer. RG Specialist on standby.</div>
+        <div class="churn-item"><strong>No response to 3 contact attempts</strong>Escalate to VIP Manager. Consider alternative channel. Log all attempts in CRM.</div>
+        <div class="churn-item"><strong>Payday (15th / 30th) no deposit</strong>For players with consistent payday deposit history — missing payday is an early churn signal. Personal outreach within 24h.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- /page-sla -->
+
+
+<!-- ══════════════════════════════════════
+     PAGE 5 — GLOSSARY
+══════════════════════════════════════ -->
+<div id="page-glossary" class="page">
+  <div class="hero" style="padding-bottom:40px;">
+    <div class="hero-eyebrow"><span class="gold-line"></span> Reference Document</div>
+    <h1>VIP <em>Glossary</em></h1>
+    <p class="hero-desc">Key terms, acronyms, metrics, and Philippines-specific context for the VIP management workflow.</p>
+  </div>
+  <div class="main">
+    <div class="section-title">VIP Operations Terms</div>
+    <div class="gloss-grid" style="margin-bottom:40px;">
+      <div class="gloss-card">
+        <div class="gloss-term">NGR</div>
+        <div class="gloss-abbr">Net Gaming Revenue</div>
+        <div class="gloss-def">Total player deposits minus withdrawals, minus bonuses paid. The primary metric for assessing a VIP player's value. NGR is used to determine tier eligibility and cashback entitlement.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">GGR</div>
+        <div class="gloss-abbr">Gross Gaming Revenue</div>
+        <div class="gloss-def">Total wagers placed minus total winnings paid out, before deducting bonuses or operating costs. Used for broader financial reporting alongside NGR.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">LTV</div>
+        <div class="gloss-abbr">Lifetime Value</div>
+        <div class="gloss-def">The projected total NGR a player will generate over their active lifetime on the platform. Used to justify retention investment — a high LTV player warrants more aggressive retention spend than their current month's NGR alone suggests.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">VAM</div>
+        <div class="gloss-abbr">VIP Account Manager</div>
+        <div class="gloss-def">The dedicated personal host assigned to a Gold, Platinum, or Elite VIP player. Responsible for all personal touchpoints, offers, gift management, and first-line escalation for the assigned player portfolio.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Cashback</div>
+        <div class="gloss-abbr">Loss Rebate Bonus</div>
+        <div class="gloss-def">A percentage of a player's net losses returned to them as a bonus, typically on a weekly or monthly basis depending on tier. Cashback rates are negotiated at Platinum and Elite tier. All cashback must be processed through the bonus engine with full documentation.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Churn</div>
+        <div class="gloss-abbr">Player Lapse / Attrition</div>
+        <div class="gloss-def">A VIP player who has become inactive (no deposits for 30+ days) or who has materially reduced their deposit volume. Churn prevention is the primary measure of VIP team performance — retaining an existing VIP is significantly more cost-effective than acquiring a new one.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">EDD</div>
+        <div class="gloss-abbr">Enhanced Due Diligence</div>
+        <div class="gloss-def">A deeper identity and source of funds verification required for all Gold+ VIP players before benefits are activated. Includes employment verification, bank statements, and source of funds declaration. Mandatory under AMLC regulations for high-value customers.</div>
+        <span class="gloss-ph">🇵🇭 AMLC Requirement</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">CTR</div>
+        <div class="gloss-abbr">Cash Transaction Report</div>
+        <div class="gloss-def">Filed with AMLC when a player's single or linked transactions reach ₱500,000 or more in a single banking day. The VIP team must alert Compliance the same day when a player hits this threshold — do not wait for end-of-day reporting.</div>
+        <span class="gloss-ph">🇵🇭 AMLC Filing</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">STR</div>
+        <div class="gloss-abbr">Suspicious Transaction Report</div>
+        <div class="gloss-def">Filed with AMLC when there is reasonable suspicion that a transaction involves proceeds of an unlawful activity. VIP team flags suspicious patterns to the KYC Senior who prepares the STR for CCO submission. Tipping-off the player is a criminal offence.</div>
+        <span class="gloss-ph">🇵🇭 AMLC Filing</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Pakikisama</div>
+        <div class="gloss-abbr">Filipino Cultural Value</div>
+        <div class="gloss-def">A Filipino concept meaning camaraderie, solidarity, and getting along well with others. In the context of VIP management, it means building genuine personal relationships rather than purely transactional interactions. PH VIP players respond significantly better to hosts who demonstrate authentic care.</div>
+        <span class="gloss-ph">🇵🇭 Cultural Context</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">GPAP</div>
+        <div class="gloss-abbr">Gaming Protection and Awareness Programme</div>
+        <div class="gloss-def">PAGCOR's responsible gambling framework that all licensed operators must comply with. Includes requirements for player self-exclusion, deposit limits, loss limits, and mandatory RG awareness messaging. VIP teams are subject to GPAP obligations in all high-value player interactions.</div>
+        <span class="gloss-ph">🇵🇭 PAGCOR Requirement</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Payday Cycle</div>
+        <div class="gloss-abbr">PH Deposit Peak Days</div>
+        <div class="gloss-def">In the Philippines, salary payments are typically made on the 15th and last day of each month (semi-monthly pay schedule). These are the highest deposit days in the calendar. VIP teams should plan personalised outreach and offers around these dates for maximum engagement impact.</div>
+        <span class="gloss-ph">🇵🇭 Market Context</span>
+      </div>
+    </div>
+
+    <div class="section-title">Philippines Payment Context</div>
+    <div class="gloss-grid">
+      <div class="gloss-card">
+        <div class="gloss-term">GCash</div>
+        <div class="gloss-abbr">Mynt / Globe Fintech</div>
+        <div class="gloss-def">The dominant e-wallet platform in the Philippines with over 90 million registered users. The primary deposit and withdrawal method for the majority of VIP players. GCash transactions are near-instant. VAMs must understand GCash limits — personal accounts have a ₱100,000 wallet limit; players may need a GCash Business account for higher volumes.</div>
+        <span class="gloss-ph">🇵🇭 Primary E-Wallet</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Maya</div>
+        <div class="gloss-abbr">PayMaya / PLDT Voyager</div>
+        <div class="gloss-def">The second major e-wallet platform in the Philippines. Popular among more financially sophisticated players and those with business accounts. Maya supports higher transaction limits than standard GCash. Platinum and Elite players may prefer Maya for large single transactions.</div>
+        <span class="gloss-ph">🇵🇭 Secondary E-Wallet</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">InstaPay / PESONet</div>
+        <div class="gloss-abbr">BSP Interbank Payment Systems</div>
+        <div class="gloss-def">BSP-regulated interbank fund transfer systems. InstaPay is real-time (24/7, up to ₱50,000 per transaction). PESONet is batch-cleared (business day). Used for bank-to-bank VIP withdrawals. VAMs should understand which system is being used as it affects the settlement timeline communicated to the player.</div>
+        <span class="gloss-ph">🇵🇭 Bank Transfer Rails</span>
+      </div>
+    </div>
+  </div>
+</div><!-- /page-glossary -->
+
+<footer>
+  <strong>VIP Management Workflow</strong> · iGaming Philippines Operations · PAGCOR / AMLC Compliant · Internal Use Only
+</footer>
+
+<script>
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function toggleStep(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+</script>
+</body>
+</html>

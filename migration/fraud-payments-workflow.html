@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fraud & Payments Workflow · iGaming Philippines</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #080c0a;
+  --bg2:      #0b100d;
+  --surface:  #0f1510;
+  --surface2: #141d16;
+  --border:   #1a2b1e;
+  --border2:  #223328;
+  --green:    #00e676;
+  --green2:   #69f0ae;
+  --green3:   #b9f6ca;
+  --green-dim:#00e67620;
+  --red:      #ff3d3d;
+  --red2:     #ff6b6b;
+  --amber:    #ffab00;
+  --amber2:   #ffd740;
+  --blue:     #40c4ff;
+  --purple:   #ce93d8;
+  --text:     #e8f5e9;
+  --text2:    #a5d6a7;
+  --text3:    #4a7a50;
+  --text4:    #2d4d32;
+
+  /* fraud types */
+  --ft-bonus:  #ffab00;
+  --ft-multi:  #ff6b6b;
+  --ft-pay:    #ce93d8;
+  --ft-ato:    #40c4ff;
+  --ft-laund:  #ff3d3d;
+  --ft-match:  #69f0ae;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { font-size:20px; scroll-behavior:smooth; }
+
+body {
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Barlow',sans-serif;
+  font-size:18px; line-height:1.7;
+  min-height:100vh;
+}
+
+/* scanline effect */
+body::before {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:9999;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,230,118,0.012) 2px,
+    rgba(0,230,118,0.012) 4px
+  );
+}
+
+/* grid bg */
+body::after {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size:48px 48px;
+  opacity:0.4;
+}
+
+/* ── TOP NAV ── */
+.topnav {
+  position:sticky; top:0; z-index:200;
+  background:rgba(8,12,10,0.97);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border2);
+  display:flex; align-items:center;
+  padding:0 40px; height:56px;
+  position:relative;
+}
+.topnav::after {
+  content:''; position:absolute; bottom:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent, var(--green), transparent);
+  opacity:0.5;
+}
+.nav-brand {
+  font-family:'Share Tech Mono',monospace;
+  font-size:20px; color:var(--green);
+  margin-right:auto; letter-spacing:0.05em;
+}
+.nav-brand span { color:var(--text3); }
+.nav-links { display:flex; }
+.nav-link {
+  font-family:'Share Tech Mono',monospace;
+  font-size:14px; letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--text3); padding:0 16px; height:56px;
+  display:flex; align-items:center; cursor:pointer;
+  border-bottom:2px solid transparent; margin-bottom:-1px;
+  transition:all 0.15s; background:none;
+  border-top:none; border-left:none; border-right:none;
+}
+.nav-link:hover { color:var(--text2); }
+.nav-link.active { color:var(--green); border-bottom-color:var(--green); }
+
+/* ── PAGES ── */
+.page { display:none; position:relative; z-index:1; }
+.page.active { display:block; }
+
+/* ── HERO ── */
+.hero {
+  background:var(--bg2);
+  padding:60px 40px 48px;
+  position:relative; overflow:hidden;
+  border-bottom:1px solid var(--border2);
+}
+.hero-grid-accent {
+  position:absolute; top:0; right:0; bottom:0; width:40%;
+  background: linear-gradient(135deg, transparent 50%, rgba(0,230,118,0.03) 100%);
+  pointer-events:none;
+}
+.hero-bracket {
+  font-family:'Share Tech Mono',monospace;
+  font-size:14px; letter-spacing:0.25em; text-transform:uppercase;
+  color:var(--green); margin-bottom:16px;
+  display:flex; align-items:center; gap:12px;
+}
+.hero-bracket::before { content:'['; color:var(--text3); }
+.hero-bracket::after  { content:']'; color:var(--text3); }
+h1 {
+  font-family:'Barlow',sans-serif;
+  font-size:clamp(42px,5vw,81px);
+  font-weight:800; line-height:1.05;
+  letter-spacing:-0.02em; margin-bottom:16px;
+  color:#fff;
+}
+h1 em { color:var(--green); font-style:normal; }
+.hero-desc {
+  font-size:18px; color:var(--text2);
+  max-width:620px; line-height:1.8; margin-bottom:36px;
+  font-weight:300;
+}
+.hero-stats {
+  display:flex; gap:1px; flex-wrap:wrap;
+}
+.hero-stat {
+  padding:14px 22px;
+  background:var(--surface);
+  border:1px solid var(--border2);
+  text-align:center; min-width:100px;
+}
+.hero-stat-num {
+  font-family:'Share Tech Mono',monospace;
+  font-size:34px; color:var(--green); line-height:1;
+}
+.hero-stat-label { font-size:13px; color:var(--text3); margin-top:4px; letter-spacing:0.1em; text-transform:uppercase; }
+
+/* ── MAIN ── */
+.main { max-width:1200px; margin:0 auto; padding:48px 40px; position:relative; z-index:1; }
+
+.sec-label {
+  font-family:'Share Tech Mono',monospace;
+  font-size:14px; letter-spacing:0.25em; text-transform:uppercase;
+  color:var(--green); margin-bottom:24px;
+  display:flex; align-items:center; gap:12px;
+}
+.sec-label::before { content:'//'; color:var(--text4); }
+.sec-label::after  { content:''; flex:1; height:1px; background:var(--border2); }
+
+/* ── FRAUD TYPE CARDS ── */
+.fraud-types {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:2px; margin-bottom:48px;
+}
+.ft-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-top:2px solid var(--ftc);
+  padding:16px;
+  transition:all 0.15s;
+}
+.ft-card:hover { border-color:var(--ftc); background:var(--surface2); }
+.ft-icon { font-size:26px; margin-bottom:8px; }
+.ft-name {
+  font-family:'Share Tech Mono',monospace;
+  font-size:16px; color:var(--ftc);
+  letter-spacing:0.05em; margin-bottom:6px;
+  text-transform:uppercase;
+}
+.ft-desc { font-size:16px; color:var(--text2); line-height:1.7; }
+.ft-risk {
+  margin-top:10px; padding-top:10px; border-top:1px solid var(--border);
+  font-size:13px; letter-spacing:0.15em; text-transform:uppercase;
+}
+
+/* ── BLOCK (expandable) ── */
+.block {
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-left:3px solid var(--bc, var(--green));
+  margin-bottom:3px; overflow:hidden;
+}
+.block:hover { border-color:var(--bc, var(--green)); border-left-color:var(--bc,var(--green)); }
+.block-header {
+  padding:16px 20px;
+  display:flex; align-items:center; gap:14px;
+  cursor:pointer; user-select:none;
+  transition:background 0.12s;
+}
+.block-header:hover { background:var(--surface2); }
+.block-num {
+  font-family:'Share Tech Mono',monospace;
+  font-size:29px; color:var(--bc,var(--green));
+  opacity:0.6; flex-shrink:0; width:36px;
+}
+.block-info { flex:1; }
+.block-title {
+  font-size:21px; font-weight:700; color:#fff;
+}
+.block-sub { font-size:16px; color:var(--text3); margin-top:2px; letter-spacing:0.03em; }
+.block-tag {
+  font-family:'Share Tech Mono',monospace;
+  font-size:13px; letter-spacing:0.12em; text-transform:uppercase;
+  padding:3px 10px; border:1px solid;
+  border-color:rgba(var(--bc-rgb,0,230,118),0.3);
+  background:rgba(var(--bc-rgb,0,230,118),0.07);
+  color:var(--bc,var(--green)); white-space:nowrap; flex-shrink:0;
+}
+.block-toggle { font-size:18px; color:var(--text3); transition:transform 0.2s; flex-shrink:0; }
+.block.open .block-toggle { transform:rotate(180deg); }
+.block-body { display:none; padding:0 20px 20px; }
+.block.open .block-body { display:block; }
+
+.block-cols { display:grid; grid-template-columns:1fr 1fr; gap:20px; padding-top:18px; border-top:1px solid var(--border); margin-top:2px; }
+@media(max-width:700px) { .block-cols { grid-template-columns:1fr; } }
+
+.col-hd {
+  font-family:'Share Tech Mono',monospace;
+  font-size:13px; letter-spacing:0.2em; text-transform:uppercase;
+  color:var(--text3); margin-bottom:10px;
+  padding-bottom:7px; border-bottom:1px solid var(--border);
+}
+
+.act-list { list-style:none; display:flex; flex-direction:column; gap:9px; }
+.act-list li {
+  display:flex; gap:10px; align-items:flex-start;
+  font-size:17px; color:var(--text2); line-height:1.7;
+}
+.act-list li::before {
+  content:'>';
+  font-family:'Share Tech Mono',monospace;
+  color:var(--bc,var(--green));
+  flex-shrink:0; font-size:16px; margin-top:2px;
+}
+
+.out-stack { display:flex; flex-direction:column; gap:7px; }
+.out {
+  padding:10px 14px; border:1px solid; border-left:2px solid;
+  font-size:17px; line-height:1.7;
+  display:flex; gap:10px; align-items:flex-start;
+}
+.out-g  { border-color:rgba(0,230,118,0.2);   border-left-color:var(--green);  background:rgba(0,230,118,0.04);  color:var(--green2); }
+.out-r  { border-color:rgba(255,61,61,0.2);   border-left-color:var(--red);    background:rgba(255,61,61,0.04);  color:var(--red2); }
+.out-a  { border-color:rgba(255,171,0,0.2);   border-left-color:var(--amber);  background:rgba(255,171,0,0.04);  color:var(--amber2); }
+.out-b  { border-color:rgba(64,196,255,0.2);  border-left-color:var(--blue);   background:rgba(64,196,255,0.04); color:var(--blue); }
+.out-p  { border-color:rgba(206,147,216,0.2); border-left-color:var(--purple); background:rgba(206,147,216,0.04);color:var(--purple); }
+.out-ico { font-size:18px; flex-shrink:0; margin-top:1px; }
+.out-txt strong { display:block; font-weight:700; font-size:17px; margin-bottom:1px; }
+
+.ph-note {
+  margin-top:14px; padding:11px 14px;
+  background:rgba(0,230,118,0.04);
+  border:1px solid rgba(0,230,118,0.15);
+  border-left:2px solid var(--green);
+  font-size:16px; color:var(--text2); line-height:1.8;
+}
+.ph-note strong { color:var(--green); font-family:'Share Tech Mono',monospace; font-size:14px; letter-spacing:0.05em; }
+
+.tool-row { margin-top:14px; padding-top:12px; border-top:1px solid var(--border); display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+.tool-lbl { font-family:'Share Tech Mono',monospace; font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:var(--text3); margin-right:2px; }
+.tool-chip { font-family:'Share Tech Mono',monospace; font-size:14px; padding:2px 9px; background:var(--surface2); border:1px solid var(--border2); color:var(--text2); }
+
+/* connector */
+.conn { padding:5px 0 5px 48px; display:flex; flex-direction:column; gap:0; }
+.conn-line { width:1px; height:14px; background:var(--border2); margin-left:14px; }
+.conn-lbl { font-family:'Share Tech Mono',monospace; font-size:13px; letter-spacing:0.12em; text-transform:uppercase; color:var(--text3); background:var(--bg); border:1px solid var(--border); padding:2px 10px; margin:2px 0; display:inline-block; }
+.conn-arr { font-size:18px; color:var(--border2); margin-left:6px; }
+
+/* ── MATRIX TABLE ── */
+.mtable { width:100%; border-collapse:collapse; font-size:17px; background:var(--surface); border:1px solid var(--border2); }
+.mtable th { padding:11px 14px; text-align:left; font-family:'Share Tech Mono',monospace; font-size:13px; letter-spacing:0.15em; text-transform:uppercase; color:var(--text3); border-bottom:1px solid var(--border2); background:var(--surface2); }
+.mtable td { padding:11px 14px; border-bottom:1px solid var(--border); color:var(--text2); vertical-align:top; line-height:1.7; font-size:17px; }
+.mtable tr:last-child td { border-bottom:none; }
+.mtable tr:hover td { background:var(--surface2); }
+.scen-name { font-weight:700; color:#fff; font-size:17px; }
+.scen-sub  { font-size:14px; color:var(--text3); margin-top:2px; font-family:'Share Tech Mono',monospace; }
+
+.bdg {
+  display:inline-block; padding:2px 8px; font-size:13px;
+  font-family:'Share Tech Mono',monospace;
+  letter-spacing:0.08em; text-transform:uppercase; border:1px solid; white-space:nowrap;
+}
+.bdg-g { color:var(--green);  border-color:rgba(0,230,118,0.3);  background:rgba(0,230,118,0.06); }
+.bdg-r { color:var(--red);    border-color:rgba(255,61,61,0.3);   background:rgba(255,61,61,0.06); }
+.bdg-a { color:var(--amber);  border-color:rgba(255,171,0,0.3);   background:rgba(255,171,0,0.06); }
+.bdg-b { color:var(--blue);   border-color:rgba(64,196,255,0.3);  background:rgba(64,196,255,0.06); }
+.bdg-p { color:var(--purple); border-color:rgba(206,147,216,0.3); background:rgba(206,147,216,0.06); }
+
+.atag { display:inline-block; padding:2px 7px; font-size:14px; border:1px solid; margin-top:3px; font-family:'Share Tech Mono',monospace; }
+.at-g { color:var(--green);  border-color:rgba(0,230,118,0.25);  background:rgba(0,230,118,0.04); }
+.at-r { color:var(--red);    border-color:rgba(255,61,61,0.25);  background:rgba(255,61,61,0.04); }
+.at-a { color:var(--amber);  border-color:rgba(255,171,0,0.25);  background:rgba(255,171,0,0.04); }
+.at-b { color:var(--blue);   border-color:rgba(64,196,255,0.25); background:rgba(64,196,255,0.04); }
+.at-p { color:var(--purple); border-color:rgba(206,147,216,0.25);background:rgba(206,147,216,0.04); }
+
+/* ── PAYMENT FLOW DIAGRAM ── */
+.pflow { display:flex; flex-direction:column; gap:3px; margin-bottom:40px; }
+.pflow-row { display:flex; gap:3px; }
+.pflow-node {
+  flex:1; padding:14px 16px;
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-top:2px solid var(--nc,var(--green));
+  min-height:80px;
+}
+.pflow-node.wide { flex:2; }
+.pflow-node-label {
+  font-family:'Share Tech Mono',monospace;
+  font-size:13px; letter-spacing:0.15em; text-transform:uppercase;
+  color:var(--nc,var(--green)); margin-bottom:5px;
+}
+.pflow-node-title { font-size:18px; font-weight:700; color:#fff; margin-bottom:4px; }
+.pflow-node-desc  { font-size:16px; color:var(--text2); line-height:1.6; }
+.pflow-arrow { display:flex; align-items:center; justify-content:center; font-family:'Share Tech Mono',monospace; font-size:23px; color:var(--text4); padding:0 4px; }
+.pflow-vconn { display:flex; flex-direction:column; align-items:center; gap:0; padding:4px 0; }
+.pflow-vline { width:1px; height:12px; background:var(--border2); }
+.pflow-vlbl { font-family:'Share Tech Mono',monospace; font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:var(--text3); background:var(--bg); border:1px solid var(--border); padding:1px 8px; margin:2px 0; }
+
+/* ── SLA GRID ── */
+.sla-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:2px; margin-bottom:40px; }
+.sla-card { background:var(--surface); border:1px solid var(--border2); overflow:hidden; border-top:2px solid var(--sc,var(--green)); }
+.sla-top { padding:16px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; }
+.sla-num { font-family:'Share Tech Mono',monospace; font-size:42px; color:var(--sc,var(--green)); line-height:1; }
+.sla-name { font-size:20px; font-weight:700; color:#fff; }
+.sla-sub  { font-size:14px; color:var(--text3); margin-top:2px; font-family:'Share Tech Mono',monospace; }
+.sla-body { padding:14px 18px; }
+.sla-desc { font-size:17px; color:var(--text2); line-height:1.7; margin-bottom:10px; }
+.sla-rules { list-style:none; display:flex; flex-direction:column; gap:6px; }
+.sla-rules li { font-size:16px; color:var(--text3); display:flex; gap:8px; line-height:1.6; font-family:'Share Tech Mono',monospace; }
+.sla-rules li::before { content:'·'; font-size:23px; line-height:1.1; color:var(--green); flex-shrink:0; }
+
+/* ── GLOSSARY ── */
+.gloss-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:2px; }
+.gloss-card { background:var(--surface); border:1px solid var(--border); padding:16px 18px; transition:border-color 0.15s; }
+.gloss-card:hover { border-color:var(--border2); }
+.gloss-term { font-family:'Share Tech Mono',monospace; font-size:20px; color:var(--green); margin-bottom:3px; }
+.gloss-abbr { font-size:13px; letter-spacing:0.12em; text-transform:uppercase; color:var(--text3); margin-bottom:9px; font-family:'Share Tech Mono',monospace; }
+.gloss-def  { font-size:17px; color:var(--text2); line-height:1.7; }
+.gloss-ph   { display:inline-block; margin-top:7px; font-size:13px; padding:2px 8px; background:rgba(0,230,118,0.06); border:1px solid rgba(0,230,118,0.2); color:var(--green); font-family:'Share Tech Mono',monospace; letter-spacing:0.08em; }
+
+/* alert banner */
+.alert-banner {
+  padding:16px 20px; margin-bottom:28px;
+  background:rgba(255,61,61,0.06);
+  border:1px solid rgba(255,61,61,0.25);
+  border-left:3px solid var(--red);
+  font-size:17px; color:var(--text2); line-height:1.8;
+  display:flex; gap:14px; align-items:flex-start;
+}
+.alert-icon { font-size:23px; flex-shrink:0; }
+
+/* breach table */
+.breach-table { width:100%; border-collapse:collapse; font-size:17px; background:var(--surface); border:1px solid var(--border2); }
+.breach-table th { padding:10px 14px; font-family:'Share Tech Mono',monospace; font-size:13px; letter-spacing:0.15em; text-transform:uppercase; color:var(--text3); border-bottom:1px solid var(--border2); background:var(--surface2); text-align:left; }
+.breach-table td { padding:10px 14px; border-bottom:1px solid var(--border); color:var(--text2); font-size:17px; line-height:1.6; vertical-align:top; }
+.breach-table tr:last-child td { border-bottom:none; }
+.breach-table tr:hover td { background:var(--surface2); }
+
+footer {
+  background:var(--bg2);
+  border-top:1px solid var(--border2);
+  text-align:center; padding:20px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:14px; color:var(--text3);
+  letter-spacing:0.08em; position:relative; z-index:1;
+}
+footer strong { color:var(--green); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav" style="position:sticky;">
+  <a href="index.html" class="nav-brand" style="text-decoration:none;cursor:pointer;" title="Back to Hub">FRAUD<span>//</span>PAYMENTS<span> ·</span> OPS</a>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="showPage('fraud',this)">Fraud Detection</button>
+    <button class="nav-link" onclick="showPage('payments',this)">Payments Flow</button>
+    <button class="nav-link" onclick="showPage('matrix',this)">Decision Matrix</button>
+    <button class="nav-link" onclick="showPage('sla',this)">SLA & Timers</button>
+    <button class="nav-link" onclick="showPage('glossary',this)">Glossary</button>
+  </div>
+</nav>
+
+
+<!-- ══════════════════════════
+     PAGE 1 — FRAUD DETECTION
+══════════════════════════ -->
+<div id="page-fraud" class="page active">
+  <div class="hero">
+    <div class="hero-grid-accent"></div>
+    <div class="hero-bracket">PH · PAGCOR · AMLC · BSP Compliant</div>
+    <h1>Fraud <em>Detection</em><br>&amp; Investigation</h1>
+    <p class="hero-desc">Internal fraud management framework covering all fraud typologies, detection triggers, investigation tiers, account action protocols, and coordination with Compliance and Legal for the Philippines iGaming market.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-num">6</div><div class="hero-stat-label">Fraud Types</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">3</div><div class="hero-stat-label">Investigation Tiers</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">1h</div><div class="hero-stat-label">Tier 1 SLA</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">24h</div><div class="hero-stat-label">AMLC Flag Window</div></div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- FRAUD TYPOLOGY -->
+    <div class="sec-label">Fraud Typology Library</div>
+    <div class="fraud-types" style="margin-bottom:48px;">
+      <div class="ft-card" style="--ftc:var(--ft-bonus)">
+        <div class="ft-icon">🎁</div>
+        <div class="ft-name">Bonus Abuse</div>
+        <div class="ft-desc">Exploiting welcome offers, cashback, free bets. Multiple accounts to claim the same promotion. Minimal-risk play to clear wagering requirements.</div>
+        <div class="ft-risk" style="color:var(--ft-bonus)">RISK · HIGH VOLUME</div>
+      </div>
+      <div class="ft-card" style="--ftc:var(--ft-multi)">
+        <div class="ft-icon">👥</div>
+        <div class="ft-name">Multi-Accounting</div>
+        <div class="ft-desc">Player operates 2 or more accounts sharing device, IP, payment method, or identity documents. Often linked to bonus abuse or collusion.</div>
+        <div class="ft-risk" style="color:var(--ft-multi)">RISK · HIGH VOLUME</div>
+      </div>
+      <div class="ft-card" style="--ftc:var(--ft-pay)">
+        <div class="ft-icon">💳</div>
+        <div class="ft-name">Payment Fraud</div>
+        <div class="ft-desc">Use of stolen GCash/Maya credentials, unauthorized e-wallet access, OTP phishing, SIM swap attacks, or third-party payment methods.</div>
+        <div class="ft-risk" style="color:var(--ft-pay)">RISK · CRITICAL</div>
+      </div>
+      <div class="ft-card" style="--ftc:var(--ft-ato)">
+        <div class="ft-icon">🔓</div>
+        <div class="ft-name">Account Takeover</div>
+        <div class="ft-desc">Unauthorized access to a legitimate player account via credential stuffing, phishing, or social engineering. Typically followed by rapid withdrawal attempts.</div>
+        <div class="ft-risk" style="color:var(--ft-ato)">RISK · CRITICAL</div>
+      </div>
+      <div class="ft-card" style="--ftc:var(--ft-laund)">
+        <div class="ft-icon">🔄</div>
+        <div class="ft-name">Money Laundering</div>
+        <div class="ft-desc">Using the platform to layer illegal funds — deposit, minimal play, withdrawal. Third-party deposits, structured transactions below CTR thresholds.</div>
+        <div class="ft-risk" style="color:var(--ft-laund)">RISK · REGULATORY</div>
+      </div>
+      <div class="ft-card" style="--ftc:var(--ft-match)">
+        <div class="ft-icon">⚽</div>
+        <div class="ft-name">Match Fixing / Collusion</div>
+        <div class="ft-desc">Coordinated betting on predetermined outcomes. Collusion between players in poker or PvP games. Abnormal bet patterns on specific markets or events.</div>
+        <div class="ft-risk" style="color:var(--ft-match)">RISK · HIGH</div>
+      </div>
+    </div>
+
+    <!-- DETECTION LAYER -->
+    <div class="sec-label">Detection Layer — Triggers</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:40px;">
+      <div style="background:var(--surface);border:1px solid var(--border2);padding:20px;">
+        <div class="col-hd">Automated Rules Engine Flags</div>
+        <ul class="act-list" style="--bc:var(--green)">
+          <li>Multiple accounts sharing the same device fingerprint, IP address, or browser profile</li>
+          <li>Deposit from a payment method already registered on another account</li>
+          <li>Bonus claim velocity: same promo claimed within 48h from devices on the same network</li>
+          <li>Withdrawal request within 30 minutes of initial deposit with minimal or no play</li>
+          <li>Transaction velocity: 5+ deposits or withdrawals within a 2-hour window</li>
+          <li>Bet pattern anomaly: near-zero house edge play (e.g. alternating red/black, backing both sides)</li>
+          <li>OTP verification from an unrecognised device + immediate withdrawal attempt = ATO indicator</li>
+          <li>Daily transaction aggregate reaching 80% of the ₱500k AMLC CTR threshold — pre-flag alert</li>
+          <li>Login from a new country or VPN when the player has a consistent PH login history</li>
+          <li>Player uses 3+ different payment methods within 7 days — potential carding signal</li>
+        </ul>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border2);padding:20px;">
+        <div class="col-hd">Manual Flagging Sources</div>
+        <ul class="act-list" style="--bc:var(--amber)">
+          <li>CS Agent observes unusual player behaviour or receives a complaint from another player about suspected collusion</li>
+          <li>VIP Account Manager notices third-party deposit — someone other than the account holder is topping up the account</li>
+          <li>Payments team flags a chargeback or e-wallet dispute filed against a recent deposit</li>
+          <li>KYC Analyst identifies document or identity patterns matching a previously rejected or banned account</li>
+          <li>Sportsbook Trading flags an abnormal betting pattern on a specific match or event — potential match fixing signal</li>
+          <li>External intelligence: industry fraud network alert or PAGCOR notification about a known fraudster operating in the PH market</li>
+          <li>Player self-reports that their account has been accessed without their knowledge (ATO victim report)</li>
+        </ul>
+        <div class="ph-note">
+          <strong>// PH FRAUD CONTEXT</strong><br>
+          Common Philippines-specific fraud patterns: GCash account farming using pre-registered SIMs (leveraging the PH SIM registration gaps), OTP interception via social engineering on GCash helpdesk impersonation, coordinated bonus abuse rings operating through Telegram groups, and structured deposits just below ₱500k to avoid AMLC CTR filing.
+        </div>
+      </div>
+    </div>
+
+    <!-- INVESTIGATION TIERS -->
+    <div class="sec-label">Investigation Workflow — 3 Tiers</div>
+
+    <!-- TIER 1 -->
+    <div class="block open" id="f1" style="--bc:var(--amber);--bc-rgb:255,171,0;">
+      <div class="block-header" onclick="tog('f1')">
+        <div class="block-num">T1</div>
+        <div class="block-info">
+          <div class="block-title">Fraud Analyst — Initial Triage</div>
+          <div class="block-sub">First responder · Rules engine alerts · Preliminary evidence gathering</div>
+        </div>
+        <div class="block-tag">SLA: 1 HOUR</div>
+        <div class="block-toggle">▾</div>
+      </div>
+      <div class="block-body">
+        <div class="block-cols">
+          <div>
+            <div class="col-hd">Triage Actions</div>
+            <ul class="act-list" style="--bc:var(--amber)">
+              <li>Receive alert from the automated rules engine or manual flag — acknowledge within 15 minutes and assign a case reference number</li>
+              <li>Pull the player's full account profile: registration date, KYC status, deposit history, withdrawal history, bonus claims, login history, device and IP log</li>
+              <li>Identify the primary fraud typology from the flag and cross-reference against the fraud typology library</li>
+              <li>Apply an immediate soft account restriction if the fraud risk is rated High or Critical: suspend deposits and withdrawals pending investigation. Do not suspend the account entirely at this stage — preserve the player's ability to contact CS</li>
+              <li>Document all findings, data points, and screenshots in the case management system with timestamps</li>
+              <li>Run device fingerprint, IP, and payment method cross-reference to identify any linked accounts</li>
+              <li>If linked accounts are found: flag all linked accounts for investigation and expand the case scope immediately</li>
+              <li>Determine if the case requires escalation to Tier 2 within 1 hour or can be resolved at Tier 1</li>
+            </ul>
+          </div>
+          <div>
+            <div class="col-hd">Tier 1 Outcomes</div>
+            <div class="out-stack">
+              <div class="out out-g"><div class="out-ico">✓</div><div class="out-txt"><strong>False Positive — Clear</strong>Evidence review confirms no fraud. Remove restriction. Log outcome. No player contact unless restriction caused disruption.</div></div>
+              <div class="out out-a"><div class="out-ico">⚑</div><div class="out-txt"><strong>Soft Restriction — Monitor</strong>Indicators present but inconclusive. Maintain deposit/withdrawal hold. Pass to Tier 2 within 1 hour with full case file.</div></div>
+              <div class="out out-r"><div class="out-ico">⛔</div><div class="out-txt"><strong>Confirmed Bonus Abuse — Close</strong>Clear evidence of T1-resolvable fraud (e.g. duplicate bonus claim). Account restricted. Bonus reversed. Funds held pending review. Log and close.</div></div>
+              <div class="out out-b"><div class="out-ico">↑</div><div class="out-txt"><strong>Escalate to Tier 2</strong>ATO suspected, payment fraud, money laundering signals, or multi-account ring — immediate escalation regardless of SLA clock.</div></div>
+            </div>
+            <div class="tool-row">
+              <span class="tool-lbl">Tools:</span>
+              <span class="tool-chip">Fraud Rules Engine</span>
+              <span class="tool-chip">Device Fingerprint DB</span>
+              <span class="tool-chip">IP/Geo Lookup</span>
+              <span class="tool-chip">Case Management System</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="conn"><div class="conn-line"></div><div class="conn-lbl">Inconclusive / ATO / payment fraud / ML signal → Tier 2</div><div class="conn-arr">▼</div></div>
+
+    <!-- TIER 2 -->
+    <div class="block open" id="f2" style="--bc:var(--red);--bc-rgb:255,61,61;">
+      <div class="block-header" onclick="tog('f2')">
+        <div class="block-num">T2</div>
+        <div class="block-info">
+          <div class="block-title">Senior Fraud Analyst — Deep Investigation</div>
+          <div class="block-sub">Evidence compilation · Payment tracing · AMLC coordination · Account suspension authority</div>
+        </div>
+        <div class="block-tag">SLA: 24 HOURS</div>
+        <div class="block-toggle">▾</div>
+      </div>
+      <div class="block-body">
+        <div class="block-cols">
+          <div>
+            <div class="col-hd">Investigation Actions</div>
+            <ul class="act-list" style="--bc:var(--red)">
+              <li>Take ownership of the full case file from Tier 1. Conduct an independent review — do not rely solely on T1 findings</li>
+              <li>Trace the full deposit and withdrawal chain: map all payment methods used, source wallets, destination accounts, and timeline</li>
+              <li>For ATO cases: cross-reference login timestamps with the player's self-reported normal activity. Check for concurrent sessions or impossible geography (two logins from distant locations within minutes)</li>
+              <li>For payment fraud: contact the PSP (GCash Business, Maya Business, UnionBank) via the dedicated fraud reporting channel to confirm whether the payment instrument is flagged or disputed</li>
+              <li>For multi-account rings: map the full network of linked accounts. Identify the primary account and any secondary accounts created to exploit bonuses or launder funds</li>
+              <li>For match fixing signals: coordinate with the Sportsbook Trading team to obtain the bet data and market context. Cross-reference with any industry intelligence feeds</li>
+              <li>Compile a structured evidence package: screenshots, transaction logs, device data, payment traces, and a written investigation summary</li>
+              <li>Make a preliminary recommendation: Account suspension, fund freeze, AMLC referral, or escalation to Head of Fraud</li>
+            </ul>
+          </div>
+          <div>
+            <div class="col-hd">Tier 2 Outcomes</div>
+            <div class="out-stack">
+              <div class="out out-g"><div class="out-ico">✓</div><div class="out-txt"><strong>Resolved — Account Restrictions Lifted</strong>Investigation clears the account. Remove restrictions. Send player a courtesy explanation if restriction lasted &gt;4 hours.</div></div>
+              <div class="out out-r"><div class="out-ico">⛔</div><div class="out-txt"><strong>Account Suspended — Funds Frozen</strong>Fraud confirmed. Full account suspension. Funds held per internal policy and BSP/PAGCOR requirements. Player notified of account review.</div></div>
+              <div class="out out-p"><div class="out-ico">📋</div><div class="out-txt"><strong>AMLC Referral Initiated</strong>Money laundering indicators confirmed. Prepare Suspicious Activity flag for KYC Senior. CCO to review for STR filing. No tipping-off.</div></div>
+              <div class="out out-b"><div class="out-ico">↑</div><div class="out-txt"><strong>Escalate to Head of Fraud</strong>Case exceeds Senior Analyst authority, requires law enforcement referral, or involves an organised fraud ring.</div></div>
+            </div>
+            <div class="ph-note">
+              <strong>// PSP FRAUD CONTACTS (PH)</strong><br>
+              GCash Business fraud reporting: gcashbusiness.ph fraud desk. Maya Business: Maya Enterprise fraud channel. UnionBank: corporate banking fraud line. BSP Mediation: for unresolved e-payment disputes. All PSP fraud contacts must be maintained in the Fraud team's secure contact register.
+            </div>
+            <div class="tool-row">
+              <span class="tool-lbl">Tools:</span>
+              <span class="tool-chip">Payment Trace Tool</span>
+              <span class="tool-chip">PSP Fraud Portal</span>
+              <span class="tool-chip">Network Analysis Tool</span>
+              <span class="tool-chip">AMLC Flag Template</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="conn"><div class="conn-line"></div><div class="conn-lbl">Organised ring / law enforcement / AMLC obligation / exceeds Senior authority → Tier 3</div><div class="conn-arr">▼</div></div>
+
+    <!-- TIER 3 -->
+    <div class="block open" id="f3" style="--bc:var(--purple);--bc-rgb:206,147,216;">
+      <div class="block-header" onclick="tog('f3')">
+        <div class="block-num">T3</div>
+        <div class="block-info">
+          <div class="block-title">Head of Fraud & Payments — Final Authority</div>
+          <div class="block-sub">Executive decision · Regulatory coordination · Law enforcement referral · Cross-department escalation</div>
+        </div>
+        <div class="block-tag">SLA: 48 HOURS</div>
+        <div class="block-toggle">▾</div>
+      </div>
+      <div class="block-body">
+        <div class="block-cols">
+          <div>
+            <div class="col-hd">Executive Actions</div>
+            <ul class="act-list" style="--bc:var(--purple)">
+              <li>Review the complete investigation file from Tier 2 including all evidence, transaction traces, and the Senior Analyst's recommendation</li>
+              <li>Make a final account disposition decision: permanent ban, suspension pending refund, freeze pending law enforcement, or reinstatement with restrictions</li>
+              <li>For organised fraud rings: coordinate with the Legal team on evidence preservation and potential civil action. Determine if a criminal complaint to the NBI (National Bureau of Investigation) Philippines is warranted</li>
+              <li>For AMLC-referral cases: coordinate with the CCO to ensure the STR is filed correctly and within the 5-business-day deadline. Ensure tipping-off protocols are enforced across all teams including CS and VIP</li>
+              <li>Coordinate with PAGCOR if the fraud pattern has sector-wide implications or if PAGCOR notification is required under the operator's licence conditions</li>
+              <li>Brief the COO on all cases resulting in permanent bans, law enforcement referrals, or regulatory filings — within 24 hours of the final decision</li>
+              <li>Issue an internal fraud pattern alert to CS, KYC, VIP, and CRM teams if the fraud typology is new or escalating — without disclosing confidential case details</li>
+              <li>Update the fraud rules engine with new detection parameters based on the pattern identified in the case</li>
+            </ul>
+          </div>
+          <div>
+            <div class="col-hd">Final Outcomes</div>
+            <div class="out-stack">
+              <div class="out out-r"><div class="out-ico">🔒</div><div class="out-txt"><strong>Permanent Ban — Account Terminated</strong>All funds returned minus confirmed fraud losses per T&Cs. Account closed permanently. Flagged in the fraud registry. Device/IP/payment method blacklisted.</div></div>
+              <div class="out out-p"><div class="out-ico">📋</div><div class="out-txt"><strong>AMLC STR Filed + Account Frozen</strong>CCO submits STR. Funds frozen pending AMLC investigation. Account remains active in read-only state to preserve evidence. No tipping-off to player.</div></div>
+              <div class="out out-b"><div class="out-ico">⚖</div><div class="out-txt"><strong>NBI Referral — Law Enforcement</strong>Evidence package submitted to NBI Philippines. Legal team engaged. All account data preserved per evidence chain of custody requirements.</div></div>
+              <div class="out out-g"><div class="out-ico">✓</div><div class="out-txt"><strong>Reinstated with Monitoring</strong>Inconclusive evidence. Account reinstated with enhanced monitoring flag and reduced deposit limits pending further observation.</div></div>
+            </div>
+            <div class="tool-row">
+              <span class="tool-lbl">Contacts:</span>
+              <span class="tool-chip">CCO / Compliance</span>
+              <span class="tool-chip">Legal Team</span>
+              <span class="tool-chip">PAGCOR Compliance Desk</span>
+              <span class="tool-chip">NBI Philippines</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /page-fraud -->
+
+
+<!-- ══════════════════════════
+     PAGE 2 — PAYMENTS FLOW
+══════════════════════════ -->
+<div id="page-payments" class="page">
+  <div class="hero" style="padding-bottom:40px;">
+    <div class="hero-grid-accent"></div>
+    <div class="hero-bracket">GCash · Maya · UnionBank · BDO · InstaPay · PESONet</div>
+    <h1>Payments <em>Operations</em><br>Workflow</h1>
+    <p class="hero-desc">End-to-end deposit and withdrawal processing flows, payment failure escalation, chargeback management, PSP routing, and BSP/PAGCOR regulatory obligations for the Philippines market.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-num">4</div><div class="hero-stat-label">PSP Channels</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">30m</div><div class="hero-stat-label">VIP Withdrawal SLA</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">₱500k</div><div class="hero-stat-label">AMLC CTR Threshold</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">5d</div><div class="hero-stat-label">Chargeback Response Window</div></div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- DEPOSIT FLOW -->
+    <div class="sec-label">Deposit Processing Flow</div>
+    <div class="pflow">
+      <div class="pflow-row">
+        <div class="pflow-node" style="--nc:var(--green)">
+          <div class="pflow-node-label">Step 01</div>
+          <div class="pflow-node-title">Player Initiates Deposit</div>
+          <div class="pflow-node-desc">Player selects amount and payment method in the platform. GCash, Maya, InstaPay, or bank transfer.</div>
+        </div>
+        <div class="pflow-arrow">→</div>
+        <div class="pflow-node" style="--nc:var(--green)">
+          <div class="pflow-node-label">Step 02</div>
+          <div class="pflow-node-title">Real-Time Fraud Pre-Screen</div>
+          <div class="pflow-node-desc">Rules engine checks: velocity, device fingerprint, payment method blacklist, account status, daily limit.</div>
+        </div>
+        <div class="pflow-arrow">→</div>
+        <div class="pflow-node" style="--nc:var(--amber)">
+          <div class="pflow-node-label">Step 03</div>
+          <div class="pflow-node-title">PSP Routing</div>
+          <div class="pflow-node-desc">Route to correct PSP based on method: GCash API, Maya API, UnionBank InstaPay, or BDO PESONet.</div>
+        </div>
+        <div class="pflow-arrow">→</div>
+        <div class="pflow-node" style="--nc:var(--amber)">
+          <div class="pflow-node-label">Step 04</div>
+          <div class="pflow-node-title">PSP Processes Payment</div>
+          <div class="pflow-node-desc">Player completes OTP / authentication on PSP side. PSP sends success or failure callback to platform.</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:3px;">
+        <div class="pflow-node" style="--nc:var(--green)">
+          <div class="pflow-node-label">Success Path</div>
+          <div class="pflow-node-title">Deposit Credited to Account</div>
+          <div class="pflow-node-desc">Funds credited instantly. CTR check runs if aggregate daily total approaches ₱500k. Bonus engine checks for applicable promo trigger. Player notified in-app and via SMS.</div>
+        </div>
+        <div class="pflow-node" style="--nc:var(--red)">
+          <div class="pflow-node-label">Failure Path</div>
+          <div class="pflow-node-title">Deposit Failure Handling</div>
+          <div class="pflow-node-desc">Classify failure code: PSP timeout, insufficient funds, OTP failure, fraud block, or account limit. Player shown human-readable error. Auto-retry for timeout only (max 1 retry). Manual review queue if fraud block. Log all failures with error code for PSP reconciliation.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEPOSIT FAILURE ESCALATION -->
+    <div class="sec-label">Deposit Failure Escalation</div>
+    <div style="overflow-x:auto;margin-bottom:40px;">
+      <table class="mtable">
+        <thead>
+          <tr>
+            <th>Failure Code</th>
+            <th>Cause</th>
+            <th>Automated Action</th>
+            <th>Manual Escalation</th>
+            <th>Player Communication</th>
+            <th>SLA</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bdg bdg-a">PSP_TIMEOUT</span></td>
+            <td>PSP did not respond within 30s</td>
+            <td>Auto-retry once. If second timeout: mark deposit as pending, do not credit</td>
+            <td>Payments Specialist checks PSP status page. If PSP-wide outage: escalate to Head of Fraud & Payments</td>
+            <td>"Your payment is being processed — please wait 15 minutes before trying again."</td>
+            <td>Resolve within 30 min</td>
+          </tr>
+          <tr>
+            <td><span class="bdg bdg-r">FRAUD_BLOCK</span></td>
+            <td>Rules engine hard block</td>
+            <td>Deposit rejected. Fraud alert generated. Case auto-created for Fraud Analyst review</td>
+            <td>Fraud Analyst triages within 1 hour (Tier 1 workflow)</td>
+            <td>"We were unable to process your payment. Please contact support." — Do not reveal fraud block reason</td>
+            <td>Fraud triage within 1h</td>
+          </tr>
+          <tr>
+            <td><span class="bdg bdg-a">LIMIT_EXCEEDED</span></td>
+            <td>GCash/Maya wallet limit or platform daily deposit cap</td>
+            <td>Deposit rejected. Player shown limit details</td>
+            <td>None unless player contacts CS — CS advises alternative payment method (bank transfer)</td>
+            <td>"Your deposit exceeds your current limit. Try a smaller amount or use bank transfer."</td>
+            <td>CS response per tier SLA</td>
+          </tr>
+          <tr>
+            <td><span class="bdg bdg-r">ACCT_RESTRICTED</span></td>
+            <td>Account under fraud review or KYC hold</td>
+            <td>Deposit rejected. Player account shows restriction flag</td>
+            <td>CS escalates to Fraud or KYC team depending on restriction type. Do not reveal investigation status</td>
+            <td>"Your account is temporarily under review. Please contact support for assistance."</td>
+            <td>Immediate</td>
+          </tr>
+          <tr>
+            <td><span class="bdg bdg-b">PSP_DECLINED</span></td>
+            <td>PSP declined — insufficient funds, expired card, bank block</td>
+            <td>Deposit rejected. No retry. Log PSP decline code</td>
+            <td>None — player-side issue. CS advises player to check their GCash/bank account</td>
+            <td>"Your payment was declined by your payment provider. Please check your account or try another method."</td>
+            <td>CS response per tier SLA</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- WITHDRAWAL FLOW -->
+    <div class="sec-label">Withdrawal Processing Flow</div>
+    <div class="pflow" style="margin-bottom:12px;">
+      <div class="pflow-row">
+        <div class="pflow-node" style="--nc:var(--blue)">
+          <div class="pflow-node-label">Step 01</div>
+          <div class="pflow-node-title">Player Requests Withdrawal</div>
+          <div class="pflow-node-desc">Player submits withdrawal request: amount, destination account (GCash, Maya, bank). Platform checks minimum withdrawal (₱500) and maximum per-transaction limits.</div>
+        </div>
+        <div class="pflow-arrow">→</div>
+        <div class="pflow-node" style="--nc:var(--blue)">
+          <div class="pflow-node-label">Step 02</div>
+          <div class="pflow-node-title">Verification Gate</div>
+          <div class="pflow-node-desc">Automated checks: KYC status confirmed, withdrawal account matches KYC name (name-match check), wagering requirements met, no active bonus lock, no fraud or compliance hold.</div>
+        </div>
+        <div class="pflow-arrow">→</div>
+        <div class="pflow-node wide" style="--nc:var(--amber)">
+          <div class="pflow-node-label">Step 03 — Approval Tier</div>
+          <div class="pflow-node-title">Tiered Approval Queue</div>
+          <div class="pflow-node-desc">
+            Standard (&lt;₱50k): Auto-approve if all verification gates pass · Payments Specialist review (&lt;₱500k) · Head of Fraud &amp; Payments approval required for ≥₱500k single withdrawal · VIP players bypass standard queue and enter priority lane.
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:3px;">
+        <div class="pflow-node" style="--nc:var(--green)">
+          <div class="pflow-node-label">Approved Path</div>
+          <div class="pflow-node-title">PSP Disbursement</div>
+          <div class="pflow-node-desc">Approved withdrawal sent to PSP. GCash/Maya: near-instant. InstaPay: real-time (max 30 min). PESONet: next business day batch. BDO/UnionBank direct: same day if before 2pm. Player notified via SMS and in-app on completion.</div>
+        </div>
+        <div class="pflow-node" style="--nc:var(--red)">
+          <div class="pflow-node-label">Held / Rejected Path</div>
+          <div class="pflow-node-title">Withdrawal Hold Escalation</div>
+          <div class="pflow-node-desc">Gate failure → CS notifies player of required action (KYC update, wagering, name mismatch). Fraud hold → Fraud team owns without disclosing reason. Compliance hold → CCO owns. Player must not be given timeline if a compliance investigation is active.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WITHDRAWAL APPROVAL THRESHOLDS -->
+    <div style="background:var(--surface);border:1px solid var(--border2);padding:20px;margin-bottom:40px;">
+      <div class="col-hd" style="margin-bottom:14px;">Withdrawal Approval Authority Thresholds</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:2px;">
+        <div style="padding:14px 16px;background:var(--surface2);border:1px solid var(--border);">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:0.15em;text-transform:uppercase;color:var(--green);margin-bottom:6px;">Auto-Approve</div>
+          <div style="font-size:26px;font-weight:800;color:#fff;margin-bottom:4px;">&lt; ₱50,000</div>
+          <div style="font-size:16px;color:var(--text2);">All gates pass. No manual review. Disbursed immediately to PSP queue.</div>
+        </div>
+        <div style="padding:14px 16px;background:var(--surface2);border:1px solid var(--border);">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:0.15em;text-transform:uppercase;color:var(--amber);margin-bottom:6px;">Payments Specialist</div>
+          <div style="font-size:26px;font-weight:800;color:#fff;margin-bottom:4px;">₱50k – ₱500k</div>
+          <div style="font-size:16px;color:var(--text2);">Manual review by Payments Specialist. Verify destination account ownership. Approve within SLA.</div>
+        </div>
+        <div style="padding:14px 16px;background:var(--surface2);border:1px solid var(--border);">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:0.15em;text-transform:uppercase;color:var(--red);margin-bottom:6px;">Head of Fraud & Payments</div>
+          <div style="font-size:26px;font-weight:800;color:#fff;margin-bottom:4px;">≥ ₱500,000</div>
+          <div style="font-size:16px;color:var(--text2);">Head approval required. AMLC CTR alert triggered. Manual source-of-funds review before disbursement.</div>
+        </div>
+        <div style="padding:14px 16px;background:var(--surface2);border:1px solid var(--border);">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:0.15em;text-transform:uppercase;color:var(--purple);margin-bottom:6px;">CCO Sign-Off</div>
+          <div style="font-size:26px;font-weight:800;color:#fff;margin-bottom:4px;">Any — Compliance Flag</div>
+          <div style="font-size:16px;color:var(--text2);">Any withdrawal with a compliance, AMLC, or PEP flag requires CCO approval regardless of amount.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARGEBACK SECTION -->
+    <div class="sec-label">Chargeback & Dispute Management</div>
+    <div class="block open" id="cb1" style="--bc:var(--purple);--bc-rgb:206,147,216;">
+      <div class="block-header" onclick="tog('cb1')">
+        <div class="block-num">CB</div>
+        <div class="block-info">
+          <div class="block-title">Chargeback & E-Wallet Dispute Flow</div>
+          <div class="block-sub">GCash / Maya dispute · Bank chargeback · BSP mediation process</div>
+        </div>
+        <div class="block-tag">RESPOND WITHIN 5 DAYS</div>
+        <div class="block-toggle">▾</div>
+      </div>
+      <div class="block-body">
+        <div class="block-cols">
+          <div>
+            <div class="col-hd">Chargeback Response Process</div>
+            <ul class="act-list" style="--bc:var(--purple)">
+              <li>PSP notifies platform of a chargeback or dispute filing via the PSP merchant dashboard or email alert. Log immediately with the chargeback reference number</li>
+              <li>Identify the deposit transaction, player account, and the stated reason for the dispute (unauthorised transaction, service not received, fraudulent merchant)</li>
+              <li>Compile the evidence package within 48 hours: transaction timestamp, PSP transaction ID, player login records at time of deposit, game play records showing funds were used, KYC documents, and any CS communication history with the player</li>
+              <li>Payments Specialist reviews and determines if the chargeback is:
+                (a) Fraudulent chargeback by the player — contest with evidence,
+                (b) Legitimate ATO — player did not make the deposit — accept chargeback and initiate fraud investigation,
+                (c) PSP error — escalate to PSP directly</li>
+              <li>For contested chargebacks: submit evidence to the PSP chargeback portal within the 5-business-day window. Any submission after the deadline is automatically lost</li>
+              <li>Suspend the player account pending resolution if the chargeback indicates potential fraud</li>
+              <li>If chargeback rate for a specific PSP exceeds 1% in any month: escalate to Head of Fraud & Payments for PSP relationship review</li>
+            </ul>
+            <div class="ph-note">
+              <strong>// BSP MEDIATION</strong><br>
+              If a GCash or Maya dispute cannot be resolved directly with the PSP, the player may escalate to the BSP Consumer Assistance Mechanism (CAM). The operator must maintain complete transaction records for a minimum of 5 years to defend BSP-mediated disputes. BSP resolution timelines vary (30–90 days). Payments team must track all active BSP dispute references.
+            </div>
+          </div>
+          <div>
+            <div class="col-hd">Chargeback Outcomes</div>
+            <div class="out-stack">
+              <div class="out out-g"><div class="out-ico">✓</div><div class="out-txt"><strong>Chargeback Won</strong>Evidence accepted by PSP. Funds returned to operator. Player account reviewed — possible ban if chargeback was fraudulent.</div></div>
+              <div class="out out-r"><div class="out-ico">✗</div><div class="out-txt"><strong>Chargeback Lost</strong>Evidence insufficient or deadline missed. Funds returned to player via PSP. Write off the loss. Review evidence process to prevent recurrence.</div></div>
+              <div class="out out-a"><div class="out-ico">⚑</div><div class="out-txt"><strong>Legitimate ATO Dispute</strong>Accept chargeback. Refund player. Launch ATO fraud investigation (Tier 2). Strengthen account security for the player going forward.</div></div>
+              <div class="out out-b"><div class="out-ico">→</div><div class="out-txt"><strong>BSP Escalation</strong>PSP unable to resolve. Formal BSP Consumer Assistance Mechanism filing. Payments Specialist manages with Legal support.</div></div>
+            </div>
+            <div class="tool-row">
+              <span class="tool-lbl">Portals:</span>
+              <span class="tool-chip">GCash Merchant Portal</span>
+              <span class="tool-chip">Maya Business Dashboard</span>
+              <span class="tool-chip">BSP CAM Portal</span>
+              <span class="tool-chip">Transaction Ledger</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /page-payments -->
+
+
+<!-- ══════════════════════════
+     PAGE 3 — DECISION MATRIX
+══════════════════════════ -->
+<div id="page-matrix" class="page">
+  <div class="hero" style="padding-bottom:40px;">
+    <div class="hero-grid-accent"></div>
+    <div class="hero-bracket">Internal Reference</div>
+    <h1>Fraud &amp; Payments<br><em>Decision Matrix</em></h1>
+    <p class="hero-desc">Quick-reference mapping of scenarios to the correct owner, action, and resolution path across fraud investigation and payments operations.</p>
+  </div>
+  <div class="main">
+
+    <div class="sec-label">Fraud Scenario Routing</div>
+    <div style="overflow-x:auto;margin-bottom:40px;">
+      <table class="mtable">
+        <thead>
+          <tr>
+            <th style="width:18%">Scenario</th>
+            <th style="width:12%">Fraud Type</th>
+            <th style="width:10%">First Owner</th>
+            <th style="width:10%">Escalate To</th>
+            <th style="width:20%">Immediate Action</th>
+            <th style="width:13%">Resolution</th>
+            <th style="width:10%">Regulatory</th>
+            <th style="width:7%">SLA</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="scen-name">Same-device multi-account detected</div><div class="scen-sub">Two accounts share identical device fingerprint</div></td>
+            <td><span class="bdg bdg-r">Multi-Account</span></td>
+            <td><span class="bdg bdg-a">T1 Analyst</span></td>
+            <td><span class="bdg bdg-a">T2 Senior</span> if ring suspected</td>
+            <td>Soft restrict both accounts. Pull all linked account data. Cross-reference payment methods and bonus claims</td>
+            <td><span class="atag at-r">Ban secondary accounts</span><br><span class="atag at-a">Warn / restrict primary</span></td>
+            <td>PAGCOR incident log</td>
+            <td>1h triage</td>
+          </tr>
+          <tr>
+            <td><div class="scen-name">Bonus abuse — wagering pattern</div><div class="scen-sub">Near-zero house-edge play to clear bonus</div></td>
+            <td><span class="bdg bdg-a">Bonus Abuse</span></td>
+            <td><span class="bdg bdg-a">T1 Analyst</span></td>
+            <td>No escalation if clear</td>
+            <td>Review bet history. Calculate RTP of player's strategy. If &gt;99% RTP on bonus-eligible games: void bonus and winnings per T&Cs</td>
+            <td><span class="atag at-r">Bonus voided</span><br><span class="atag at-a">Account flagged — enhanced monitoring</span></td>
+            <td>None</td>
+            <td>1h</td>
+          </tr>
+          <tr>
+            <td><div class="scen-name">Suspected Account Takeover</div><div class="scen-sub">Login from new device + rapid withdrawal attempt</div></td>
+            <td><span class="bdg bdg-b">ATO</span></td>
+            <td><span class="bdg bdg-a">T1 Analyst</span></td>
+            <td><span class="bdg bdg-r">T2 Senior</span> immediately</td>
+            <td>Hard block account immediately. Freeze pending withdrawals. Contact the legitimate account holder via registered phone/email to confirm access. Do not process any withdrawal until owner identity confirmed</td>
+            <td><span class="atag at-r">Withdrawal blocked</span><br><span class="atag at-g">Account restored to rightful owner with security reset</span></td>
+            <td>None unless funds lost</td>
+            <td>Immediate action · 1h T2 review</td>
+          </tr>
+          <tr>
+            <td><div class="scen-name">GCash OTP phishing suspected</div><div class="scen-sub">Player reports receiving OTP they did not request</div></td>
+            <td><span class="bdg bdg-b">Payment Fraud / ATO</span></td>
+            <td><span class="bdg bdg-a">T1 Analyst</span></td>
+            <td><span class="bdg bdg-r">T2 Senior</span></td>
+            <td>Immediately block all deposits and withdrawals. Alert GCash Business fraud desk. Log all recent transactions. Coordinate with player to change platform credentials</td>
+            <td><span class="atag at-r">Freeze account</span><br><span class="atag at-b">PSP investigation</span></td>
+            <td>BSP reportable if funds lost</td>
+            <td>Immediate</td>
+          </tr>
+          <tr>
+            <td><div class="scen-name">Structured deposits below ₱500k</div><div class="scen-sub">Multiple deposits totalling ₱490k–₱499k per day</div></td>
+            <td><span class="bdg bdg-r">ML / Structuring</span></td>
+            <td><span class="bdg bdg-r">T2 Senior</span></td>
+            <td><span class="bdg bdg-p">T3 Head + CCO</span></td>
+            <td>Do not immediately restrict — preserve transaction trail. Flag to KYC Senior for AMLC assessment. Document pattern over 5+ business days before any account action to build the STR evidence base</td>
+            <td><span class="atag at-p">AMLC STR likely</span><br><span class="atag at-a">Account monitoring intensified</span></td>
+            <td>AMLC STR within 5 business days · No tipping-off</td>
+            <td>24h to AMLC flag · 48h T3 decision</td>
+          </tr>
+          <tr>
+            <td><div class="scen-name">Third-party deposit detected</div><div class="scen-sub">Deposit source name does not match KYC name</div></td>
+            <td><span class="bdg bdg-r">ML / Payment Fraud</span></td>
+            <td><span class="bdg bdg-r">T2 Senior</span></td>
+            <td><span class="bdg bdg-p">T3 Head + CCO</span></td>
+            <td>Put account on deposit hold immediately. Freeze the specific transaction. Request written explanation from player (do not reveal ML suspicion — frame as a security verification). Escalate to Compliance</td>
+            <td><span class="atag at-r">Return funds to source</span><br><span class="atag at-p">AMLC STR if suspicious explanation</span></td>
+            <td>AMLC STR if confirmed</td>
+            <td>24h decision</td>
+          </tr>
+          <tr>
+            <td><div class="scen-name">Abnormal sportsbook bet pattern</div><div class="scen-sub">Large bets on obscure markets with unusual odds movement</div></td>
+            <td><span class="bdg bdg-g">Match Fixing</span></td>
+            <td><span class="bdg bdg-r">T2 Senior</span></td>
+            <td><span class="bdg bdg-p">T3 Head</span></td>
+            <td>Do not settle bets pending investigation. Alert Sportsbook Trading team immediately. Compile bet data and market movement evidence. Coordinate with Sports Integrity Unit if applicable</td>
+            <td><span class="atag at-a">Bets voided if fixing confirmed</span><br><span class="atag at-r">Account banned</span></td>
+            <td>PAGCOR notification · Possible NBI referral</td>
+            <td>24h T2 · 48h T3</td>
+          </tr>
+          <tr>
+            <td><div class="scen-name">Organised fraud ring identified</div><div class="scen-sub">Network of 5+ coordinated accounts across multiple devices</div></td>
+            <td><span class="bdg bdg-r">Multi-Account / Fraud Ring</span></td>
+            <td><span class="bdg bdg-p">T3 Head</span></td>
+            <td>Legal + PAGCOR</td>
+            <td>Simultaneously restrict all identified accounts. Preserve all evidence per legal chain-of-custody requirements. Brief COO and Legal. Assess NBI referral. Issue internal fraud alert without disclosing specifics</td>
+            <td><span class="atag at-r">All accounts permanently banned</span><br><span class="atag at-b">NBI referral</span></td>
+            <td>PAGCOR mandatory notification · AMLC if ML involved</td>
+            <td>Immediate restriction · 48h T3 final decision</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sec-label">Payments Scenario Routing</div>
+    <div style="overflow-x:auto;">
+      <table class="mtable">
+        <thead>
+          <tr>
+            <th style="width:20%">Scenario</th>
+            <th style="width:12%">First Owner</th>
+            <th style="width:12%">Escalate To</th>
+            <th style="width:22%">Required Actions</th>
+            <th style="width:14%">Resolution</th>
+            <th style="width:10%">Regulatory</th>
+            <th style="width:10%">SLA</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="scen-name">PSP-wide outage (GCash / Maya)</div><div class="scen-sub">Multiple deposits / withdrawals failing across all players</div></td>
+            <td><span class="bdg bdg-a">Payments Specialist</span></td>
+            <td><span class="bdg bdg-r">Head of F&P</span></td>
+            <td>Check PSP status page. Activate backup PSP routing if available. Update platform payment page with outage notice. Brief CS team on holding message for players. Escalate to Head within 15 min if outage persists</td>
+            <td><span class="atag at-a">Backup PSP active</span><br><span class="atag at-b">Player notification</span></td>
+            <td>None — operational incident</td>
+            <td>15min escalation · Resolve &lt;2h</td>
+          </tr>
+          <tr>
+            <td><div class="scen-name">VIP withdrawal delayed beyond SLA</div><div class="scen-sub">Gold+ player's withdrawal has not settled on time</div></td>
+            <td><span class="bdg bdg-a">Payments Specialist</span></td>
+            <td><span class="bdg bdg-r">Head of F&P</span></td>
+            <td>Identify cause: PSP delay or internal queue backlog. Escalate to priority lane immediately. Notify VAM so they can proactively contact the player before the player complains. Offer compensatory cashback if delay exceeds 2× tier SLA</td>
+            <td><span class="atag at-g">Withdrawal expedited</span><br><span class="atag at-a">Cashback offered</span></td>
+            <td>None</td>
+            <td>Immediate action · resolve within 1 hour</td>
+          </tr>
+          <tr>
+            <td><div class="scen-name">Withdrawal name mismatch</div><div class="scen-sub">GCash / bank account name does not match KYC name</div></td>
+            <td><span class="bdg bdg-a">Payments Specialist</span></td>
+            <td>KYC if persistent</td>
+            <td>Hold withdrawal. CS contacts player requesting proof that the destination account belongs to them (GCash or bank screenshot showing registered name). If mismatch is unexplained after 48h: escalate to Fraud team as potential third-party withdrawal</td>
+            <td><span class="atag at-g">Mismatch explained → process</span><br><span class="atag at-r">Unexplained → Fraud T2</span></td>
+            <td>None unless fraud confirmed</td>
+            <td>CS contact within 4h · 48h resolution window</td>
+          </tr>
+          <tr>
+            <td><div class="scen-name">Player files GCash chargeback</div><div class="scen-sub">Player disputes a deposit through GCash</div></td>
+            <td><span class="bdg bdg-a">Payments Specialist</span></td>
+            <td><span class="bdg bdg-r">Head of F&P</span> if &gt;₱50k</td>
+            <td>Retrieve dispute notification. Log reference number. Assess whether the chargeback is fraudulent (player played and lost) or legitimate (ATO). Compile evidence package within 48h. Submit response within 5 business days</td>
+            <td><span class="atag at-g">Contest — evidence submitted</span><br><span class="atag at-a">Accept — if legitimate ATO</span></td>
+            <td>BSP CAM if unresolved · 5-year record retention</td>
+            <td>Evidence compiled within 48h · Submitted within 5 business days</td>
+          </tr>
+          <tr>
+            <td><div class="scen-name">₱500k+ single-day transaction</div><div class="scen-sub">Player deposits or withdraws ≥₱500k in one banking day</div></td>
+            <td><span class="bdg bdg-r">Head of F&P</span></td>
+            <td>CCO — AMLC filing</td>
+            <td>Alert Compliance team same banking day. Head of F&P approves withdrawal if all gates pass. CCO files CTR with AMLC on the same banking day. Standard VIP service continues unless STR is also triggered</td>
+            <td><span class="atag at-b">CTR filed — AMLC</span><br><span class="atag at-g">Transaction processed</span></td>
+            <td>AMLC CTR mandatory — same banking day</td>
+            <td>Alert Compliance same day</td>
+          </tr>
+          <tr>
+            <td><div class="scen-name">Recurring PSP reconciliation discrepancy</div><div class="scen-sub">Platform ledger does not match PSP settlement report</div></td>
+            <td><span class="bdg bdg-a">Payments Specialist</span></td>
+            <td><span class="bdg bdg-r">Head of F&P</span> + Finance</td>
+            <td>Run daily reconciliation report. Identify the specific transaction discrepancy with PSP transaction ID. Log in reconciliation tracker. Escalate to Head of F&P if discrepancy &gt;₱5,000 or unresolved for 24h. Finance team notified for ledger adjustment</td>
+            <td><span class="atag at-g">Reconciled</span><br><span class="atag at-b">PSP credit / debit adjustment</span></td>
+            <td>BSP record-keeping requirements</td>
+            <td>Identify within 24h · Resolve within 72h</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- /page-matrix -->
+
+
+<!-- ══════════════════════════
+     PAGE 4 — SLA & TIMERS
+══════════════════════════ -->
+<div id="page-sla" class="page">
+  <div class="hero" style="padding-bottom:40px;">
+    <div class="hero-grid-accent"></div>
+    <div class="hero-bracket">Service Level Standards</div>
+    <h1>SLA &amp; <em>Response</em><br>Timers</h1>
+    <p class="hero-desc">All response time standards for fraud investigation tiers, payment processing, withdrawal SLAs by player tier, and non-negotiable regulatory timers.</p>
+  </div>
+  <div class="main">
+
+    <div class="sec-label">Fraud Investigation SLAs</div>
+    <div class="sla-grid" style="margin-bottom:40px;">
+      <div class="sla-card" style="--sc:var(--amber)">
+        <div class="sla-top">
+          <div class="sla-num" style="color:var(--amber)">1h</div>
+          <div><div class="sla-name">Tier 1 — Triage</div><div class="sla-sub">Fraud Analyst</div></div>
+        </div>
+        <div class="sla-body">
+          <div class="sla-desc">Initial triage, evidence pull, and restriction decision must be completed within 1 hour of alert receipt.</div>
+          <ul class="sla-rules">
+            <li>Alert acknowledgement: 15 minutes</li>
+            <li>Preliminary restriction (if warranted): 30 minutes</li>
+            <li>Escalation to Tier 2 if inconclusive: 1 hour</li>
+            <li>False positive clearance: 1 hour</li>
+          </ul>
+        </div>
+      </div>
+      <div class="sla-card" style="--sc:var(--red)">
+        <div class="sla-top">
+          <div class="sla-num" style="color:var(--red)">24h</div>
+          <div><div class="sla-name">Tier 2 — Investigation</div><div class="sla-sub">Senior Analyst</div></div>
+        </div>
+        <div class="sla-body">
+          <div class="sla-desc">Full investigation, payment trace, PSP coordination, and recommendation within 24 hours.</div>
+          <ul class="sla-rules">
+            <li>Evidence compilation: 8 hours</li>
+            <li>PSP contact (if required): 4 hours</li>
+            <li>Preliminary recommendation to T3: 24 hours</li>
+            <li>ATO / critical fraud: immediate escalation — no wait</li>
+          </ul>
+        </div>
+      </div>
+      <div class="sla-card" style="--sc:var(--purple)">
+        <div class="sla-top">
+          <div class="sla-num" style="color:var(--purple)">48h</div>
+          <div><div class="sla-name">Tier 3 — Final Decision</div><div class="sla-sub">Head of Fraud & Payments</div></div>
+        </div>
+        <div class="sla-body">
+          <div class="sla-desc">Executive review, final account disposition, and all regulatory coordination within 48 hours.</div>
+          <ul class="sla-rules">
+            <li>Final account decision: 48 hours</li>
+            <li>CCO AMLC briefing: within 24h of T3 receipt</li>
+            <li>COO/Legal notification: same day as final decision</li>
+            <li>Fraud rules engine update: within 72h of case close</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-label">Payment Processing SLAs by Channel</div>
+    <div style="overflow-x:auto;margin-bottom:40px;">
+      <table class="breach-table">
+        <thead>
+          <tr>
+            <th>Channel</th>
+            <th>Deposit Settlement</th>
+            <th>Standard Withdrawal</th>
+            <th>Gold Withdrawal</th>
+            <th>Platinum Withdrawal</th>
+            <th>Elite Withdrawal</th>
+            <th>Breach Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bdg bdg-g">GCash</span></td>
+            <td>Instant (real-time API)</td>
+            <td>4 hours</td>
+            <td>1 hour</td>
+            <td>30 minutes</td>
+            <td>Immediate</td>
+            <td>Payments Specialist escalates to Head of F&P after 2× SLA breach. VAM notified for VIP players</td>
+          </tr>
+          <tr>
+            <td><span class="bdg bdg-b">Maya</span></td>
+            <td>Instant (real-time API)</td>
+            <td>4 hours</td>
+            <td>1 hour</td>
+            <td>30 minutes</td>
+            <td>Immediate</td>
+            <td>Same as GCash. Maya enterprise channel for Platinum/Elite</td>
+          </tr>
+          <tr>
+            <td><span class="bdg bdg-a">InstaPay</span></td>
+            <td>Real-time (&lt;1 min)</td>
+            <td>4 hours</td>
+            <td>2 hours</td>
+            <td>1 hour</td>
+            <td>30 minutes</td>
+            <td>BSP real-time rail — failures are PSP-side. Log and report to PSP</td>
+          </tr>
+          <tr>
+            <td><span class="bdg bdg-p">PESONet</span></td>
+            <td>Same business day (if before 2pm)</td>
+            <td>Next business day</td>
+            <td>Same business day</td>
+            <td>Same business day</td>
+            <td>Priority same day</td>
+            <td>Batch settlement — timing is PSP-controlled. Communicate to player upfront</td>
+          </tr>
+          <tr>
+            <td><span class="bdg bdg-a">Bank Direct (BDO/UnionBank)</span></td>
+            <td>Same day (before 2pm)</td>
+            <td>24 hours</td>
+            <td>6 hours</td>
+            <td>2 hours</td>
+            <td>1 hour</td>
+            <td>Finance team coordinates with bank relationship manager for priority processing</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert-banner">
+      <div class="alert-icon">⚠</div>
+      <div>
+        <strong style="color:var(--red);font-family:'Share Tech Mono',monospace;font-size:16px;letter-spacing:0.1em;display:block;margin-bottom:6px;">CRITICAL NON-NEGOTIABLE TIMERS</strong>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;font-size:17px;color:var(--text2);line-height:1.7;">
+          <div><strong style="color:#fff;">AMLC CTR:</strong> Filed same banking day as the transaction reaching ₱500,000. No end-of-day batching permitted for this obligation.</div>
+          <div><strong style="color:#fff;">AMLC STR:</strong> Filed within 5 business days of the date suspicion arose. CCO is personally liable for missed deadlines under AMLA RA 9160.</div>
+          <div><strong style="color:#fff;">Chargeback Response:</strong> Evidence submitted to PSP within 5 business days. Missed deadlines result in automatic chargeback loss with no appeal.</div>
+          <div><strong style="color:#fff;">ATO Account Freeze:</strong> Account must be frozen within 15 minutes of confirmed ATO suspicion. Any withdrawal processed after the ATO flag is raised is the operator's liability.</div>
+          <div><strong style="color:#fff;">Tipping-Off:</strong> Once an STR is filed or in preparation, zero player communication about the investigation. This applies to all staff including CS, VIP, and Payments teams.</div>
+          <div><strong style="color:#fff;">Record Retention:</strong> All transaction records, investigation files, and KYC documents must be retained for a minimum of 5 years per AMLC requirements.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /page-sla -->
+
+
+<!-- ══════════════════════════
+     PAGE 5 — GLOSSARY
+══════════════════════════ -->
+<div id="page-glossary" class="page">
+  <div class="hero" style="padding-bottom:40px;">
+    <div class="hero-grid-accent"></div>
+    <div class="hero-bracket">Reference Document</div>
+    <h1>Fraud &amp; Payments<br><em>Glossary</em></h1>
+    <p class="hero-desc">Key terms, acronyms, Philippines-specific payment infrastructure, and regulatory definitions for the Fraud and Payments operations workflow.</p>
+  </div>
+  <div class="main">
+
+    <div class="sec-label">Fraud Terms</div>
+    <div class="gloss-grid" style="margin-bottom:40px;">
+      <div class="gloss-card">
+        <div class="gloss-term">ATO</div>
+        <div class="gloss-abbr">Account Takeover</div>
+        <div class="gloss-def">Unauthorized access to a legitimate player account by a third party, typically via stolen credentials, phishing, SIM swap, or brute force. ATOs are typically followed immediately by withdrawal attempts. Account must be frozen within 15 minutes of suspicion.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Device Fingerprint</div>
+        <div class="gloss-abbr">Browser / Device Identifier</div>
+        <div class="gloss-def">A unique identifier created from a combination of browser settings, screen resolution, installed fonts, plugins, timezone, and hardware attributes. Used to link multiple accounts operating from the same device, even if different player credentials are used.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Velocity Check</div>
+        <div class="gloss-abbr">Transaction Frequency Rule</div>
+        <div class="gloss-def">An automated rule that flags accounts making an unusually high number of transactions within a defined time window. For example: 5+ deposits within 2 hours, or 3+ bonus claims within 48 hours. High velocity on deposits or withdrawals is a primary fraud indicator.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Structuring</div>
+        <div class="gloss-abbr">Transaction Structuring / Smurfing</div>
+        <div class="gloss-def">The deliberate splitting of transactions to stay below the AMLC CTR threshold of ₱500,000. For example, making multiple deposits of ₱490,000–₱499,000 on consecutive days. Structuring is itself a criminal offence under AMLA RA 9160 regardless of the source of funds.</div>
+        <span class="gloss-ph">🇵🇭 AMLC — AMLA RA 9160</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Bonus Abuse</div>
+        <div class="gloss-abbr">Promotional Exploitation</div>
+        <div class="gloss-def">Systematic exploitation of welcome bonuses, cashback offers, or free bets through multiple accounts (bonus multi-accounting), near-zero-risk play strategies to clear wagering requirements, or coordinated rings of players sharing bonuses across accounts.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Collusion</div>
+        <div class="gloss-abbr">Coordinated Player Fraud</div>
+        <div class="gloss-def">Two or more players coordinating to gain an unfair advantage, most commonly in poker (sharing hole card information) or PvP specialty games (one player deliberately losing to another to transfer funds). Match fixing in sportsbook falls under a related but distinct category involving sporting event manipulation.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">SIM Swap</div>
+        <div class="gloss-abbr">SIM Hijacking</div>
+        <div class="gloss-def">A fraud method where an attacker convinces a mobile network operator to transfer a victim's phone number to a SIM card controlled by the attacker, thereby intercepting OTP messages. Particularly relevant in the Philippines where GCash and Maya use OTP-based authentication. Indicators include: sudden OTP failures reported by the legitimate user, or a player account accessing GCash from a new device immediately after a period of inactivity.</div>
+        <span class="gloss-ph">🇵🇭 PH Context — GCash / Maya</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Tipping-Off</div>
+        <div class="gloss-abbr">Prohibited Disclosure</div>
+        <div class="gloss-def">The act of informing a subject that they are under investigation for money laundering or that an STR has been filed. A criminal offence under AMLA. Once an AMLC referral is in progress, all player-facing communication must be cleared by the CCO. CS and VIP teams must not reference the investigation to the player under any circumstances.</div>
+        <span class="gloss-ph">🇵🇭 AMLA RA 9160</span>
+      </div>
+    </div>
+
+    <div class="sec-label">Payments & PSP Terms</div>
+    <div class="gloss-grid" style="margin-bottom:40px;">
+      <div class="gloss-card">
+        <div class="gloss-term">PSP</div>
+        <div class="gloss-abbr">Payment Service Provider</div>
+        <div class="gloss-def">A third-party provider that processes payment transactions between the operator and the player. In the Philippines context, the primary PSPs are GCash (Mynt/Globe), Maya (PLDT Voyager), UnionBank, and BDO. Each PSP has its own API, settlement timeline, dispute process, and fraud reporting channel.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Chargeback</div>
+        <div class="gloss-abbr">Payment Reversal Dispute</div>
+        <div class="gloss-def">A reversal of a payment initiated by the customer through their PSP or bank. In iGaming, chargebacks are filed by players who claim the deposit was unauthorised (ATO) or who deliberately attempt to reclaim funds after losing (friendly fraud). The operator has a fixed window (typically 5 business days) to submit evidence contesting the chargeback.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Reconciliation</div>
+        <div class="gloss-abbr">Transaction Ledger Matching</div>
+        <div class="gloss-def">The daily process of matching the operator's internal transaction ledger against the PSP settlement report to identify discrepancies. Discrepancies can arise from timing differences, failed transactions that were partially processed, or PSP errors. All discrepancies must be identified within 24 hours and resolved within 72 hours.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">InstaPay</div>
+        <div class="gloss-abbr">BSP Real-Time Payment Rail</div>
+        <div class="gloss-def">A BSP-regulated interbank real-time fund transfer service available 24/7. Maximum per-transaction amount is ₱50,000. Settlement is near-instant. The most common rail for standard player withdrawals via bank transfer in the Philippines.</div>
+        <span class="gloss-ph">🇵🇭 BSP — Real-Time</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">PESONet</div>
+        <div class="gloss-abbr">BSP Batch Payment Rail</div>
+        <div class="gloss-def">A BSP-regulated batch electronic fund transfer system. Transactions submitted before the batch cut-off (typically 12pm–2pm) are settled on the same business day. Transactions after the cut-off are settled the next business day. No maximum per-transaction limit, making it suitable for large Platinum and Elite withdrawals.</div>
+        <span class="gloss-ph">🇵🇭 BSP — Batch</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Name-Match Check</div>
+        <div class="gloss-abbr">Withdrawal Destination Verification</div>
+        <div class="gloss-def">A verification step that compares the name on the player's KYC-approved identity document against the registered name on the GCash account, Maya account, or bank account to which a withdrawal is being sent. Mismatches must be investigated before disbursement — third-party withdrawals are a key money laundering red flag.</div>
+        <span class="gloss-ph">🇵🇭 AMLC Requirement</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">CTR</div>
+        <div class="gloss-abbr">Cash Transaction Report</div>
+        <div class="gloss-def">Filed with AMLC when a player's single or linked transactions in a single banking day reach or exceed ₱500,000. Filed on the same banking day. The Payments team is responsible for alerting Compliance when a player's daily total approaches this threshold — the Fraud & Payments team tracks this in real time via the transaction monitoring dashboard.</div>
+        <span class="gloss-ph">🇵🇭 AMLC — Same Banking Day</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">BSP CAM</div>
+        <div class="gloss-abbr">Consumer Assistance Mechanism</div>
+        <div class="gloss-def">The Bangko Sentral ng Pilipinas formal dispute resolution process for unresolved payment complaints. Players can escalate to BSP CAM if GCash or Maya does not resolve their dispute within the PSP's own internal timeline. The operator must maintain full transaction records and be prepared to respond to BSP inquiries, which can carry regulatory penalties for non-compliance.</div>
+        <span class="gloss-ph">🇵🇭 BSP — Regulatory Escalation</span>
+      </div>
+    </div>
+
+    <div class="sec-label">Regulatory Reference</div>
+    <div class="gloss-grid">
+      <div class="gloss-card">
+        <div class="gloss-term">AMLA RA 9160</div>
+        <div class="gloss-abbr">Anti-Money Laundering Act (as amended)</div>
+        <div class="gloss-def">The primary Philippines legislation governing AML obligations. Extended to cover online casinos and iGaming operators by RA 10927 (2017). Key obligations: KYC, CTR filing, STR filing, record retention (5 years), and prohibition on tipping-off. CCO bears personal liability for compliance failures.</div>
+        <span class="gloss-ph">🇵🇭 Primary AML Legislation</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">NBI</div>
+        <div class="gloss-abbr">National Bureau of Investigation</div>
+        <div class="gloss-def">The Philippine federal law enforcement agency with jurisdiction over cybercrime, financial fraud, and organised crime. Relevant for iGaming operators when fraud cases involve criminal activity warranting a formal complaint — particularly for organised fraud rings, large-scale ATO attacks, or match-fixing investigations with criminal elements.</div>
+        <span class="gloss-ph">🇵🇭 Law Enforcement</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">PAGCOR</div>
+        <div class="gloss-abbr">Philippine Amusement and Gaming Corporation</div>
+        <div class="gloss-def">Primary gaming regulator and licencing authority. Operators must notify PAGCOR of significant fraud incidents, match-fixing cases, and any AMLC filings relating to gaming activity. PAGCOR may also issue operator-level guidance on emerging fraud typologies in the Philippine iGaming market.</div>
+        <span class="gloss-ph">🇵🇭 Gaming Regulator</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">BSP</div>
+        <div class="gloss-abbr">Bangko Sentral ng Pilipinas</div>
+        <div class="gloss-def">Central bank of the Philippines. Regulates all payment service providers including GCash and Maya. Relevant to the Fraud & Payments team when: PSP disputes escalate to BSP CAM, e-money regulatory obligations apply, or when a payment fraud case involves the banking system.</div>
+        <span class="gloss-ph">🇵🇭 Central Bank</span>
+      </div>
+    </div>
+  </div>
+</div><!-- /page-glossary -->
+
+<footer>
+  <strong>FRAUD / PAYMENTS WORKFLOW</strong> · iGaming Philippines Operations · PAGCOR · AMLC · BSP Compliant · Internal Use Only
+</footer>
+
+<script>
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+function tog(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KYC Escalation Workflow · iGaming Philippines</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #f7f5f0;
+  --surface:  #ffffff;
+  --surface2: #f0ece4;
+  --border:   #ddd8ce;
+  --border2:  #c8c2b6;
+  --ink:      #1a1612;
+  --ink2:     #4a4540;
+  --ink3:     #7a756e;
+  --accent:   #c84b2f;
+  --accent2:  #1a4a7a;
+  --accent3:  #1a6a45;
+  --warn:     #b8860b;
+  --red:      #c84b2f;
+  --amber:    #d4830a;
+  --green:    #1a6a45;
+  --blue:     #1a4a7a;
+  --purple:   #5a2d82;
+
+  --t1: #c84b2f;
+  --t2: #d4830a;
+  --t3: #1a4a7a;
+  --t4: #5a2d82;
+  --t-amlc: #1a1612;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { font-size:21px; scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 18px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* grain texture */
+body::after {
+  content:'';
+  position:fixed; inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none; z-index:9999; opacity:0.4;
+}
+
+/* ── TOP NAV ── */
+.topnav {
+  position:sticky; top:0; z-index:100;
+  background:var(--ink);
+  display:flex; align-items:center;
+  padding:0 40px; height:56px;
+  border-bottom:3px solid var(--accent);
+}
+.topnav-brand {
+  font-family:'Playfair Display',serif;
+  font-size:23px; font-weight:900;
+  color:#fff; letter-spacing:0.01em;
+  margin-right:auto;
+}
+.topnav-brand span { color:var(--accent); }
+.topnav-links { display:flex; gap:0; }
+.nav-link {
+  font-size:16px; letter-spacing:0.15em; text-transform:uppercase;
+  color:rgba(255,255,255,0.5); padding:0 18px; height:56px;
+  display:flex; align-items:center; cursor:pointer;
+  border-bottom:3px solid transparent; margin-bottom:-3px;
+  transition:all 0.2s; background:none; border-top:none; border-left:none; border-right:none;
+  font-family:'IBM Plex Mono',monospace;
+}
+.nav-link:hover { color:rgba(255,255,255,0.85); }
+.nav-link.active { color:#fff; border-bottom-color:var(--accent); }
+
+/* ── PAGES ── */
+.page { display:none; }
+.page.active { display:block; }
+
+/* ── HERO ── */
+.hero {
+  background: var(--ink);
+  color:#fff;
+  padding:64px 40px 48px;
+  position:relative; overflow:hidden;
+}
+.hero::before {
+  content:'KYC';
+  position:absolute; right:-20px; top:-30px;
+  font-family:'Playfair Display',serif;
+  font-size:286px; font-weight:900;
+  color:rgba(255,255,255,0.03);
+  line-height:1; pointer-events:none;
+  letter-spacing:-0.05em;
+}
+.hero-eyebrow {
+  font-size:14px; letter-spacing:0.3em; text-transform:uppercase;
+  color:var(--accent); margin-bottom:14px;
+  display:flex; align-items:center; gap:10px;
+}
+.hero-eyebrow::before { content:''; width:32px; height:1px; background:var(--accent); }
+.hero h1 {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(36px,4vw,68px);
+  font-weight:900; line-height:1.1;
+  margin-bottom:16px;
+}
+.hero h1 em { color:var(--accent); font-style:normal; }
+.hero-desc {
+  font-size:20px; color:rgba(255,255,255,0.6);
+  max-width:640px; line-height:1.8;
+}
+.hero-meta {
+  display:flex; gap:24px; margin-top:32px; flex-wrap:wrap;
+}
+.hero-stat {
+  padding:14px 20px;
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:2px;
+}
+.hero-stat-num {
+  font-family:'Playfair Display',serif;
+  font-size:36px; font-weight:700; color:var(--accent);
+}
+.hero-stat-label { font-size:14px; color:rgba(255,255,255,0.4); margin-top:2px; letter-spacing:0.1em; }
+
+/* ── MAIN LAYOUT ── */
+.main { max-width:1200px; margin:0 auto; padding:48px 40px; }
+.section-title {
+  font-family:'Playfair Display',serif;
+  font-size:17px; font-weight:600; letter-spacing:0.2em;
+  text-transform:uppercase; color:var(--ink3);
+  margin-bottom:28px;
+  display:flex; align-items:center; gap:12px;
+}
+.section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* ── TIER LEGEND ── */
+.tier-legend {
+  display:flex; gap:10px; flex-wrap:wrap; margin-bottom:40px;
+  padding:16px 20px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:2px;
+}
+.tier-pill {
+  display:flex; align-items:center; gap:8px;
+  padding:6px 14px; border-radius:2px;
+  font-size:17px; font-weight:500;
+  border:1px solid;
+}
+.tp-1 { background:rgba(200,75,47,0.08); border-color:rgba(200,75,47,0.3); color:var(--t1); }
+.tp-2 { background:rgba(212,131,10,0.08); border-color:rgba(212,131,10,0.3); color:var(--t2); }
+.tp-3 { background:rgba(26,74,122,0.08); border-color:rgba(26,74,122,0.3); color:var(--t3); }
+.tp-4 { background:rgba(90,45,130,0.08); border-color:rgba(90,45,130,0.3); color:var(--t4); }
+.tp-amlc { background:rgba(26,22,18,0.08); border-color:rgba(26,22,18,0.4); color:var(--t-amlc); }
+.tier-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+.td-1 { background:var(--t1); }
+.td-2 { background:var(--t2); }
+.td-3 { background:var(--t3); }
+.td-4 { background:var(--t4); }
+.td-amlc { background:var(--t-amlc); }
+
+/* ── FLOW DIAGRAM ── */
+.flow-container { position:relative; }
+
+/* Trigger box */
+.trigger-box {
+  background:var(--ink);
+  color:#fff;
+  padding:20px 28px;
+  border-radius:2px;
+  margin-bottom:8px;
+  display:flex; align-items:center; gap:16px;
+  position:relative;
+}
+.trigger-label {
+  font-family:'Playfair Display',serif;
+  font-size:26px; font-weight:700;
+}
+.trigger-sub { font-size:17px; color:rgba(255,255,255,0.5); margin-top:3px; }
+
+/* Fail reason grid */
+.fail-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:8px; margin-bottom:32px;
+}
+.fail-card {
+  background:rgba(200,75,47,0.06);
+  border:1px solid rgba(200,75,47,0.2);
+  border-top:2px solid var(--accent);
+  padding:12px 16px; border-radius:2px;
+}
+.fail-card-title { font-size:17px; font-weight:600; color:var(--accent); margin-bottom:4px; }
+.fail-card-body { font-size:16px; color:var(--ink2); line-height:1.6; }
+
+/* Connector arrow */
+.connector {
+  display:flex; flex-direction:column; align-items:center;
+  gap:0; margin:4px 0;
+}
+.connector-line { width:2px; height:20px; background:var(--border2); }
+.connector-arrow { font-size:23px; color:var(--border2); line-height:1; }
+.connector-label {
+  font-size:14px; letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--ink3); background:var(--bg);
+  padding:2px 10px; border:1px solid var(--border);
+  border-radius:2px; margin:4px 0;
+}
+
+/* TIER BLOCK */
+.tier-block {
+  border:1px solid var(--border);
+  border-radius:2px;
+  overflow:hidden;
+  margin-bottom:8px;
+  background:var(--surface);
+}
+.tier-header {
+  padding:14px 20px;
+  display:flex; align-items:center; gap:14px;
+  border-bottom:1px solid var(--border);
+  cursor:pointer;
+  user-select:none;
+  transition:background 0.15s;
+}
+.tier-header:hover { background:var(--surface2); }
+.tier-num {
+  font-family:'Playfair Display',serif;
+  font-size:36px; font-weight:900;
+  line-height:1; flex-shrink:0;
+  width:40px;
+}
+.tier-header-info { flex:1; }
+.tier-name { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; }
+.tier-owner { font-size:16px; color:var(--ink3); margin-top:2px; letter-spacing:0.05em; }
+.tier-sla {
+  font-size:16px; padding:4px 12px;
+  border-radius:2px; font-weight:600;
+  border:1px solid; white-space:nowrap;
+}
+.tier-toggle {
+  font-size:23px; color:var(--ink3);
+  transition:transform 0.2s; flex-shrink:0;
+}
+.tier-block.open .tier-toggle { transform:rotate(180deg); }
+
+.tier-body {
+  display:none;
+  padding:20px;
+}
+.tier-block.open .tier-body { display:block; }
+
+.tier-cols {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+@media(max-width:700px) { .tier-cols { grid-template-columns:1fr; } }
+
+.tier-col-title {
+  font-size:14px; letter-spacing:0.2em; text-transform:uppercase;
+  color:var(--ink3); margin-bottom:10px;
+  padding-bottom:8px; border-bottom:1px solid var(--border);
+}
+
+.checklist { list-style:none; display:flex; flex-direction:column; gap:8px; }
+.checklist li {
+  display:flex; gap:10px; align-items:flex-start;
+  font-size:17px; color:var(--ink2); line-height:1.6;
+}
+.checklist li::before {
+  content:'→';
+  color:var(--tier-color,var(--ink3));
+  flex-shrink:0; margin-top:1px;
+  font-weight:600;
+}
+
+.outcome-list { display:flex; flex-direction:column; gap:8px; }
+.outcome-item {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:10px 14px;
+  border-radius:2px;
+  font-size:17px; line-height:1.6;
+  border:1px solid;
+}
+.oi-approve { background:rgba(26,106,69,0.06); border-color:rgba(26,106,69,0.2); color:var(--green); }
+.oi-escalate { background:rgba(26,74,122,0.06); border-color:rgba(26,74,122,0.2); color:var(--blue); }
+.oi-reject { background:rgba(200,75,47,0.06); border-color:rgba(200,75,47,0.2); color:var(--red); }
+.oi-edd { background:rgba(90,45,130,0.06); border-color:rgba(90,45,130,0.2); color:var(--purple); }
+.oi-amlc { background:rgba(26,22,18,0.06); border-color:rgba(26,22,18,0.3); color:var(--ink); }
+.oi-icon { font-size:21px; flex-shrink:0; }
+.oi-text strong { display:block; font-weight:600; margin-bottom:2px; }
+
+.tier-tools {
+  margin-top:16px; padding-top:16px; border-top:1px solid var(--border);
+  display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+}
+.tool-label { font-size:14px; letter-spacing:0.15em; text-transform:uppercase; color:var(--ink3); margin-right:4px; }
+.tool-tag {
+  font-size:16px; padding:3px 10px;
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:2px; color:var(--ink2);
+}
+
+.sla-bar-wrap { margin-top:16px; padding-top:16px; border-top:1px solid var(--border); }
+.sla-bar-label { font-size:16px; color:var(--ink3); margin-bottom:6px; }
+.sla-track { height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+.sla-fill { height:100%; border-radius:3px; }
+
+/* AMLC alert block */
+.amlc-block {
+  background:var(--ink);
+  color:#fff;
+  border-radius:2px;
+  padding:20px 24px;
+  margin-top:8px;
+  position:relative; overflow:hidden;
+}
+.amlc-block::before {
+  content:'⚠';
+  position:absolute; right:20px; top:10px;
+  font-size:104px; opacity:0.06; pointer-events:none;
+}
+.amlc-header {
+  display:flex; align-items:center; gap:10px;
+  margin-bottom:14px;
+}
+.amlc-badge {
+  font-size:13px; letter-spacing:0.2em; text-transform:uppercase;
+  padding:4px 10px; background:var(--accent);
+  color:#fff; border-radius:2px; font-weight:600;
+}
+.amlc-title {
+  font-family:'Playfair Display',serif;
+  font-size:22px; font-weight:700;
+}
+.amlc-cols {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+@media(max-width:700px) { .amlc-cols { grid-template-columns:1fr; } }
+.amlc-col-title {
+  font-size:14px; letter-spacing:0.18em; text-transform:uppercase;
+  color:rgba(255,255,255,0.4); margin-bottom:10px;
+  border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:6px;
+}
+.amlc-list { list-style:none; display:flex; flex-direction:column; gap:7px; }
+.amlc-list li {
+  font-size:17px; color:rgba(255,255,255,0.75);
+  display:flex; gap:8px; line-height:1.6;
+}
+.amlc-list li::before { content:'▸'; color:var(--accent); flex-shrink:0; }
+
+/* ── DECISION MATRIX PAGE ── */
+.matrix-wrap { overflow-x:auto; }
+.matrix-table {
+  width:100%; border-collapse:collapse;
+  font-size:17px; background:var(--surface);
+  border:1px solid var(--border);
+}
+.matrix-table th {
+  padding:12px 16px; text-align:left;
+  font-size:14px; letter-spacing:0.16em; text-transform:uppercase;
+  color:var(--ink3); border-bottom:2px solid var(--border);
+  background:var(--surface2);
+  font-family:'IBM Plex Mono',monospace;
+}
+.matrix-table td {
+  padding:12px 16px; border-bottom:1px solid var(--border);
+  color:var(--ink2); vertical-align:top; line-height:1.7;
+}
+.matrix-table tr:last-child td { border-bottom:none; }
+.matrix-table tr:hover td { background:var(--surface2); }
+.scenario-name { font-weight:600; color:var(--ink); font-size:17px; }
+.scenario-sub { font-size:16px; color:var(--ink3); margin-top:2px; }
+
+.tier-badge {
+  display:inline-block; padding:3px 10px; border-radius:2px;
+  font-size:14px; font-weight:600; letter-spacing:0.08em;
+  text-transform:uppercase; white-space:nowrap;
+}
+.tb-1 { background:rgba(200,75,47,0.1); color:var(--t1); border:1px solid rgba(200,75,47,0.3); }
+.tb-2 { background:rgba(212,131,10,0.1); color:var(--t2); border:1px solid rgba(212,131,10,0.3); }
+.tb-3 { background:rgba(26,74,122,0.1); color:var(--t3); border:1px solid rgba(26,74,122,0.3); }
+.tb-4 { background:rgba(90,45,130,0.1); color:var(--t4); border:1px solid rgba(90,45,130,0.3); }
+.tb-amlc { background:rgba(26,22,18,0.08); color:var(--t-amlc); border:1px solid rgba(26,22,18,0.3); }
+
+.action-tag {
+  display:inline-block; padding:2px 8px; border-radius:2px;
+  font-size:14px; border:1px solid; margin-top:4px;
+}
+.at-approve { color:var(--green); border-color:rgba(26,106,69,0.3); background:rgba(26,106,69,0.06); }
+.at-escalate { color:var(--blue); border-color:rgba(26,74,122,0.3); background:rgba(26,74,122,0.06); }
+.at-reject { color:var(--red); border-color:rgba(200,75,47,0.3); background:rgba(200,75,47,0.06); }
+.at-edd { color:var(--purple); border-color:rgba(90,45,130,0.3); background:rgba(90,45,130,0.06); }
+.at-amlc { color:var(--ink); border-color:rgba(26,22,18,0.3); background:rgba(26,22,18,0.05); }
+.at-hold { color:var(--amber); border-color:rgba(212,131,10,0.3); background:rgba(212,131,10,0.06); }
+
+/* ── SLA PAGE ── */
+.sla-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; margin-bottom:40px; }
+.sla-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:2px; overflow:hidden;
+}
+.sla-card-top {
+  padding:16px 20px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:12px;
+}
+.sla-card-num {
+  font-family:'Playfair Display',serif;
+  font-size:47px; font-weight:900; line-height:1;
+}
+.sla-card-body { padding:16px 20px; }
+.sla-card-meta { font-size:17px; color:var(--ink3); margin-bottom:12px; line-height:1.7; }
+.sla-rule-list { list-style:none; display:flex; flex-direction:column; gap:7px; }
+.sla-rule-list li { font-size:16px; color:var(--ink2); display:flex; gap:8px; line-height:1.6; }
+.sla-rule-list li::before { content:'·'; color:var(--ink3); font-size:23px; line-height:1.2; flex-shrink:0; }
+
+.breach-table {
+  width:100%; border-collapse:collapse;
+  font-size:17px; background:var(--surface);
+  border:1px solid var(--border);
+}
+.breach-table th { padding:11px 16px; font-size:14px; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink3); border-bottom:2px solid var(--border); background:var(--surface2); text-align:left; }
+.breach-table td { padding:11px 16px; border-bottom:1px solid var(--border); color:var(--ink2); font-size:17px; line-height:1.6; vertical-align:top; }
+.breach-table tr:last-child td { border-bottom:none; }
+.breach-table tr:hover td { background:var(--surface2); }
+
+/* ── GLOSSARY PAGE ── */
+.gloss-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:14px; }
+.gloss-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:2px; padding:16px 20px;
+}
+.gloss-term { font-family:'Playfair Display',serif; font-size:21px; font-weight:700; color:var(--ink); margin-bottom:4px; }
+.gloss-abbr { font-size:14px; color:var(--ink3); letter-spacing:0.1em; margin-bottom:8px; }
+.gloss-def { font-size:17px; color:var(--ink2); line-height:1.7; }
+.gloss-ph { display:inline-block; margin-top:8px; font-size:14px; padding:2px 8px; background:rgba(200,75,47,0.08); border:1px solid rgba(200,75,47,0.2); color:var(--accent); border-radius:2px; }
+
+footer {
+  background:var(--ink); color:rgba(255,255,255,0.4);
+  text-align:center; padding:24px;
+  font-size:16px; letter-spacing:0.08em;
+  border-top:3px solid var(--accent);
+}
+footer strong { color:var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <a href="index.html" class="topnav-brand" style="text-decoration:none;cursor:pointer;" title="Back to Hub">iGaming <span>KYC</span> Ops</a>
+  <div class="topnav-links">
+    <button class="nav-link active" onclick="showPage('flow',this)">Escalation Flow</button>
+    <button class="nav-link" onclick="showPage('matrix',this)">Decision Matrix</button>
+    <button class="nav-link" onclick="showPage('sla',this)">SLA & Timers</button>
+    <button class="nav-link" onclick="showPage('glossary',this)">Glossary</button>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════
+     PAGE 1 — ESCALATION FLOW
+════════════════════════════════════════ -->
+<div id="page-flow" class="page active">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Philippines · PAGCOR / AMLC Compliant</div>
+    <h1>KYC <em>Escalation</em><br>Workflow</h1>
+    <p class="hero-desc">Internal reporting and escalation framework for player KYC failures during onboarding registration. Covers all failure types, tier assignments, SLA targets, and regulatory obligations under AMLC and PAGCOR.</p>
+    <div class="hero-meta">
+      <div class="hero-stat"><div class="hero-stat-num">4</div><div class="hero-stat-label">Escalation Tiers</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">4h</div><div class="hero-stat-label">Tier 1 SLA Target</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">6</div><div class="hero-stat-label">Failure Categories</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">24h</div><div class="hero-stat-label">AMLC STR Window</div></div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- SECTION: TRIGGER -->
+    <div class="section-title">Step 0 — Trigger Event</div>
+    <div class="trigger-box" style="margin-bottom:16px;">
+      <div style="font-size:42px">🔴</div>
+      <div>
+        <div class="trigger-label">Player KYC Submission Fails or Flags</div>
+        <div class="trigger-sub">Occurs during registration, first deposit attempt, or scheduled periodic review · System auto-flags or player contacts CS</div>
+      </div>
+    </div>
+
+    <div class="section-title">Failure Categories</div>
+    <div class="fail-grid" style="margin-bottom:40px;">
+      <div class="fail-card">
+        <div class="fail-card-title">📄 Document Issue</div>
+        <div class="fail-card-body">Expired ID, blurry image, unsupported document type, missing page, non-PH document without justification</div>
+      </div>
+      <div class="fail-card">
+        <div class="fail-card-title">👤 Identity Mismatch</div>
+        <div class="fail-card-body">Name, DOB, or address discrepancy between submitted documents and registration data entered by the player</div>
+      </div>
+      <div class="fail-card">
+        <div class="fail-card-title">🚨 Watchlist / Sanctions Hit</div>
+        <div class="fail-card-body">PEP match, OFAC hit, UNSC list match, or BSP sanctions list — requires immediate escalation beyond tier 1</div>
+      </div>
+      <div class="fail-card">
+        <div class="fail-card-title">📍 Address Verification Fail</div>
+        <div class="fail-card-body">Proof of address rejected — mismatched, too old (&gt;3 months), utility bill unreadable, or PO box submitted</div>
+      </div>
+      <div class="fail-card">
+        <div class="fail-card-title">⚠️ Incomplete Submission</div>
+        <div class="fail-card-body">Player submitted only partial documents, did not complete liveness check, or selfie does not match ID photo</div>
+      </div>
+      <div class="fail-card">
+        <div class="fail-card-title">🔁 Duplicate / Multiple Accounts</div>
+        <div class="fail-card-body">System detects shared device fingerprint, IP, payment method, or document match with an existing player account</div>
+      </div>
+    </div>
+
+    <!-- TIER LEGEND -->
+    <div class="section-title">Escalation Tiers</div>
+    <div class="tier-legend">
+      <div class="tier-pill tp-1"><span class="tier-dot td-1"></span>Tier 1 · CS Agent</div>
+      <div class="tier-pill tp-2"><span class="tier-dot td-2"></span>Tier 2 · KYC Analyst</div>
+      <div class="tier-pill tp-3"><span class="tier-dot td-3"></span>Tier 3 · KYC Senior / Lead</div>
+      <div class="tier-pill tp-4"><span class="tier-dot td-4"></span>Tier 4 · Head of Compliance</div>
+      <div class="tier-pill tp-amlc"><span class="tier-dot td-amlc"></span>AMLC Reporting Obligation</div>
+    </div>
+
+    <!-- FLOW -->
+    <div class="flow-container">
+
+      <!-- TIER 1 -->
+      <div class="tier-block open" id="tb1" style="--tier-color:var(--t1); border-left:4px solid var(--t1);">
+        <div class="tier-header" onclick="toggleTier('tb1')">
+          <div class="tier-num" style="color:var(--t1)">01</div>
+          <div class="tier-header-info">
+            <div class="tier-name">Customer Support Agent</div>
+            <div class="tier-owner">First point of contact · Live Chat, Email, or Player Portal notification</div>
+          </div>
+          <div class="tier-sla" style="color:var(--t1);border-color:rgba(200,75,47,0.3);background:rgba(200,75,47,0.06);">SLA: 4 hours</div>
+          <div class="tier-toggle">▾</div>
+        </div>
+        <div class="tier-body">
+          <div class="tier-cols">
+            <div>
+              <div class="tier-col-title">Actions at This Tier</div>
+              <ul class="checklist" style="--tier-color:var(--t1)">
+                <li>Acknowledge the player's contact within 15 minutes via live chat or email — confirm receipt of their KYC query</li>
+                <li>Access the player account in the back-office system and check the KYC status flag and system rejection reason code</li>
+                <li>Identify the failure category using the rejection code lookup table (document issue, mismatch, incomplete)</li>
+                <li>For simple document issues: inform the player of exactly what is needed, provide the accepted document list, and request resubmission</li>
+                <li>Log the interaction in the CRM with the KYC ticket reference number, failure category, and player communication timestamp</li>
+                <li>If resubmission is requested: set a 48-hour player response timer in the ticketing system</li>
+                <li>If failure reason is unclear or not covered by the lookup table: create a KYC escalation ticket and pass to Tier 2 immediately</li>
+              </ul>
+            </div>
+            <div>
+              <div class="tier-col-title">Possible Outcomes</div>
+              <div class="outcome-list">
+                <div class="outcome-item oi-approve">
+                  <div class="oi-icon">✅</div>
+                  <div class="oi-text"><strong>Resolved at Tier 1</strong>Player resubmits correct documents · system auto-approves · account activated</div>
+                </div>
+                <div class="outcome-item oi-escalate">
+                  <div class="oi-icon">↗</div>
+                  <div class="oi-text"><strong>Escalate to Tier 2</strong>Mismatch, unclear rejection, player disputes decision, or watchlist flag detected</div>
+                </div>
+                <div class="outcome-item oi-reject">
+                  <div class="oi-icon">⛔</div>
+                  <div class="oi-text"><strong>Player Non-Response</strong>48-hour timer expires with no resubmission · ticket escalated to Tier 2 for hold decision</div>
+                </div>
+              </div>
+              <div class="tier-tools">
+                <span class="tool-label">Tools:</span>
+                <span class="tool-tag">Back-office CRM</span>
+                <span class="tool-tag">KYC Status Portal</span>
+                <span class="tool-tag">Rejection Code Lookup</span>
+                <span class="tool-tag">Ticketing System</span>
+              </div>
+            </div>
+          </div>
+          <div class="sla-bar-wrap">
+            <div class="sla-bar-label">Target resolution: 4 hours from first contact · Escalation trigger: &gt;4h unresolved</div>
+            <div class="sla-track"><div class="sla-fill" style="width:25%;background:var(--t1);"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="connector">
+        <div class="connector-line"></div>
+        <div class="connector-label">If unresolved within SLA or failure category is complex</div>
+        <div class="connector-line"></div>
+        <div class="connector-arrow">▼</div>
+      </div>
+
+      <!-- TIER 2 -->
+      <div class="tier-block open" id="tb2" style="--tier-color:var(--t2); border-left:4px solid var(--t2);">
+        <div class="tier-header" onclick="toggleTier('tb2')">
+          <div class="tier-num" style="color:var(--t2)">02</div>
+          <div class="tier-header-info">
+            <div class="tier-name">KYC / AML Analyst</div>
+            <div class="tier-owner">Compliance Team · Specialist review of documents and identity verification</div>
+          </div>
+          <div class="tier-sla" style="color:var(--t2);border-color:rgba(212,131,10,0.3);background:rgba(212,131,10,0.06);">SLA: 24 hours</div>
+          <div class="tier-toggle">▾</div>
+        </div>
+        <div class="tier-body">
+          <div class="tier-cols">
+            <div>
+              <div class="tier-col-title">Actions at This Tier</div>
+              <ul class="checklist" style="--tier-color:var(--t2)">
+                <li>Review the full escalated KYC ticket including all player documents, system flags, and CS interaction log</li>
+                <li>Run manual identity verification checks against the submitted document set — cross-reference name, DOB, ID number</li>
+                <li>Conduct PEP and sanctions screening manually using the approved screening tool (e.g. World-Check, ComplyAdvantage) if system did not auto-screen</li>
+                <li>For address mismatch: contact player requesting an alternative proof of address (bank statement, utility bill within 90 days)</li>
+                <li>For identity mismatch: request a selfie with a handwritten date note alongside government-issued ID</li>
+                <li>For duplicate account flags: cross-check device fingerprint, IP, payment method, and document against existing accounts — document findings</li>
+                <li>Run the account through the internal risk scoring model and note the risk tier (low / medium / high)</li>
+                <li>Update the KYC case management system with full analyst notes, documents reviewed, and decision rationale</li>
+                <li>Notify the player of outcome or request for additional information within the SLA window</li>
+              </ul>
+            </div>
+            <div>
+              <div class="tier-col-title">Possible Outcomes</div>
+              <div class="outcome-list">
+                <div class="outcome-item oi-approve">
+                  <div class="oi-icon">✅</div>
+                  <div class="oi-text"><strong>Approved — Standard Risk</strong>Documents verified, no watchlist hits, identity confirmed · Analyst approves KYC and activates account</div>
+                </div>
+                <div class="outcome-item oi-edd">
+                  <div class="oi-icon">🔎</div>
+                  <div class="oi-text"><strong>EDD Required — Elevated Risk</strong>Player is flagged as medium-high risk but not on watchlist · Request source of funds declaration, employment proof, or additional ID</div>
+                </div>
+                <div class="outcome-item oi-escalate">
+                  <div class="oi-icon">↗</div>
+                  <div class="oi-text"><strong>Escalate to Tier 3</strong>PEP match, unresolved mismatch, confirmed duplicate, high risk score, or analyst unable to reach a decision</div>
+                </div>
+                <div class="outcome-item oi-reject">
+                  <div class="oi-icon">⛔</div>
+                  <div class="oi-text"><strong>Reject — Clear Fail</strong>Forged documents confirmed, non-person entity, player is a minor — rejection with account suspension and logged rationale</div>
+                </div>
+              </div>
+              <div class="tier-tools">
+                <span class="tool-label">Tools:</span>
+                <span class="tool-tag">World-Check / ComplyAdvantage</span>
+                <span class="tool-tag">KYC Case System</span>
+                <span class="tool-tag">Risk Scoring Model</span>
+                <span class="tool-tag">Document Verification Tool</span>
+              </div>
+            </div>
+          </div>
+          <div class="sla-bar-wrap">
+            <div class="sla-bar-label">Target resolution: 24 hours from escalation receipt · Escalation trigger: &gt;24h or PEP/watchlist match</div>
+            <div class="sla-track"><div class="sla-fill" style="width:50%;background:var(--t2);"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="connector">
+        <div class="connector-line"></div>
+        <div class="connector-label">If PEP · Sanctions · High Risk · Duplicate · Analyst cannot decide</div>
+        <div class="connector-line"></div>
+        <div class="connector-arrow">▼</div>
+      </div>
+
+      <!-- TIER 3 -->
+      <div class="tier-block open" id="tb3" style="--tier-color:var(--t3); border-left:4px solid var(--t3);">
+        <div class="tier-header" onclick="toggleTier('tb3')">
+          <div class="tier-num" style="color:var(--t3)">03</div>
+          <div class="tier-header-info">
+            <div class="tier-name">KYC Senior / Team Lead</div>
+            <div class="tier-owner">Compliance Team · Senior review, EDD oversight, and authority to impose account restrictions</div>
+          </div>
+          <div class="tier-sla" style="color:var(--t3);border-color:rgba(26,74,122,0.3);background:rgba(26,74,122,0.06);">SLA: 48 hours</div>
+          <div class="tier-toggle">▾</div>
+        </div>
+        <div class="tier-body">
+          <div class="tier-cols">
+            <div>
+              <div class="tier-col-title">Actions at This Tier</div>
+              <ul class="checklist" style="--tier-color:var(--t3)">
+                <li>Take ownership of the full KYC case file including all Tier 2 analyst notes, documents, screening results, and risk scoring output</li>
+                <li>Conduct an independent secondary review of all screening results — do not rely solely on Tier 2 findings</li>
+                <li>For EDD cases: review source of funds documentation, employment verification, and any third-party source materials</li>
+                <li>For PEP matches: assess the PEP category (domestic, foreign, international organisation), relationship type, and risk level. Obtain senior management sign-off before proceeding</li>
+                <li>For confirmed duplicates: coordinate with Fraud team to assess if bonus abuse or multi-accounting is intended, and issue account restriction or suspension as appropriate</li>
+                <li>Impose a temporary account deposit or withdrawal restriction pending outcome if the risk level warrants it</li>
+                <li>Prepare a written case summary and recommended outcome for Head of Compliance review if escalating to Tier 4</li>
+                <li>Ensure all actions and decisions are documented in the KYC case management system with timestamps</li>
+              </ul>
+            </div>
+            <div>
+              <div class="tier-col-title">Possible Outcomes</div>
+              <div class="outcome-list">
+                <div class="outcome-item oi-approve">
+                  <div class="oi-icon">✅</div>
+                  <div class="oi-text"><strong>EDD Satisfied — Approve</strong>Enhanced due diligence documentation received and verified · KYC Senior approves with elevated monitoring flag on account</div>
+                </div>
+                <div class="outcome-item oi-reject">
+                  <div class="oi-icon">⛔</div>
+                  <div class="oi-text"><strong>Reject and Close</strong>EDD not satisfied, confirmed forgery, or risk level unacceptable · Account rejected and locked · Rationale documented</div>
+                </div>
+                <div class="outcome-item oi-escalate">
+                  <div class="oi-icon">↗</div>
+                  <div class="oi-text"><strong>Escalate to Tier 4</strong>PEP requiring senior sign-off, potential AMLC reporting obligation, or case requires CCO / Head of Compliance authority</div>
+                </div>
+                <div class="outcome-item oi-amlc">
+                  <div class="oi-icon">📋</div>
+                  <div class="oi-text"><strong>Prepare STR Draft</strong>If reasonable grounds exist to suspect money laundering — prepare Suspicious Transaction Report draft for CCO review</div>
+                </div>
+              </div>
+              <div class="tier-tools">
+                <span class="tool-label">Tools:</span>
+                <span class="tool-tag">KYC Case Management</span>
+                <span class="tool-tag">EDD Document Repository</span>
+                <span class="tool-tag">Account Restriction Console</span>
+                <span class="tool-tag">STR Draft Template</span>
+              </div>
+            </div>
+          </div>
+          <div class="sla-bar-wrap">
+            <div class="sla-bar-label">Target resolution: 48 hours · AMLC STR filing obligation: within 5 business days of suspicion arising</div>
+            <div class="sla-track"><div class="sla-fill" style="width:75%;background:var(--t3);"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="connector">
+        <div class="connector-line"></div>
+        <div class="connector-label">If AMLC obligation · PEP requiring CCO sign-off · Case exceeds senior authority</div>
+        <div class="connector-line"></div>
+        <div class="connector-arrow">▼</div>
+      </div>
+
+      <!-- TIER 4 -->
+      <div class="tier-block open" id="tb4" style="--tier-color:var(--t4); border-left:4px solid var(--t4);">
+        <div class="tier-header" onclick="toggleTier('tb4')">
+          <div class="tier-num" style="color:var(--t4)">04</div>
+          <div class="tier-header-info">
+            <div class="tier-name">Head of Compliance / CCO</div>
+            <div class="tier-owner">Executive authority · Final decision-maker · Regulatory liaison with PAGCOR and AMLC</div>
+          </div>
+          <div class="tier-sla" style="color:var(--t4);border-color:rgba(90,45,130,0.3);background:rgba(90,45,130,0.06);">SLA: 72 hours</div>
+          <div class="tier-toggle">▾</div>
+        </div>
+        <div class="tier-body">
+          <div class="tier-cols">
+            <div>
+              <div class="tier-col-title">Actions at This Tier</div>
+              <ul class="checklist" style="--tier-color:var(--t4)">
+                <li>Review the complete case file prepared by Tier 3 including all analyst notes, EDD documents, screening results, and STR draft if applicable</li>
+                <li>Make a final KYC acceptance or rejection decision with full documented rationale — this decision is binding</li>
+                <li>For PEP cases: provide written senior management approval or rejection per internal PEP policy SOP</li>
+                <li>Review and sign off on any STR before submission to AMLC — ensure the report meets AMLC format requirements</li>
+                <li>Coordinate with PAGCOR as required for reporting obligations under the iGaming licence conditions</li>
+                <li>If the account is rejected: ensure account is suspended, funds held per regulatory requirements, and a freeze order process is initiated if warranted</li>
+                <li>Notify the CEO and Legal team of any cases involving potential criminal activity, AMLC filing, or regulatory notification</li>
+                <li>Record the final decision in the compliance register with a case reference number for audit trail</li>
+              </ul>
+            </div>
+            <div>
+              <div class="tier-col-title">Possible Outcomes</div>
+              <div class="outcome-list">
+                <div class="outcome-item oi-approve">
+                  <div class="oi-icon">✅</div>
+                  <div class="oi-text"><strong>Final Approval — High Risk Monitored</strong>CCO approves with an enhanced monitoring flag. Account is activated with automated transaction alerting and periodic review scheduled</div>
+                </div>
+                <div class="outcome-item oi-reject">
+                  <div class="oi-icon">⛔</div>
+                  <div class="oi-text"><strong>Final Rejection — Account Terminated</strong>CCO rejects. Account suspended permanently. Player notified per T&Cs. Funds returned unless freeze order applies</div>
+                </div>
+                <div class="outcome-item oi-amlc">
+                  <div class="oi-icon">📋</div>
+                  <div class="oi-text"><strong>AMLC STR Filed</strong>CCO submits Suspicious Transaction Report to AMLC. No tipping-off to player. Account status decision separate from STR filing</div>
+                </div>
+              </div>
+              <div class="tier-tools">
+                <span class="tool-label">Regulators:</span>
+                <span class="tool-tag">AMLC — STR Portal</span>
+                <span class="tool-tag">PAGCOR — Compliance Desk</span>
+                <span class="tool-tag">BSP — If payment flagged</span>
+              </div>
+            </div>
+          </div>
+          <div class="sla-bar-wrap">
+            <div class="sla-bar-label">Target resolution: 72 hours · AMLC STR submission deadline: 5 business days from suspicion arising (AMLA RA 9160)</div>
+            <div class="sla-track"><div class="sla-fill" style="width:100%;background:var(--t4);"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AMLC BLOCK -->
+      <div class="connector">
+        <div class="connector-line"></div>
+        <div class="connector-label">Regulatory Reporting Obligations</div>
+        <div class="connector-line"></div>
+        <div class="connector-arrow">▼</div>
+      </div>
+
+      <div class="amlc-block">
+        <div class="amlc-header">
+          <div class="amlc-badge">AMLC / PAGCOR</div>
+          <div class="amlc-title">Philippine Regulatory Reporting Requirements</div>
+        </div>
+        <div class="amlc-cols">
+          <div>
+            <div class="amlc-col-title">AMLC — Anti-Money Laundering Council</div>
+            <ul class="amlc-list">
+              <li><strong>STR (Suspicious Transaction Report):</strong> File within 5 business days of suspicion arising. Filed by CCO via AMLC's electronic reporting system. Do not inform the player (tipping-off prohibition).</li>
+              <li><strong>CTR (Cash Transaction Report):</strong> File for single or linked transactions exceeding PHP 500,000 in any banking day. Applicable to deposits and withdrawals.</li>
+              <li><strong>FSTR (Covered Transaction Freeze):</strong> Cooperate with AMLC freeze orders if a covered transaction is under investigation.</li>
+              <li><strong>Record Retention:</strong> All KYC records must be retained for a minimum of 5 years after the end of the business relationship.</li>
+            </ul>
+          </div>
+          <div>
+            <div class="amlc-col-title">PAGCOR — Gaming Regulatory Obligations</div>
+            <ul class="amlc-list">
+              <li><strong>Player Identity Verification:</strong> PAGCOR requires verified identity before any deposit or wager is accepted. No anonymous play permitted.</li>
+              <li><strong>Incident Reporting:</strong> Notify PAGCOR Compliance Desk of any KYC case involving potential criminal activity or AMLC filing within 24 hours of the STR decision.</li>
+              <li><strong>Excluded Persons:</strong> Cross-check all registrants against PAGCOR's Voluntary Exclusion Programme (VEP) list before activating any account.</li>
+              <li><strong>Audit Readiness:</strong> Maintain a complete, timestamped KYC audit trail. PAGCOR auditors may request case files at any time with as little as 48 hours notice.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /flow-container -->
+  </div><!-- /main -->
+</div><!-- /page-flow -->
+
+
+<!-- ════════════════════════════════════════
+     PAGE 2 — DECISION MATRIX
+════════════════════════════════════════ -->
+<div id="page-matrix" class="page">
+  <div class="hero" style="padding-bottom:40px;">
+    <div class="hero-eyebrow">Internal Reference Document</div>
+    <h1>KYC <em>Decision</em><br>Matrix</h1>
+    <p class="hero-desc">Quick-reference table mapping each KYC failure scenario to the correct escalation tier, required actions, and resolution pathway. Use this alongside the escalation flow for case-by-case decisions.</p>
+  </div>
+  <div class="main">
+    <div class="section-title">Scenario to Tier Mapping</div>
+    <div class="matrix-wrap">
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th style="width:22%">Scenario</th>
+            <th style="width:14%">Starts at Tier</th>
+            <th style="width:20%">Required Actions</th>
+            <th style="width:14%">Resolution</th>
+            <th style="width:15%">AMLC / PAGCOR</th>
+            <th style="width:15%">SLA</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="scenario-name">Expired or Low Quality Document</div><div class="scenario-sub">ID past expiry date or image unreadable</div></td>
+            <td><span class="tier-badge tb-1">Tier 1 · CS</span></td>
+            <td>CS informs player of requirement, sends document guide, requests resubmission within 48h</td>
+            <td><span class="action-tag at-approve">Re-submit → Approve</span></td>
+            <td>None</td>
+            <td>4h CS response · 48h player resubmit window</td>
+          </tr>
+          <tr>
+            <td><div class="scenario-name">Incomplete Submission</div><div class="scenario-sub">Missing page, no selfie, partial form</div></td>
+            <td><span class="tier-badge tb-1">Tier 1 · CS</span></td>
+            <td>CS identifies missing item from rejection code, notifies player with specific list of what is outstanding</td>
+            <td><span class="action-tag at-approve">Complete → Approve</span></td>
+            <td>None</td>
+            <td>4h CS response · 48h player window</td>
+          </tr>
+          <tr>
+            <td><div class="scenario-name">Unsupported Document Type</div><div class="scenario-sub">Player submitted unaccepted ID type</div></td>
+            <td><span class="tier-badge tb-1">Tier 1 · CS</span></td>
+            <td>CS sends the accepted document list (UMID, SSS ID, PhilHealth, Passport, Driver's Licence) and requests resubmission</td>
+            <td><span class="action-tag at-approve">Correct doc → Approve</span></td>
+            <td>None</td>
+            <td>4h CS response</td>
+          </tr>
+          <tr>
+            <td><div class="scenario-name">Name Mismatch (Minor)</div><div class="scenario-sub">Spelling variation, nickname, middle name absent</div></td>
+            <td><span class="tier-badge tb-2">Tier 2 · Analyst</span></td>
+            <td>Analyst reviews both documents, checks if discrepancy is explainable (e.g. married name). May request supporting document (marriage certificate, birth certificate)</td>
+            <td><span class="action-tag at-approve">Explained → Approve</span><br><span class="action-tag at-escalate">Unexplained → Tier 3</span></td>
+            <td>None unless persistent</td>
+            <td>24h analyst decision</td>
+          </tr>
+          <tr>
+            <td><div class="scenario-name">DOB or Address Mismatch</div><div class="scenario-sub">Data entered by player differs from document</div></td>
+            <td><span class="tier-badge tb-2">Tier 2 · Analyst</span></td>
+            <td>Analyst contacts player for clarification. Requests a secondary proof of address (utility bill, bank statement &lt;90 days). Validates DOB against second document</td>
+            <td><span class="action-tag at-approve">Clarified → Approve</span><br><span class="action-tag at-escalate">Unresolved → Tier 3</span></td>
+            <td>None</td>
+            <td>24h analyst decision</td>
+          </tr>
+          <tr>
+            <td><div class="scenario-name">Liveness / Selfie Fail</div><div class="scenario-sub">Selfie does not match ID photo</div></td>
+            <td><span class="tier-badge tb-2">Tier 2 · Analyst</span></td>
+            <td>Analyst reviews both images manually. If confident match not possible, requests a new selfie with a handwritten date note. Second fail escalates to Tier 3</td>
+            <td><span class="action-tag at-approve">New selfie → Approve</span><br><span class="action-tag at-escalate">Second fail → Tier 3</span></td>
+            <td>None</td>
+            <td>24h</td>
+          </tr>
+          <tr>
+            <td><div class="scenario-name">Duplicate Account Detected</div><div class="scenario-sub">Shared device, IP, document, or payment method</div></td>
+            <td><span class="tier-badge tb-2">Tier 2 · Analyst</span></td>
+            <td>Analyst cross-references all linked signals with Fraud team. Documents findings. Assesses intent (accidental vs deliberate multi-accounting)</td>
+            <td><span class="action-tag at-hold">Hold account pending review</span><br><span class="action-tag at-escalate">Deliberate → Tier 3</span></td>
+            <td>Notify PAGCOR if organised fraud suspected</td>
+            <td>24h analyst · 48h Tier 3 if escalated</td>
+          </tr>
+          <tr>
+            <td><div class="scenario-name">Source of Funds Concern</div><div class="scenario-sub">Deposit volume inconsistent with stated income</div></td>
+            <td><span class="tier-badge tb-3">Tier 3 · Senior</span></td>
+            <td>KYC Senior initiates EDD. Requests source of funds declaration, bank statements (3 months), employment letter or business registration. Reviews all materials for consistency</td>
+            <td><span class="action-tag at-approve">EDD satisfied → Approve with monitoring</span><br><span class="action-tag at-amlc">Suspicious → STR draft for CCO</span></td>
+            <td>STR if suspicious · AMLC within 5 business days</td>
+            <td>48h Tier 3 · 72h Tier 4 if STR</td>
+          </tr>
+          <tr>
+            <td><div class="scenario-name">PEP Match (Politically Exposed Person)</div><div class="scenario-sub">Player or close associate identified as PEP</div></td>
+            <td><span class="tier-badge tb-3">Tier 3 · Senior</span></td>
+            <td>Tier 3 assesses PEP category and relationship. Prepares case summary with risk recommendation. Mandatory escalation to CCO — KYC Senior cannot approve a PEP without CCO sign-off</td>
+            <td><span class="action-tag at-escalate">Mandatory → Tier 4 CCO</span></td>
+            <td>PAGCOR notification if accepted. Enhanced ongoing monitoring mandatory</td>
+            <td>48h Tier 3 assessment · 72h CCO decision</td>
+          </tr>
+          <tr>
+            <td><div class="scenario-name">Sanctions / Watchlist Hit</div><div class="scenario-sub">OFAC, UNSC, BSP, or AMLC list match</div></td>
+            <td><span class="tier-badge tb-3">Tier 3 · Senior</span></td>
+            <td>Immediate account freeze. No funds in or out. Tier 3 escalates to CCO within 1 hour. Do not inform player. Prepare STR for CCO. Preserve all evidence</td>
+            <td><span class="action-tag at-reject">Account frozen → Reject</span><br><span class="action-tag at-amlc">STR mandatory</span></td>
+            <td>STR mandatory · AMLC and PAGCOR notification · Possible law enforcement referral</td>
+            <td>Immediate escalation — 1h to CCO</td>
+          </tr>
+          <tr>
+            <td><div class="scenario-name">Forged or Tampered Documents</div><div class="scenario-sub">Document shows signs of manipulation</div></td>
+            <td><span class="tier-badge tb-3">Tier 3 · Senior</span></td>
+            <td>Immediate account suspension. Analyst documents all evidence of tampering. Escalate to CCO. Preserve original submission for potential law enforcement use</td>
+            <td><span class="action-tag at-reject">Immediate reject</span><br><span class="action-tag at-amlc">STR likely required</span></td>
+            <td>STR filing · Potential referral to NBI Philippines</td>
+            <td>Immediate suspension · 72h CCO decision on STR</td>
+          </tr>
+          <tr>
+            <td><div class="scenario-name">Minor / Under-18 Detected</div><div class="scenario-sub">DOB or document indicates player is under 18</div></td>
+            <td><span class="tier-badge tb-2">Tier 2 · Analyst</span></td>
+            <td>Immediate account suspension. No further deposits or gameplay permitted. Refund any deposited funds immediately. Log incident for PAGCOR reporting</td>
+            <td><span class="action-tag at-reject">Immediate reject + refund</span></td>
+            <td>PAGCOR incident report mandatory</td>
+            <td>Immediate — no SLA delay permitted</td>
+          </tr>
+          <tr>
+            <td><div class="scenario-name">Player on PAGCOR VEP List</div><div class="scenario-sub">Player is voluntarily self-excluded</div></td>
+            <td><span class="tier-badge tb-1">Tier 1 · CS</span></td>
+            <td>Immediate account block triggered by system or CS. Player informed that they cannot register under voluntary exclusion. Provide responsible gambling resources</td>
+            <td><span class="action-tag at-reject">Block registration</span></td>
+            <td>PAGCOR VEP compliance mandatory — no exceptions</td>
+            <td>Immediate — zero tolerance</td>
+          </tr>
+          <tr>
+            <td><div class="scenario-name">Player Non-Response to KYC Request</div><div class="scenario-sub">48-hour window expires with no resubmission</div></td>
+            <td><span class="tier-badge tb-2">Tier 2 · Analyst</span></td>
+            <td>Account placed in restricted state — read-only, no deposits or withdrawals. Send final 24h reminder. If still no response: Tier 2 recommends account suspension to Tier 3</td>
+            <td><span class="action-tag at-hold">Restrict → Final notice → Suspend</span></td>
+            <td>None unless funds are held — refund process per T&Cs</td>
+            <td>48h player window + 24h final notice</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- /page-matrix -->
+
+
+<!-- ════════════════════════════════════════
+     PAGE 3 — SLA & TIMERS
+════════════════════════════════════════ -->
+<div id="page-sla" class="page">
+  <div class="hero" style="padding-bottom:40px;">
+    <div class="hero-eyebrow">Internal Operations Standard</div>
+    <h1>SLA &amp; <em>Response</em><br>Timers</h1>
+    <p class="hero-desc">Service level agreements for each escalation tier. All timers begin from the moment the case is received at that tier. SLA breaches must be logged and reported weekly to the Head of Compliance.</p>
+  </div>
+  <div class="main">
+    <div class="section-title">Tier SLA Targets</div>
+    <div class="sla-grid">
+      <div class="sla-card">
+        <div class="sla-card-top" style="border-bottom:1px solid var(--border);">
+          <div class="sla-card-num" style="color:var(--t1)">4h</div>
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:21px;font-weight:700;">Tier 1 · CS Agent</div>
+            <div style="font-size:17px;color:var(--ink3);margin-top:2px;">First contact response</div>
+          </div>
+        </div>
+        <div class="sla-card-body">
+          <div class="sla-card-meta">CS must acknowledge the player and identify the failure category within 4 hours of first contact or system notification.</div>
+          <ul class="sla-rule-list">
+            <li>15-minute acknowledgement SLA for live chat</li>
+            <li>2-hour acknowledgement SLA for email</li>
+            <li>Player resubmission window: 48 hours</li>
+            <li>Escalation to Tier 2 if unresolved at 4h</li>
+          </ul>
+        </div>
+      </div>
+      <div class="sla-card">
+        <div class="sla-card-top">
+          <div class="sla-card-num" style="color:var(--t2)">24h</div>
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:21px;font-weight:700;">Tier 2 · KYC Analyst</div>
+            <div style="font-size:17px;color:var(--ink3);margin-top:2px;">Specialist review decision</div>
+          </div>
+        </div>
+        <div class="sla-card-body">
+          <div class="sla-card-meta">Analyst must review, run screening, and reach a decision or escalate within 24 hours of ticket assignment.</div>
+          <ul class="sla-rule-list">
+            <li>Screening run within 2 hours of receipt</li>
+            <li>Player contacted for additional documents within 4 hours</li>
+            <li>Escalation to Tier 3 if decision not reached within 24h</li>
+            <li>PEP or watchlist hit: immediate escalation regardless of SLA clock</li>
+          </ul>
+        </div>
+      </div>
+      <div class="sla-card">
+        <div class="sla-card-top">
+          <div class="sla-card-num" style="color:var(--t3)">48h</div>
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:21px;font-weight:700;">Tier 3 · KYC Senior</div>
+            <div style="font-size:17px;color:var(--ink3);margin-top:2px;">EDD and complex case review</div>
+          </div>
+        </div>
+        <div class="sla-card-body">
+          <div class="sla-card-meta">KYC Senior / Lead must complete EDD review, secondary screening, and reach a decision within 48 hours of case receipt.</div>
+          <ul class="sla-rule-list">
+            <li>EDD request to player sent within 4 hours of case receipt</li>
+            <li>Sanctions hit: escalate to CCO within 1 hour — no exception</li>
+            <li>STR draft prepared within 24h if suspicion confirmed</li>
+            <li>Escalation to Tier 4 if decision requires CCO authority</li>
+          </ul>
+        </div>
+      </div>
+      <div class="sla-card">
+        <div class="sla-card-top">
+          <div class="sla-card-num" style="color:var(--t4)">72h</div>
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:21px;font-weight:700;">Tier 4 · CCO</div>
+            <div style="font-size:17px;color:var(--ink3);margin-top:2px;">Final decision and regulatory action</div>
+          </div>
+        </div>
+        <div class="sla-card-body">
+          <div class="sla-card-meta">CCO must review the complete case file, make a final decision, and initiate any regulatory filings within 72 hours.</div>
+          <ul class="sla-rule-list">
+            <li>AMLC STR filing: within 5 business days of suspicion arising (AMLA RA 9160)</li>
+            <li>PAGCOR incident report: within 24h of final rejection decision</li>
+            <li>CEO and Legal notified same day if AMLC filing is made</li>
+            <li>No further escalation — CCO decision is final</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">SLA Breach Consequences</div>
+    <table class="breach-table">
+      <thead>
+        <tr>
+          <th>Tier</th>
+          <th>Breach Threshold</th>
+          <th>Immediate Action</th>
+          <th>Reporting Requirement</th>
+          <th>Escalation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tier-badge tb-1">Tier 1</span></td>
+          <td>No CS contact within 4h</td>
+          <td>Team Lead notified immediately. Case escalated to Tier 2 without waiting for CS resolution</td>
+          <td>Logged in weekly CS SLA breach report to Head of CS</td>
+          <td>Auto-escalate to Tier 2</td>
+        </tr>
+        <tr>
+          <td><span class="tier-badge tb-2">Tier 2</span></td>
+          <td>No analyst decision within 24h</td>
+          <td>KYC Senior takes over the case. Analyst must document reason for breach</td>
+          <td>Logged in daily compliance case tracker. Reported to Head of Compliance weekly</td>
+          <td>Auto-escalate to Tier 3</td>
+        </tr>
+        <tr>
+          <td><span class="tier-badge tb-3">Tier 3</span></td>
+          <td>No Senior decision within 48h</td>
+          <td>CCO notified directly. Account placed in full restriction (no deposits, no withdrawals) pending CCO review</td>
+          <td>Reported to CCO same day. Included in monthly compliance board report</td>
+          <td>CCO assumes case ownership</td>
+        </tr>
+        <tr>
+          <td><span class="tier-badge tb-4">Tier 4</span></td>
+          <td>No CCO decision within 72h (non-AMLC) or 5 days (AMLC)</td>
+          <td>Legal team notified. AMLC filing risk assessed. Account remains restricted</td>
+          <td>Regulatory breach risk — must be documented in compliance register and reported to board</td>
+          <td>Legal team engagement · Possible PAGCOR notification</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:32px;padding:20px 24px;background:rgba(200,75,47,0.05);border:1px solid rgba(200,75,47,0.2);border-left:4px solid var(--accent);border-radius:2px;">
+      <div style="font-family:'Playfair Display',serif;font-size:21px;font-weight:700;color:var(--accent);margin-bottom:10px;">⚠ Critical Non-Negotiable Timers</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;font-size:17px;color:var(--ink2);line-height:1.7;">
+        <div><strong style="color:var(--ink)">AMLC STR:</strong> Must be filed within 5 business days of the date the suspicion arose. Missing this deadline is a regulatory violation under RA 9160.</div>
+        <div><strong style="color:var(--ink)">AMLC CTR:</strong> Filed within the same banking day for transactions ≥ PHP 500,000.</div>
+        <div><strong style="color:var(--ink)">Sanctions Hit:</strong> Account freeze must occur within 1 hour of confirmed match. No exceptions.</div>
+        <div><strong style="color:var(--ink)">Minor Detected:</strong> Account suspension is immediate — zero delay permitted. Funds refunded within 24h.</div>
+        <div><strong style="color:var(--ink)">PAGCOR VEP:</strong> Registration block must be applied in real time at the point of KYC check. No grace period.</div>
+        <div><strong style="color:var(--ink)">Tipping-Off:</strong> Once an STR is filed or in preparation, the player must not be informed under any circumstances. This applies to all tiers.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- /page-sla -->
+
+
+<!-- ════════════════════════════════════════
+     PAGE 4 — GLOSSARY
+════════════════════════════════════════ -->
+<div id="page-glossary" class="page">
+  <div class="hero" style="padding-bottom:40px;">
+    <div class="hero-eyebrow">Reference Document</div>
+    <h1>KYC <em>Glossary</em></h1>
+    <p class="hero-desc">Key terms, acronyms, and regulatory bodies referenced in the KYC escalation workflow. All staff involved in KYC processing are expected to be familiar with these definitions.</p>
+  </div>
+  <div class="main">
+    <div class="section-title">Regulatory Bodies</div>
+    <div class="gloss-grid" style="margin-bottom:40px;">
+      <div class="gloss-card">
+        <div class="gloss-term">AMLC</div>
+        <div class="gloss-abbr">Anti-Money Laundering Council</div>
+        <div class="gloss-def">The primary government agency in the Philippines responsible for implementing the Anti-Money Laundering Act (AMLA, RA 9160 as amended). Receives and investigates STRs and CTRs filed by covered entities including iGaming operators.</div>
+        <span class="gloss-ph">🇵🇭 PH Regulatory Body</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">PAGCOR</div>
+        <div class="gloss-abbr">Philippine Amusement and Gaming Corporation</div>
+        <div class="gloss-def">The government-owned and controlled corporation that regulates and licenses all gaming operations in the Philippines. Issues iGaming licences and enforces responsible gambling and KYC requirements on licensed operators.</div>
+        <span class="gloss-ph">🇵🇭 PH Regulatory Body</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">BSP</div>
+        <div class="gloss-abbr">Bangko Sentral ng Pilipinas</div>
+        <div class="gloss-def">The central bank of the Philippines. Regulates payment service providers (PSPs) including GCash and Maya. Relevant to KYC when payment method flags arise or when e-money accounts are involved in suspicious transactions.</div>
+        <span class="gloss-ph">🇵🇭 PH Regulatory Body</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">NBI</div>
+        <div class="gloss-abbr">National Bureau of Investigation</div>
+        <div class="gloss-def">Philippine law enforcement body. Relevant when forged documents or confirmed fraud is identified — a referral to NBI may be required in cases involving criminal activity.</div>
+        <span class="gloss-ph">🇵🇭 PH Law Enforcement</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">NPC</div>
+        <div class="gloss-abbr">National Privacy Commission</div>
+        <div class="gloss-def">Regulates the Data Privacy Act of 2012 (RA 10173). KYC document storage, player data handling, and data breach notification obligations fall under NPC jurisdiction. All KYC records must be stored securely and access-controlled.</div>
+        <span class="gloss-ph">🇵🇭 PH Data Regulator</span>
+      </div>
+    </div>
+
+    <div class="section-title">KYC & AML Terms</div>
+    <div class="gloss-grid" style="margin-bottom:40px;">
+      <div class="gloss-card">
+        <div class="gloss-term">KYC</div>
+        <div class="gloss-abbr">Know Your Customer</div>
+        <div class="gloss-def">The process of verifying the identity of a customer before or during the time they start doing business with the company. Includes identity verification, document checks, and risk assessment.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">AML</div>
+        <div class="gloss-abbr">Anti-Money Laundering</div>
+        <div class="gloss-def">The set of laws, regulations, and procedures intended to prevent criminals from disguising illegally obtained funds as legitimate income. AML compliance is a core requirement of the PAGCOR licence.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">EDD</div>
+        <div class="gloss-abbr">Enhanced Due Diligence</div>
+        <div class="gloss-def">A deeper level of customer due diligence applied to higher-risk customers including PEPs, high-volume depositors, or players flagged by the risk scoring model. Requires source of funds documentation and more frequent review.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">CDD</div>
+        <div class="gloss-abbr">Customer Due Diligence</div>
+        <div class="gloss-def">Standard verification process applied to all new players: identity verification, document check, and basic risk assessment. EDD is the elevated version applied to higher-risk cases.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">STR</div>
+        <div class="gloss-abbr">Suspicious Transaction Report</div>
+        <div class="gloss-def">A report filed with the AMLC when a transaction is deemed suspicious — i.e. there are reasonable grounds to believe funds are proceeds of an unlawful activity. Must be filed within 5 business days of suspicion arising. Tipping-off is prohibited.</div>
+        <span class="gloss-ph">🇵🇭 AMLC Filing</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">CTR</div>
+        <div class="gloss-abbr">Cash Transaction Report</div>
+        <div class="gloss-def">A report filed with AMLC for single or linked cash transactions exceeding PHP 500,000 in any banking day. Applies to player deposits and withdrawals at or above this threshold. Filed on the same banking day.</div>
+        <span class="gloss-ph">🇵🇭 AMLC Filing</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">PEP</div>
+        <div class="gloss-abbr">Politically Exposed Person</div>
+        <div class="gloss-def">An individual who holds or has held a prominent public position (e.g. government official, senior military officer, senior executive of a state-owned enterprise). PEPs and their close associates and family members require enhanced due diligence and mandatory CCO approval before account activation.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">VEP</div>
+        <div class="gloss-abbr">Voluntary Exclusion Programme</div>
+        <div class="gloss-def">PAGCOR's programme allowing players to self-exclude from all licensed gaming establishments in the Philippines. Players on the VEP list must be blocked from registering or accessing their account. No exceptions are permitted.</div>
+        <span class="gloss-ph">🇵🇭 PAGCOR Programme</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Tipping-Off</div>
+        <div class="gloss-abbr">Prohibited Disclosure</div>
+        <div class="gloss-def">The act of informing a customer or any other person that an STR has been filed or is being prepared against them. This is a criminal offence under Philippine law. Once an STR decision is being considered, all player communication must be paused and reviewed by the CCO before sending.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">AMLA</div>
+        <div class="gloss-abbr">Anti-Money Laundering Act (RA 9160)</div>
+        <div class="gloss-def">The primary legislation governing AML obligations in the Philippines. As amended by RA 9194, RA 10167, RA 10365, and RA 10927 (which extended AMLA coverage to casinos including online gaming). All iGaming operators must comply.</div>
+        <span class="gloss-ph">🇵🇭 PH Legislation</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Liveness Check</div>
+        <div class="gloss-abbr">Biometric Identity Verification</div>
+        <div class="gloss-def">A real-time verification step where the player takes a selfie or video to prove they are a live person (not a photo or mask) and that their face matches the submitted government ID. Failure of liveness check escalates to Tier 2 analyst review.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Risk Scoring</div>
+        <div class="gloss-abbr">Internal Risk Assessment Model</div>
+        <div class="gloss-def">A scoring system applied to each player during KYC review. Factors include: country of origin, source of funds, PEP status, deposit volume, and transaction behaviour. Output is a risk tier (low / medium / high) that determines the level of ongoing monitoring required.</div>
+      </div>
+    </div>
+
+    <div class="section-title">Accepted Philippine KYC Documents</div>
+    <div class="gloss-grid">
+      <div class="gloss-card">
+        <div class="gloss-term">Primary ID (Any 1 Required)</div>
+        <div class="gloss-def" style="margin-top:8px;">
+          Passport · Driver's Licence (LTO) · SSS Card / UMID · PhilHealth ID · Postal ID · PRC ID · Voter's ID · Philippine National ID (PhilSys)
+        </div>
+        <span class="gloss-ph">Must be valid and government-issued</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Proof of Address (Any 1 Required)</div>
+        <div class="gloss-def" style="margin-top:8px;">
+          Utility bill (MERALCO, Maynilad, Manila Water) · Bank statement · Credit card statement · Barangay certification with address · BIR tax return with address
+        </div>
+        <span class="gloss-ph">Must be dated within 90 days</span>
+      </div>
+      <div class="gloss-card">
+        <div class="gloss-term">Source of Funds (EDD Only)</div>
+        <div class="gloss-def" style="margin-top:8px;">
+          Employment certificate with salary · 3-month bank statement · BIR Income Tax Return (ITR) · Business registration and audited financials · Remittance records (for OFWs)
+        </div>
+        <span class="gloss-ph">Required for EDD cases only</span>
+      </div>
+    </div>
+  </div>
+</div><!-- /page-glossary -->
+
+<footer>
+  <strong>KYC Escalation Workflow</strong> · iGaming Philippines Operations · PAGCOR / AMLC Compliant Framework · Internal Use Only
+</footer>
+
+<script>
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleTier(id) {
+  const block = document.getElementById(id);
+  block.classList.toggle('open');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iGaming Live Operations — Org Chart</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #05080f;
+  --surface: #0c1220;
+  --border: #1e2d45;
+  --accent: #00d4ff;
+  --accent2: #7c3aed;
+  --accent3: #10b981;
+  --accent4: #f59e0b;
+  --text: #e2e8f0;
+  --text-muted: #64748b;
+  --text-dim: #94a3b8;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; font-size:21px; }
+body { background:var(--bg); color:var(--text); font-family:'DM Mono',monospace; font-size:18px; line-height:1.6; min-height:100vh; overflow-x:hidden; }
+body::before {
+  content:''; position:fixed; inset:0;
+  background-image: linear-gradient(rgba(0,212,255,0.025) 1px,transparent 1px), linear-gradient(90deg,rgba(0,212,255,0.025) 1px,transparent 1px);
+  background-size:40px 40px; pointer-events:none; z-index:0;
+}
+
+/* PAGE NAV */
+.page-nav { position:sticky; top:0; z-index:200; background:rgba(5,8,15,0.97); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 32px; height:60px; gap:0; }
+.page-nav-logo { font-family:'Syne',sans-serif; font-size:22px; font-weight:800; color:#fff; letter-spacing:0.02em; margin-right:32px; white-space:nowrap; }
+.page-nav-logo span { color:var(--accent); }
+.page-tab { font-family:'DM Mono',monospace; font-size:17px; letter-spacing:0.15em; text-transform:uppercase; padding:0 22px; height:60px; background:transparent; border:none; color:var(--text-muted); cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; }
+.page-tab:hover { color:var(--text); }
+.page-tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+
+/* PAGES */
+.page { display:none; }
+.page.active { display:block; }
+
+/* HERO */
+.hero { position:relative; z-index:1; padding:52px 40px 36px; text-align:center; border-bottom:1px solid var(--border); background:linear-gradient(180deg,rgba(0,212,255,0.04) 0%,transparent 100%); }
+.hero-tag { display:inline-block; font-size:16px; letter-spacing:0.25em; text-transform:uppercase; color:var(--accent); border:1px solid rgba(0,212,255,0.3); padding:5px 18px; border-radius:2px; margin-bottom:16px; }
+.hero h1 { font-family:'Syne',sans-serif; font-size:clamp(39px,4vw,73px); font-weight:800; color:#fff; line-height:1.1; letter-spacing:-0.02em; }
+.hero h1 span { color:var(--accent); }
+.hero-sub { margin-top:10px; font-size:18px; color:var(--text-muted); letter-spacing:0.08em; }
+.products { display:flex; justify-content:center; gap:10px; margin-top:20px; flex-wrap:wrap; }
+.product-badge { font-size:16px; letter-spacing:0.1em; padding:5px 14px; border-radius:2px; text-transform:uppercase; }
+.pb-sports { background:rgba(0,212,255,0.1); border:1px solid rgba(0,212,255,0.3); color:var(--accent); }
+.pb-casino { background:rgba(124,58,237,0.1); border:1px solid rgba(124,58,237,0.3); color:#a78bfa; }
+.pb-spec { background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:var(--accent3); }
+.pb-ph { background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); color:var(--accent4); }
+
+/* FILTER BAR */
+.dept-nav { position:sticky; top:60px; z-index:100; background:rgba(5,8,15,0.95); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:11px 32px; display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; }
+.dept-nav::-webkit-scrollbar { display:none; }
+.nav-btn { flex-shrink:0; font-family:'DM Mono',monospace; font-size:16px; letter-spacing:0.12em; text-transform:uppercase; padding:7px 16px; background:transparent; border:1px solid var(--border); color:var(--text-muted); cursor:pointer; border-radius:2px; transition:all 0.2s; }
+.nav-btn:hover,.nav-btn.active { border-color:var(--accent); color:var(--accent); background:rgba(0,212,255,0.05); }
+
+/* MAIN */
+.main { position:relative; z-index:1; padding:32px; max-width:1600px; margin:0 auto; }
+
+/* C-SUITE */
+.csuite { display:flex; justify-content:center; gap:12px; margin-bottom:36px; flex-wrap:wrap; }
+.ceo-card { background:linear-gradient(135deg,rgba(0,212,255,0.07),rgba(124,58,237,0.07)); border:1px solid rgba(0,212,255,0.22); border-radius:4px; padding:16px 22px; text-align:center; min-width:160px; position:relative; overflow:hidden; }
+.ceo-card::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; background:linear-gradient(90deg,var(--accent),var(--accent2)); }
+.ceo-card .role { font-family:'Syne',sans-serif; font-size:29px; font-weight:700; color:#fff; }
+.ceo-card .title { font-size:14px; letter-spacing:0.18em; text-transform:uppercase; color:var(--accent); margin-top:4px; }
+
+/* REPORTING BANNER */
+.reporting-banner { background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:18px 20px; margin-bottom:26px; }
+.reporting-banner h3 { font-family:'Syne',sans-serif; font-size:17px; font-weight:600; text-transform:uppercase; letter-spacing:0.18em; color:var(--accent); margin-bottom:14px; }
+.report-chain { display:flex; flex-wrap:wrap; gap:0; align-items:center; }
+.chain-label { background:rgba(0,212,255,0.05); border:1px solid rgba(0,212,255,0.15); padding:6px 15px; font-size:17px; color:var(--text-dim); border-radius:2px; white-space:nowrap; }
+.chain-arrow { color:var(--text-muted); padding:0 8px; font-size:21px; }
+.ph-note { margin-top:12px; font-size:17px; color:var(--accent4); line-height:1.7; padding:10px 15px; background:rgba(245,158,11,0.05); border:1px solid rgba(245,158,11,0.18); border-radius:3px; }
+
+/* PRIORITY TABLE */
+.priority-panel { margin-bottom:26px; background:var(--surface); border:1px solid var(--border); border-radius:4px; overflow:hidden; }
+.priority-panel-header { padding:14px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; background:rgba(0,212,255,0.02); }
+.priority-panel-header h3 { font-family:'Syne',sans-serif; font-size:21px; font-weight:700; color:#fff; }
+.priority-table { width:100%; border-collapse:collapse; font-size:17px; }
+.priority-table th { padding:10px 16px; text-align:left; font-size:14px; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border); }
+.priority-table td { padding:10px 16px; border-bottom:1px solid rgba(255,255,255,0.03); color:var(--text-dim); vertical-align:top; line-height:1.6; }
+.priority-table tr:last-child td { border-bottom:none; }
+.priority-table tr:hover td { background:rgba(255,255,255,0.02); }
+.role-name { font-weight:500; color:var(--text); }
+
+/* LEGEND */
+.legend { display:flex; gap:16px; margin-bottom:22px; flex-wrap:wrap; align-items:center; padding:12px 18px; background:var(--surface); border:1px solid var(--border); border-radius:4px; font-size:16px; }
+.legend-title { letter-spacing:0.16em; text-transform:uppercase; color:var(--text-muted); }
+.legend-item { display:flex; align-items:center; gap:6px; color:var(--text-dim); }
+
+/* DEPT GRID */
+.dept-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:18px; }
+.dept-card { background:var(--surface); border:1px solid var(--border); border-radius:4px; overflow:hidden; transition:all 0.25s; animation:fadeUp 0.4s ease forwards; opacity:0; transform:translateY(16px); }
+.dept-card:hover { border-color:var(--dept-color,var(--accent)); box-shadow:0 0 24px rgba(0,0,0,0.3); transform:translateY(-2px); }
+@keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+.dept-card.hidden { display:none !important; }
+
+.dept-header { padding:15px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; background:linear-gradient(90deg,rgba(var(--dept-rgb,0,212,255),0.06),transparent); position:relative; }
+.dept-header::before { content:''; position:absolute; left:0;top:0;bottom:0; width:3px; background:var(--dept-color,var(--accent)); }
+.dept-icon { font-size:26px; width:36px; height:36px; display:flex; align-items:center; justify-content:center; background:rgba(var(--dept-rgb,0,212,255),0.1); border-radius:4px; flex-shrink:0; }
+.dept-name { font-family:'Syne',sans-serif; font-size:20px; font-weight:700; color:#fff; }
+.dept-code { font-size:14px; letter-spacing:0.15em; color:var(--dept-color,var(--accent)); text-transform:uppercase; margin-top:2px; }
+.dept-body { padding:15px 18px; }
+
+.dept-head { background:rgba(255,255,255,0.025); border:1px solid rgba(var(--dept-rgb,0,212,255),0.18); border-radius:3px; padding:12px 14px; margin-bottom:13px; display:flex; align-items:flex-start; gap:10px; }
+.head-badge { font-size:13px; letter-spacing:0.15em; text-transform:uppercase; padding:3px 9px; background:rgba(var(--dept-rgb,0,212,255),0.14); color:var(--dept-color,var(--accent)); border-radius:2px; white-space:nowrap; flex-shrink:0; margin-top:2px; }
+.head-title { font-family:'Syne',sans-serif; font-size:18px; font-weight:600; color:#fff; }
+.head-meta { font-size:16px; color:var(--text-muted); margin-top:4px; line-height:1.6; }
+.exp-tag { display:inline-flex; align-items:center; gap:3px; font-size:14px; padding:2px 8px; border-radius:2px; background:rgba(255,255,255,0.04); border:1px solid var(--border); color:var(--text-dim); margin-top:4px; margin-right:3px; }
+
+.reports-label { font-size:14px; letter-spacing:0.15em; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+.reports-label::after { content:''; flex:1; height:1px; background:var(--border); }
+.report-item { display:flex; align-items:flex-start; gap:8px; padding:9px 0; border-bottom:1px solid rgba(255,255,255,0.03); }
+.report-item:last-child { border-bottom:none; }
+.report-item::before { content:'└'; color:var(--text-muted); font-size:17px; margin-top:1px; flex-shrink:0; }
+.report-content { flex:1; min-width:0; }
+.report-role { font-size:17px; color:var(--text-dim); font-weight:500; line-height:1.5; }
+.report-note { font-size:16px; color:var(--text-muted); margin-top:3px; line-height:1.6; }
+.report-tags { display:flex; flex-wrap:wrap; gap:4px; margin-top:5px; }
+
+/* TAGS */
+.priority-tag { font-size:13px; padding:3px 8px; border-radius:2px; text-transform:uppercase; letter-spacing:0.08em; flex-shrink:0; white-space:nowrap; }
+.p-now   { background:rgba(239,68,68,0.14);  color:#fca5a5; border:1px solid rgba(239,68,68,0.28); }
+.p-soon  { background:rgba(245,158,11,0.14); color:#fcd34d; border:1px solid rgba(245,158,11,0.28); }
+.p-later { background:rgba(16,185,129,0.14); color:#6ee7b7; border:1px solid rgba(16,185,129,0.28); }
+.t-senior { background:rgba(124,58,237,0.14); color:#c4b5fd; border:1px solid rgba(124,58,237,0.28); }
+.t-mid    { background:rgba(0,212,255,0.1);   color:#7dd3fc; border:1px solid rgba(0,212,255,0.22); }
+.t-junior { background:rgba(52,211,153,0.1);  color:#6ee7b7; border:1px solid rgba(52,211,153,0.22); }
+.t-yrs    { background:rgba(255,255,255,0.04); color:var(--text-muted); border:1px solid var(--border); }
+.t-ph     { background:rgba(245,158,11,0.08); color:#fcd34d; border:1px solid rgba(245,158,11,0.22); }
+
+/* HC BAR */
+.hc-bar { margin-top:13px; padding-top:13px; border-top:1px solid var(--border); display:flex; align-items:center; gap:10px; }
+.hc-label { font-size:14px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted); white-space:nowrap; }
+.hc-track { flex:1; height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
+.hc-fill { height:100%; background:var(--dept-color,var(--accent)); border-radius:2px; opacity:0.65; }
+.hc-num { font-size:17px; color:var(--dept-color,var(--accent)); white-space:nowrap; font-weight:500; }
+
+/* SUMMARY */
+.summary-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; margin-top:32px; }
+.summary-box { padding:16px; background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:4px; }
+.summary-box .num { font-family:'Syne',sans-serif; font-size:42px; font-weight:800; }
+.summary-box .lbl { font-size:17px; color:var(--text-muted); margin-top:4px; }
+
+/* ===== TIMELINE PAGE ===== */
+.timeline-main { position:relative; z-index:1; padding:32px; max-width:1100px; margin:0 auto; }
+.tl-section-label { font-size:16px; letter-spacing:0.22em; text-transform:uppercase; color:var(--accent); margin-bottom:20px; display:flex; align-items:center; gap:10px; }
+.tl-section-label::after { content:''; flex:1; height:1px; background:rgba(0,212,255,0.12); }
+.tl-phase { position:relative; padding-left:30px; margin-bottom:40px; }
+.tl-phase::before { content:''; position:absolute; left:9px; top:28px; bottom:-40px; width:1px; background:var(--border); }
+.tl-phase:last-of-type::before { display:none; }
+.tl-dot { position:absolute; left:0; top:9px; width:20px; height:20px; border-radius:50%; border:2px solid var(--phase-color,var(--accent)); background:var(--bg); display:flex; align-items:center; justify-content:center; }
+.tl-dot::after { content:''; width:8px; height:8px; border-radius:50%; background:var(--phase-color,var(--accent)); }
+.tl-phase-header { background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--phase-color,var(--accent)); border-radius:0 4px 4px 0; padding:14px 18px; margin-bottom:14px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+.tl-phase-title { font-family:'Syne',sans-serif; font-size:22px; font-weight:700; color:#fff; }
+.tl-phase-meta { font-size:17px; color:var(--phase-color,var(--accent)); letter-spacing:0.06em; }
+.tl-phase-hc { margin-left:auto; font-size:18px; color:var(--text-dim); }
+.tl-phase-hc strong { color:var(--phase-color,var(--accent)); font-family:'Syne',sans-serif; font-size:26px; }
+.tl-roles-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:10px; }
+.tl-role-card { background:var(--surface); border:1px solid var(--border); border-radius:3px; padding:13px 15px; transition:border-color 0.2s; }
+.tl-role-card:hover { border-color:var(--phase-color,var(--accent)); }
+.tl-role-name { font-size:18px; color:var(--text); font-weight:500; margin-bottom:6px; line-height:1.4; }
+.tl-role-dept { font-size:14px; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px; }
+.tl-role-tags { display:flex; flex-wrap:wrap; gap:4px; }
+.tl-focus { margin-top:14px; padding:13px 16px; background:rgba(var(--phase-rgb,0,212,255),0.04); border:1px solid rgba(var(--phase-rgb,0,212,255),0.14); border-radius:3px; font-size:17px; color:var(--text-muted); line-height:1.8; }
+.tl-focus strong { color:var(--phase-color,var(--accent)); }
+
+.reg-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:10px; font-size:17px; color:var(--text-dim); line-height:1.8; }
+.reg-card { padding:13px 16px; background:rgba(245,158,11,0.04); border:1px solid rgba(245,158,11,0.12); border-radius:3px; }
+.reg-card-title { color:var(--accent4); font-weight:500; margin-bottom:5px; font-size:18px; }
+
+@media(max-width:600px){
+  .main,.timeline-main{padding:18px 14px;}
+  .dept-nav{padding:9px 14px;}
+  .hero{padding:32px 18px 24px;}
+  .page-nav{padding:0 14px;}
+  .page-nav-logo{display:none;}
+}
+</style>
+</head>
+<body>
+
+<nav class="page-nav">
+  <a href="index.html" class="page-nav-logo" style="text-decoration:none;cursor:pointer;" title="Back to Hub">iGaming <span>OPS</span></a>
+  <button class="page-tab active" onclick="showPage('org',this)">Org Chart</button>
+  <button class="page-tab" onclick="showPage('timeline',this)">Hiring Timeline</button>
+</nav>
+
+<!-- ========== ORG CHART PAGE ========== -->
+<div class="page active" id="page-org">
+  <div class="hero">
+    <div class="hero-tag">Live Operations Structure</div>
+    <h1>iGaming <span>Org Chart</span></h1>
+    <p class="hero-sub">Organisational Framework · Philippines Market · Growth Edition</p>
+    <div class="products">
+      <span class="product-badge pb-sports">⚽ Sportsbook</span>
+      <span class="product-badge pb-casino">🎰 Casino · Slots · Bingo · Poker</span>
+      <span class="product-badge pb-spec">🎱 Billiards PvP · Crash · Pachinko</span>
+      <span class="product-badge pb-ph">🇵🇭 PAGCOR · AMLC · BSP</span>
+    </div>
+  </div>
+
+  <div class="dept-nav">
+    <button class="nav-btn active" onclick="filterDept('all',this)">All</button>
+    <button class="nav-btn" onclick="filterDept('tech',this)">Technology</button>
+    <button class="nav-btn" onclick="filterDept('ux',this)">UX & Design</button>
+    <button class="nav-btn" onclick="filterDept('product',this)">Product</button>
+    <button class="nav-btn" onclick="filterDept('ops',this)">Operations</button>
+    <button class="nav-btn" onclick="filterDept('commercial',this)">Commercial</button>
+    <button class="nav-btn" onclick="filterDept('kyc',this)">KYC</button>
+    <button class="nav-btn" onclick="filterDept('risk',this)">Risk & Compliance</button>
+    <button class="nav-btn" onclick="filterDept('finance',this)">Finance</button>
+    <button class="nav-btn" onclick="filterDept('legal',this)">Legal</button>
+    <button class="nav-btn" onclick="filterDept('people',this)">People & HR</button>
+  </div>
+
+  <div class="main">
+    <div style="text-align:center;margin-bottom:16px;"><div style="font-size:12px;letter-spacing:0.25em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">Executive Leadership</div></div>
+    <div class="csuite">
+      <div class="ceo-card"><div class="role">CEO</div><div class="title">Chief Executive Officer</div></div>
+      <div class="ceo-card"><div class="role">COO</div><div class="title">Chief Operating Officer</div></div>
+      <div class="ceo-card"><div class="role">CTO</div><div class="title">Chief Technology Officer</div></div>
+      <div class="ceo-card"><div class="role">CPO</div><div class="title">Chief Product Officer</div></div>
+      <div class="ceo-card"><div class="role">CFO</div><div class="title">Chief Financial Officer</div></div>
+      <div class="ceo-card"><div class="role">CLO</div><div class="title">Chief Legal Officer</div></div>
+    </div>
+
+    <div class="reporting-banner">
+      <h3>Primary Reporting Chain</h3>
+      <div class="report-chain">
+        <div class="chain-label">CEO</div><div class="chain-arrow">→</div>
+        <div class="chain-label">COO / CTO / CPO</div><div class="chain-arrow">→</div>
+        <div class="chain-label">Department Heads</div><div class="chain-arrow">→</div>
+        <div class="chain-label">Team Leads / Seniors</div><div class="chain-arrow">→</div>
+        <div class="chain-label">Mid / Junior ICs</div>
+      </div>
+      <div class="ph-note">🇵🇭 <strong>Philippines context:</strong> KYC is a standalone department (not a sub-unit of Compliance) due to PAGCOR audit volume and AMLC R.A. 9160 CDD/EDD obligations. DPO must be registered with the National Privacy Commission under R.A. 10173. Payments roles must understand GCash and Maya (BSP e-money rules). Finance must cover BIR filings. HR must cover DOLE, SSS, PhilHealth, and Pag-IBIG.</div>
+    </div>
+
+    <div class="legend">
+      <span class="legend-title">Priority:</span>
+      <span class="legend-item"><span class="priority-tag p-now">Now</span> Hire immediately</span>
+      <span class="legend-item"><span class="priority-tag p-soon">Soon</span> 3–6 months</span>
+      <span class="legend-item"><span class="priority-tag p-later">Later</span> Scale / milestone</span>
+      <span style="color:var(--border);padding:0 8px">|</span>
+      <span class="legend-title">Seniority:</span>
+      <span class="legend-item"><span class="priority-tag t-senior">Senior</span></span>
+      <span class="legend-item"><span class="priority-tag t-mid">Mid</span></span>
+      <span class="legend-item"><span class="priority-tag t-junior">Junior</span></span>
+      <span class="legend-item"><span class="priority-tag t-yrs">⏱ yrs exp</span></span>
+    </div>
+
+    <div class="dept-grid" id="deptGrid">
+
+      <!-- ENGINEERING -->
+      <div class="dept-card" data-group="tech" style="--dept-color:#00d4ff;--dept-rgb:0,212,255;animation-delay:0.04s">
+        <div class="dept-header"><div class="dept-icon">💻</div><div><div class="dept-name">Engineering</div><div class="dept-code">TECH-01 · Reports to CTO</div></div></div>
+        <div class="dept-body">
+          <div class="dept-head"><div class="head-badge">Head</div><div><div class="head-title">Head of Engineering</div><div class="head-meta">Full dev lifecycle · architecture · team hiring</div><div><span class="exp-tag">⏱ 8–12 yrs</span><span class="exp-tag t-senior">Senior</span></div></div></div>
+          <div class="reports-label">Direct Reports</div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Senior Frontend Engineer ×2</div><div class="report-note">React / Vue · Sportsbook UI, Casino lobby, Specialty Games</div><div class="report-tags"><span class="priority-tag p-now">Now</span><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">5–8 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Junior Frontend Engineer ×1–2</div><div class="report-note">Component work under senior oversight</div><div class="report-tags"><span class="priority-tag p-soon">Soon</span><span class="priority-tag t-junior">Junior</span><span class="priority-tag t-yrs">1–3 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Senior Backend Engineer ×2</div><div class="report-note">Node / Go · API, wallet, game engine, odds feed</div><div class="report-tags"><span class="priority-tag p-now">Now</span><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">5–9 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Mid Backend Engineer ×1–2</div><div class="report-note">Feature dev, API maintenance, microservices</div><div class="report-tags"><span class="priority-tag p-soon">Soon</span><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">DevOps / Infrastructure Engineer</div><div class="report-note">AWS/GCP, CI/CD, uptime SLAs, security patching</div><div class="report-tags"><span class="priority-tag p-soon">Soon</span><span class="priority-tag t-mid">Mid–Senior</span><span class="priority-tag t-yrs">4–7 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Data / BI Analyst</div><div class="report-note">Player analytics, KPI dashboards, churn signals</div><div class="report-tags"><span class="priority-tag p-later">Later</span><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Mobile Engineer (iOS / Android)</div><div class="report-note">React Native or native · mobile product expansion</div><div class="report-tags"><span class="priority-tag p-later">Later</span><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–6 yrs</span></div></div></div>
+          <div class="hc-bar"><span class="hc-label">Target HC</span><div class="hc-track"><div class="hc-fill" style="width:60%"></div></div><span class="hc-num">8–14 FTE</span></div>
+        </div>
+      </div>
+
+      <!-- QA -->
+      <div class="dept-card" data-group="tech" style="--dept-color:#38bdf8;--dept-rgb:56,189,248;animation-delay:0.08s">
+        <div class="dept-header"><div class="dept-icon">🧪</div><div><div class="dept-name">Quality Assurance</div><div class="dept-code">TECH-02 · Reports to CTO / Head of Eng</div></div></div>
+        <div class="dept-body">
+          <div class="dept-head"><div class="head-badge">Lead</div><div><div class="head-title">QA Lead / SDET</div><div class="head-meta">Test strategy, automation framework, release gating</div><div><span class="exp-tag">⏱ 6–9 yrs</span><span class="exp-tag t-senior">Senior</span></div></div></div>
+          <div class="reports-label">Direct Reports</div>
+          <div class="report-item"><div class="report-content"><div class="report-role">QA Engineer — Platform ×2</div><div class="report-note">Sportsbook flows, wallet, registration, KYC handoff testing</div><div class="report-tags"><span class="priority-tag p-soon">Soon</span><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">QA Engineer — Games</div><div class="report-note">RNG certification, crash fairness, PvP mechanic validation</div><div class="report-tags"><span class="priority-tag p-later">Later</span><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div></div>
+          <div class="hc-bar"><span class="hc-label">Target HC</span><div class="hc-track"><div class="hc-fill" style="width:35%"></div></div><span class="hc-num">3–5 FTE</span></div>
+        </div>
+      </div>
+
+      <!-- UX & DESIGN -->
+      <div class="dept-card" data-group="ux" style="--dept-color:#f472b6;--dept-rgb:244,114,182;animation-delay:0.12s">
+        <div class="dept-header"><div class="dept-icon">🎨</div><div><div class="dept-name">UX & Design</div><div class="dept-code">UX-01 · Reports to CPO</div></div></div>
+        <div class="dept-body">
+          <div class="dept-head"><div class="head-badge">Head</div><div><div class="head-title">Head of UX / Lead Product Designer</div><div class="head-meta">Design system ownership · player experience strategy · design ops</div><div><span class="exp-tag">⏱ 7–10 yrs</span><span class="exp-tag t-senior">Senior</span><span class="exp-tag t-ph">🇵🇭 iGaming exp preferred</span></div></div></div>
+          <div class="reports-label">Direct Reports</div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Senior UX Designer</div><div class="report-note">Sportsbook flows, bet builder, cashout journeys, onboarding, conversion optimisation</div><div class="report-tags"><span class="priority-tag p-now">Now</span><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">5–8 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">UI / Visual Designer</div><div class="report-note">Component library, brand expression, casino lobby aesthetics, marketing creatives</div><div class="report-tags"><span class="priority-tag p-soon">Soon</span><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">UX Researcher</div><div class="report-note">Player testing, heatmaps, conversion funnel analysis, localisation insights for PH market</div><div class="report-tags"><span class="priority-tag p-later">Later</span><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Motion / Game UI Designer</div><div class="report-note">Crash game animations, billiards PvP UI, pachinko visual effects, game state feedback</div><div class="report-tags"><span class="priority-tag p-later">Later</span><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–6 yrs</span></div></div></div>
+          <div class="hc-bar"><span class="hc-label">Target HC</span><div class="hc-track"><div class="hc-fill" style="width:40%"></div></div><span class="hc-num">3–5 FTE</span></div>
+        </div>
+      </div>
+
+      <!-- PRODUCT -->
+      <div class="dept-card" data-group="product" style="--dept-color:#7c3aed;--dept-rgb:124,58,237;animation-delay:0.16s">
+        <div class="dept-header"><div class="dept-icon">🎯</div><div><div class="dept-name">Product Management</div><div class="dept-code">PROD-01 · Reports to CPO</div></div></div>
+        <div class="dept-body">
+          <div class="dept-head"><div class="head-badge">Head</div><div><div class="head-title">Head of Product / CPO</div><div class="head-meta">Roadmap · player experience vision · provider negotiations</div><div><span class="exp-tag">⏱ 8–12 yrs</span><span class="exp-tag t-senior">Senior</span><span class="exp-tag t-ph">🇵🇭 SEA iGaming exp</span></div></div></div>
+          <div class="reports-label">Direct Reports</div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Product Manager — Sportsbook</div><div class="report-note">Bet builder, live betting, cashout, odds display</div><div class="report-tags"><span class="priority-tag p-now">Now</span><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">5–8 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Sportsbook Trader / Odds Compiler</div><div class="report-note">Lines management, in-play trading, risk exposure monitoring</div><div class="report-tags"><span class="priority-tag p-soon">Soon</span><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">5–8 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Product Manager — Casino & Bingo</div><div class="report-note">Slots lobby, bingo rooms, poker client, game provider integration</div><div class="report-tags"><span class="priority-tag p-soon">Soon</span><span class="priority-tag t-mid">Mid–Senior</span><span class="priority-tag t-yrs">4–7 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Head of Speciality Games</div><div class="report-note">Billiards PvP, crash game, online pachinko · tournament logic, matchmaking</div><div class="report-tags"><span class="priority-tag p-later">Later</span><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">6–10 yrs</span></div></div></div>
+          <div class="hc-bar"><span class="hc-label">Target HC</span><div class="hc-track"><div class="hc-fill" style="width:45%"></div></div><span class="hc-num">4–6 FTE</span></div>
+        </div>
+      </div>
+
+      <!-- CUSTOMER SUPPORT -->
+      <div class="dept-card" data-group="ops" style="--dept-color:#10b981;--dept-rgb:16,185,129;animation-delay:0.2s">
+        <div class="dept-header"><div class="dept-icon">🎧</div><div><div class="dept-name">Customer Support</div><div class="dept-code">OPS-01 · Reports to COO</div></div></div>
+        <div class="dept-body">
+          <div class="dept-head"><div class="head-badge">Head</div><div><div class="head-title">Head of Customer Support</div><div class="head-meta">SLA ownership · escalation matrix · tools, training, quality</div><div><span class="exp-tag">⏱ 6–10 yrs</span><span class="exp-tag t-senior">Senior</span><span class="exp-tag t-ph">🇵🇭 BPO / iGaming exp</span></div></div></div>
+          <div class="reports-label">Direct Reports</div>
+          <div class="report-item"><div class="report-content"><div class="report-role">CS Team Lead ×1–2</div><div class="report-note">Shift supervision, tier-2 escalations, agent coaching</div><div class="report-tags"><span class="priority-tag p-now">Now</span><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">CS Agent — Live Chat / Email ×4–8</div><div class="report-note">24/7 coverage · sportsbook, casino, payments · Filipino + English</div><div class="report-tags"><span class="priority-tag p-now">Now</span><span class="priority-tag t-junior">Junior</span><span class="priority-tag t-yrs">1–3 yrs</span><span class="priority-tag t-ph">🇵🇭 Bilingual</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Responsible Gambling Specialist</div><div class="report-note">Self-exclusion, limit monitoring, player welfare flags</div><div class="report-tags"><span class="priority-tag p-soon">Soon</span><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div></div>
+          <div class="hc-bar"><span class="hc-label">Target HC</span><div class="hc-track"><div class="hc-fill" style="width:55%"></div></div><span class="hc-num">7–12 FTE</span></div>
+        </div>
+      </div>
+
+      <!-- CRM -->
+      <div class="dept-card" data-group="commercial" style="--dept-color:#f59e0b;--dept-rgb:245,158,11;animation-delay:0.24s">
+        <div class="dept-header"><div class="dept-icon">📊</div><div><div class="dept-name">CRM & Retention</div><div class="dept-code">COMM-01 · Reports to COO</div></div></div>
+        <div class="dept-body">
+          <div class="dept-head"><div class="head-badge">Head</div><div><div class="head-title">CRM Manager / Head of Retention</div><div class="head-meta">Lifecycle campaigns · segmentation · bonus strategy · player LTV</div><div><span class="exp-tag">⏱ 5–8 yrs</span><span class="exp-tag t-senior">Senior</span><span class="exp-tag t-ph">🇵🇭 SEA market exp</span></div></div></div>
+          <div class="reports-label">Direct Reports</div>
+          <div class="report-item"><div class="report-content"><div class="report-role">CRM Campaign Manager</div><div class="report-note">Email, SMS, push, in-app · Filipino audience localisation</div><div class="report-tags"><span class="priority-tag p-soon">Soon</span><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Bonus & Promotions Analyst</div><div class="report-note">Wagering conditions, promo ROI, bonus abuse detection</div><div class="report-tags"><span class="priority-tag p-soon">Soon</span><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">CRM Data Analyst</div><div class="report-note">Segmentation, churn prediction, LTV modelling, A/B testing</div><div class="report-tags"><span class="priority-tag p-later">Later</span><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div></div>
+          <div class="hc-bar"><span class="hc-label">Target HC</span><div class="hc-track"><div class="hc-fill" style="width:35%"></div></div><span class="hc-num">3–5 FTE</span></div>
+        </div>
+      </div>
+
+      <!-- VIP -->
+      <div class="dept-card" data-group="commercial" style="--dept-color:#ec4899;--dept-rgb:236,72,153;animation-delay:0.28s">
+        <div class="dept-header"><div class="dept-icon">👑</div><div><div class="dept-name">VIP Management</div><div class="dept-code">COMM-02 · Reports to COO</div></div></div>
+        <div class="dept-body">
+          <div class="dept-head"><div class="head-badge">Head</div><div><div class="head-title">VIP Manager / Head of VIP</div><div class="head-meta">High-value player relationships · personal account management</div><div><span class="exp-tag">⏱ 5–8 yrs</span><span class="exp-tag t-senior">Senior</span><span class="exp-tag t-ph">🇵🇭 Relationship sales bg</span></div></div></div>
+          <div class="reports-label">Direct Reports</div>
+          <div class="report-item"><div class="report-content"><div class="report-role">VIP Account Manager ×1–3</div><div class="report-note">Personal host per VIP tier · cashback, gifts, event invites, personalised offers</div><div class="report-tags"><span class="priority-tag p-soon">Soon</span><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">VIP Analyst</div><div class="report-note">Spend monitoring, tier upgrades, reactivation campaigns</div><div class="report-tags"><span class="priority-tag p-later">Later</span><span class="priority-tag t-junior">Junior–Mid</span><span class="priority-tag t-yrs">2–4 yrs</span></div></div></div>
+          <div class="hc-bar"><span class="hc-label">Target HC</span><div class="hc-track"><div class="hc-fill" style="width:28%"></div></div><span class="hc-num">2–4 FTE</span></div>
+        </div>
+      </div>
+
+      <!-- AFFILIATES -->
+      <div class="dept-card" data-group="commercial" style="--dept-color:#fb923c;--dept-rgb:251,146,60;animation-delay:0.32s">
+        <div class="dept-header"><div class="dept-icon">🔗</div><div><div class="dept-name">Affiliate & Partnerships</div><div class="dept-code">COMM-03 · Reports to COO</div></div></div>
+        <div class="dept-body">
+          <div class="dept-head"><div class="head-badge">Head</div><div><div class="head-title">Affiliate Manager / Head of Affiliates</div><div class="head-meta">Network management · deal structures · traffic quality oversight</div><div><span class="exp-tag">⏱ 5–8 yrs</span><span class="exp-tag t-senior">Senior</span><span class="exp-tag t-ph">🇵🇭 PH affiliate network exp</span></div></div></div>
+          <div class="reports-label">Direct Reports</div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Affiliate Executive</div><div class="report-note">Partner onboarding, reporting, commission reconciliation</div><div class="report-tags"><span class="priority-tag p-soon">Soon</span><span class="priority-tag t-junior">Junior–Mid</span><span class="priority-tag t-yrs">2–4 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">SEO / Content Specialist</div><div class="report-note">Organic acquisition · Filipino-language content · review sites</div><div class="report-tags"><span class="priority-tag p-later">Later</span><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div></div>
+          <div class="hc-bar"><span class="hc-label">Target HC</span><div class="hc-track"><div class="hc-fill" style="width:25%"></div></div><span class="hc-num">2–3 FTE</span></div>
+        </div>
+      </div>
+
+      <!-- KYC STANDALONE -->
+      <div class="dept-card" data-group="kyc" style="--dept-color:#fbbf24;--dept-rgb:251,191,36;animation-delay:0.36s">
+        <div class="dept-header"><div class="dept-icon">🪪</div><div><div class="dept-name">KYC & Identity Verification</div><div class="dept-code">KYC-01 · Reports to Head of Compliance / COO</div></div></div>
+        <div class="dept-body">
+          <div class="dept-head"><div class="head-badge">Head</div><div><div class="head-title">KYC Manager / Head of Identity</div><div class="head-meta">PAGCOR KYC framework · AMLC CDD/EDD · verification SLA ownership · eKYC vendor</div><div><span class="exp-tag">⏱ 6–9 yrs</span><span class="exp-tag t-senior">Senior</span><span class="exp-tag t-ph">🇵🇭 AMLC / BSP essential</span></div></div></div>
+          <div class="ph-note" style="margin-bottom:11px;font-size:12px;">KYC is separated from Compliance due to PAGCOR daily audit trail requirements and the volume of CDD/EDD under AMLC R.A. 9160.</div>
+          <div class="reports-label">Direct Reports</div>
+          <div class="report-item"><div class="report-content"><div class="report-role">KYC Analyst Tier 1 ×2–3</div><div class="report-note">Standard document checks · government ID, proof of address · first-level review</div><div class="report-tags"><span class="priority-tag p-now">Now</span><span class="priority-tag t-junior">Junior</span><span class="priority-tag t-yrs">1–3 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">KYC Senior Analyst / EDD Specialist</div><div class="report-note">Enhanced Due Diligence · PEP screening · sanctions checks · high-risk accounts</div><div class="report-tags"><span class="priority-tag p-now">Now</span><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">4–7 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">AML / STR Officer</div><div class="report-note">Suspicious Transaction Reports to AMLC · transaction monitoring · SAR filing</div><div class="report-tags"><span class="priority-tag p-now">Now</span><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">5–8 yrs</span><span class="priority-tag t-ph">🇵🇭 AMLC mandatory</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">KYC Operations Coordinator</div><div class="report-note">Queue management, verification SLA, eKYC tool liaison</div><div class="report-tags"><span class="priority-tag p-soon">Soon</span><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div></div>
+          <div class="hc-bar"><span class="hc-label">Target HC</span><div class="hc-track"><div class="hc-fill" style="width:45%"></div></div><span class="hc-num">5–8 FTE</span></div>
+        </div>
+      </div>
+
+      <!-- COMPLIANCE -->
+      <div class="dept-card" data-group="risk" style="--dept-color:#ef4444;--dept-rgb:239,68,68;animation-delay:0.4s">
+        <div class="dept-header"><div class="dept-icon">🛡️</div><div><div class="dept-name">Compliance & Regulatory</div><div class="dept-code">RISK-01 · Reports to CLO / COO</div></div></div>
+        <div class="dept-body">
+          <div class="dept-head"><div class="head-badge">Head</div><div><div class="head-title">Head of Compliance / CCO</div><div class="head-meta">PAGCOR licence conditions · AML programme · internal audit · regulatory filings</div><div><span class="exp-tag">⏱ 8–12 yrs</span><span class="exp-tag t-senior">Senior</span><span class="exp-tag t-ph">🇵🇭 PAGCOR exp essential</span></div></div></div>
+          <div class="reports-label">Direct Reports</div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Compliance Officer</div><div class="report-note">Internal policy · audit prep · PAGCOR submissions · regulator liaison</div><div class="report-tags"><span class="priority-tag p-now">Now</span><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">5–8 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Responsible Gambling Manager</div><div class="report-note">RG tools, player protection programme, PAGCOR RG requirements</div><div class="report-tags"><span class="priority-tag p-soon">Soon</span><span class="priority-tag t-mid">Mid–Senior</span><span class="priority-tag t-yrs">4–7 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Regulatory Reporting Analyst</div><div class="report-note">Monthly / quarterly PAGCOR data submissions, fee calculations, licence renewals</div><div class="report-tags"><span class="priority-tag p-soon">Soon</span><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div></div>
+          <div class="hc-bar"><span class="hc-label">Target HC</span><div class="hc-track"><div class="hc-fill" style="width:38%"></div></div><span class="hc-num">4–6 FTE</span></div>
+        </div>
+      </div>
+
+      <!-- FRAUD & PAYMENTS -->
+      <div class="dept-card" data-group="risk" style="--dept-color:#f97316;--dept-rgb:249,115,22;animation-delay:0.44s">
+        <div class="dept-header"><div class="dept-icon">🔍</div><div><div class="dept-name">Fraud & Payments</div><div class="dept-code">RISK-02 · Reports to COO / CFO</div></div></div>
+        <div class="dept-body">
+          <div class="dept-head"><div class="head-badge">Head</div><div><div class="head-title">Head of Fraud & Payments</div><div class="head-meta">Chargeback management · fraud rules · GCash / Maya / PSP relationships</div><div><span class="exp-tag">⏱ 7–10 yrs</span><span class="exp-tag t-senior">Senior</span><span class="exp-tag t-ph">🇵🇭 GCash / Maya / BSP</span></div></div></div>
+          <div class="reports-label">Direct Reports</div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Fraud Analyst ×1–2</div><div class="report-note">Transaction monitoring · multi-account detection · device fingerprinting</div><div class="report-tags"><span class="priority-tag p-now">Now</span><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Payments Specialist</div><div class="report-note">Deposit / withdrawal · GCash, Maya, bank transfer · PSP reconciliation</div><div class="report-tags"><span class="priority-tag p-now">Now</span><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Risk Rules Analyst</div><div class="report-note">Velocity rules, bonus abuse controls, rule tuning</div><div class="report-tags"><span class="priority-tag p-later">Later</span><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div></div>
+          <div class="hc-bar"><span class="hc-label">Target HC</span><div class="hc-track"><div class="hc-fill" style="width:38%"></div></div><span class="hc-num">3–5 FTE</span></div>
+        </div>
+      </div>
+
+      <!-- FINANCE -->
+      <div class="dept-card" data-group="finance" style="--dept-color:#34d399;--dept-rgb:52,211,153;animation-delay:0.48s">
+        <div class="dept-header"><div class="dept-icon">💰</div><div><div class="dept-name">Finance & Accounting</div><div class="dept-code">FIN-01 · Reports to CFO</div></div></div>
+        <div class="dept-body">
+          <div class="dept-head"><div class="head-badge">Head</div><div><div class="head-title">Finance Manager / CFO</div><div class="head-meta">P&L · treasury · investor reporting · BIR / SEC compliance</div><div><span class="exp-tag">⏱ 8–12 yrs</span><span class="exp-tag t-senior">Senior</span><span class="exp-tag t-ph">🇵🇭 BIR / SEC exp</span></div></div></div>
+          <div class="reports-label">Direct Reports</div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Financial Controller / Accountant</div><div class="report-note">Bookkeeping · payroll · BIR filings · statutory accounts</div><div class="report-tags"><span class="priority-tag p-soon">Soon</span><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">4–6 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">FP&A Analyst</div><div class="report-note">Budgeting, forecasting, scenario modelling, board reporting</div><div class="report-tags"><span class="priority-tag p-later">Later</span><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div></div>
+          <div class="hc-bar"><span class="hc-label">Target HC</span><div class="hc-track"><div class="hc-fill" style="width:25%"></div></div><span class="hc-num">2–3 FTE</span></div>
+        </div>
+      </div>
+
+      <!-- LEGAL -->
+      <div class="dept-card" data-group="legal" style="--dept-color:#a78bfa;--dept-rgb:167,139,250;animation-delay:0.52s">
+        <div class="dept-header"><div class="dept-icon">⚖️</div><div><div class="dept-name">Legal & Governance</div><div class="dept-code">LEGAL-01 · Reports to CLO / CEO</div></div></div>
+        <div class="dept-body">
+          <div class="dept-head"><div class="head-badge">Head</div><div><div class="head-title">General Counsel / CLO</div><div class="head-meta">Contracts · PAGCOR licence · IP · data privacy</div><div><span class="exp-tag">⏱ 8–12 yrs</span><span class="exp-tag t-senior">Senior</span><span class="exp-tag t-ph">🇵🇭 PH Bar preferred</span></div></div></div>
+          <div class="reports-label">Direct Reports</div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Legal Counsel (In-house or Retained)</div><div class="report-note">Affiliate agreements · provider contracts · player T&Cs · labour law</div><div class="report-tags"><span class="priority-tag p-soon">Soon</span><span class="priority-tag t-mid">Mid–Senior</span><span class="priority-tag t-yrs">4–7 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Data Protection Officer (DPO)</div><div class="report-note">NPC / R.A. 10173 compliance · privacy notices · breach response · NPC registration</div><div class="report-tags"><span class="priority-tag p-soon">Soon</span><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–6 yrs</span><span class="priority-tag t-ph">🇵🇭 NPC mandatory</span></div></div></div>
+          <div class="hc-bar"><span class="hc-label">Target HC</span><div class="hc-track"><div class="hc-fill" style="width:20%"></div></div><span class="hc-num">2–3 FTE</span></div>
+        </div>
+      </div>
+
+      <!-- PEOPLE & HR -->
+      <div class="dept-card" data-group="people" style="--dept-color:#67e8f9;--dept-rgb:103,232,249;animation-delay:0.56s">
+        <div class="dept-header"><div class="dept-icon">🧑‍🤝‍🧑</div><div><div class="dept-name">People & HR</div><div class="dept-code">HR-01 · Reports to COO / CEO</div></div></div>
+        <div class="dept-body">
+          <div class="dept-head"><div class="head-badge">Head</div><div><div class="head-title">HR Manager / Head of People</div><div class="head-meta">Culture · recruitment · onboarding · performance · DOLE compliance</div><div><span class="exp-tag">⏱ 6–9 yrs</span><span class="exp-tag t-senior">Senior</span><span class="exp-tag t-ph">🇵🇭 DOLE / SSS / PhilHealth</span></div></div></div>
+          <div class="reports-label">Direct Reports</div>
+          <div class="report-item"><div class="report-content"><div class="report-role">Talent Acquisition Specialist</div><div class="report-note">End-to-end recruitment · iGaming talent network · PH tech hiring</div><div class="report-tags"><span class="priority-tag p-later">Later</span><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div></div>
+          <div class="report-item"><div class="report-content"><div class="report-role">HR Generalist / People Ops</div><div class="report-note">Contracts · onboarding · L&D · payroll coordination · DOLE filings</div><div class="report-tags"><span class="priority-tag p-later">Later</span><span class="priority-tag t-junior">Junior–Mid</span><span class="priority-tag t-yrs">2–4 yrs</span></div></div></div>
+          <div class="hc-bar"><span class="hc-label">Target HC</span><div class="hc-track"><div class="hc-fill" style="width:20%"></div></div><span class="hc-num">2–3 FTE</span></div>
+        </div>
+      </div>
+
+    </div><!-- /dept-grid -->
+
+    <div style="margin-top:32px;background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:20px;">
+      <div style="font-size:12px;letter-spacing:0.25em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;">Total Headcount Estimate</div>
+      <div class="summary-grid">
+        <div class="summary-box"><div class="num" style="color:var(--accent)">15–25</div><div class="lbl">Phase 1 · Launch Ready</div></div>
+        <div class="summary-box"><div class="num" style="color:#a78bfa">35–55</div><div class="lbl">Phase 2 · 6–18 Months</div></div>
+        <div class="summary-box"><div class="num" style="color:var(--accent3)">65–95+</div><div class="lbl">Phase 3 · Full Suite Live</div></div>
+        <div class="summary-box"><div class="num" style="color:var(--accent4)">13</div><div class="lbl">Departments Total</div></div>
+        <div class="summary-box"><div class="num" style="color:#fbbf24">5–8</div><div class="lbl">KYC Team (standalone)</div></div>
+        <div class="summary-box"><div class="num" style="color:#f472b6">3–5</div><div class="lbl">UX & Design Team</div></div>
+      </div>
+    </div>
+  </div>
+</div><!-- /page-org -->
+
+
+<!-- ========== TIMELINE PAGE ========== -->
+<div class="page" id="page-timeline">
+  <div class="hero">
+    <div class="hero-tag">Hiring Timeline</div>
+    <h1>When to <span>Hire</span></h1>
+    <p class="hero-sub">Philippines Market · 3-Phase Growth Plan · Sportsbook → Casino → Specialty Games</p>
+  </div>
+  <div class="timeline-main">
+    <div class="tl-section-label">Growth Phases</div>
+
+    <!-- PHASE 1 -->
+    <div class="tl-phase" style="--phase-color:#ef4444;--phase-rgb:239,68,68;">
+      <div class="tl-dot"></div>
+      <div class="tl-phase-header">
+        <div><div class="tl-phase-title">Phase 1 — Foundation</div><div class="tl-phase-meta">Month 0–3 · Pre-launch to Sportsbook Go-Live</div></div>
+        <div class="tl-phase-hc">Target: <strong>15–25</strong> FTE</div>
+      </div>
+      <div class="tl-roles-grid">
+        <div class="tl-role-card"><div class="tl-role-dept">Engineering</div><div class="tl-role-name">Head of Engineering</div><div class="tl-role-tags"><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">8–12 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Engineering</div><div class="tl-role-name">Senior Frontend Engineer ×2</div><div class="tl-role-tags"><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">5–8 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Engineering</div><div class="tl-role-name">Senior Backend Engineer ×2</div><div class="tl-role-tags"><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">5–9 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">UX & Design</div><div class="tl-role-name">Senior UX Designer</div><div class="tl-role-tags"><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">5–8 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Product</div><div class="tl-role-name">Product Manager — Sportsbook</div><div class="tl-role-tags"><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">5–8 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Compliance</div><div class="tl-role-name">Head of Compliance / CCO</div><div class="tl-role-tags"><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">8–12 yrs</span><span class="priority-tag t-ph">🇵🇭 PAGCOR</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Compliance</div><div class="tl-role-name">Compliance Officer</div><div class="tl-role-tags"><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">5–8 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">KYC</div><div class="tl-role-name">KYC Manager / Head of Identity</div><div class="tl-role-tags"><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">6–9 yrs</span><span class="priority-tag t-ph">🇵🇭 AMLC</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">KYC</div><div class="tl-role-name">KYC Analyst Tier 1 ×2</div><div class="tl-role-tags"><span class="priority-tag t-junior">Junior</span><span class="priority-tag t-yrs">1–3 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">KYC</div><div class="tl-role-name">AML / STR Officer</div><div class="tl-role-tags"><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">5–8 yrs</span><span class="priority-tag t-ph">🇵🇭 Mandatory</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Fraud & Payments</div><div class="tl-role-name">Head of Fraud & Payments</div><div class="tl-role-tags"><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">7–10 yrs</span><span class="priority-tag t-ph">🇵🇭 GCash/Maya</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Fraud & Payments</div><div class="tl-role-name">Fraud Analyst + Payments Specialist</div><div class="tl-role-tags"><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Customer Support</div><div class="tl-role-name">Head of CS + CS Team Lead</div><div class="tl-role-tags"><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">6–10 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Customer Support</div><div class="tl-role-name">CS Agent ×4 (24/7 coverage)</div><div class="tl-role-tags"><span class="priority-tag t-junior">Junior</span><span class="priority-tag t-yrs">1–3 yrs</span><span class="priority-tag t-ph">🇵🇭 Bilingual</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Legal</div><div class="tl-role-name">General Counsel / CLO</div><div class="tl-role-tags"><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">8–12 yrs</span><span class="priority-tag t-ph">🇵🇭 PH Bar</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Legal</div><div class="tl-role-name">Data Protection Officer (DPO)</div><div class="tl-role-tags"><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–6 yrs</span><span class="priority-tag t-ph">🇵🇭 NPC reg.</span></div></div>
+      </div>
+      <div class="tl-focus"><strong>Phase 1 focus:</strong> Establish the minimum viable team for PAGCOR licence compliance, sportsbook go-live, and basic player operations. The KYC Manager, AML/STR Officer, and CCO are non-negotiable before going live — PAGCOR can inspect at any time. DPO must be registered with NPC before player data is collected.</div>
+    </div>
+
+    <!-- PHASE 2 -->
+    <div class="tl-phase" style="--phase-color:#f59e0b;--phase-rgb:245,158,11;">
+      <div class="tl-dot"></div>
+      <div class="tl-phase-header">
+        <div><div class="tl-phase-title">Phase 2 — Growth</div><div class="tl-phase-meta">Month 3–12 · Casino, Bingo, Poker Launch · Scaling Operations</div></div>
+        <div class="tl-phase-hc">Target: <strong>35–55</strong> FTE</div>
+      </div>
+      <div class="tl-roles-grid">
+        <div class="tl-role-card"><div class="tl-role-dept">Engineering</div><div class="tl-role-name">Mid Backend Engineer ×2</div><div class="tl-role-tags"><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Engineering</div><div class="tl-role-name">Junior Frontend Engineer ×2</div><div class="tl-role-tags"><span class="priority-tag t-junior">Junior</span><span class="priority-tag t-yrs">1–3 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Engineering</div><div class="tl-role-name">DevOps / Infrastructure Engineer</div><div class="tl-role-tags"><span class="priority-tag t-mid">Mid–Senior</span><span class="priority-tag t-yrs">4–7 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">QA</div><div class="tl-role-name">QA Lead + QA Engineers ×2</div><div class="tl-role-tags"><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–6 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">UX & Design</div><div class="tl-role-name">UI / Visual Designer</div><div class="tl-role-tags"><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Product</div><div class="tl-role-name">PM — Casino & Bingo</div><div class="tl-role-tags"><span class="priority-tag t-mid">Mid–Senior</span><span class="priority-tag t-yrs">4–7 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Product</div><div class="tl-role-name">Sportsbook Trader / Odds Compiler</div><div class="tl-role-tags"><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">5–8 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">CRM</div><div class="tl-role-name">CRM Manager + Campaign Manager</div><div class="tl-role-tags"><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">4–8 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">CRM</div><div class="tl-role-name">Bonus & Promotions Analyst</div><div class="tl-role-tags"><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">VIP</div><div class="tl-role-name">VIP Manager + Account Manager ×1</div><div class="tl-role-tags"><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">4–8 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Affiliates</div><div class="tl-role-name">Affiliate Manager + Executive</div><div class="tl-role-tags"><span class="priority-tag t-mid">Mid–Senior</span><span class="priority-tag t-yrs">4–8 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">KYC</div><div class="tl-role-name">EDD Specialist + Ops Coordinator</div><div class="tl-role-tags"><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–7 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Compliance</div><div class="tl-role-name">RG Manager + Regulatory Analyst</div><div class="tl-role-tags"><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–6 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Customer Support</div><div class="tl-role-name">CS Agents ×4 + RG Specialist</div><div class="tl-role-tags"><span class="priority-tag t-junior">Junior</span><span class="priority-tag t-yrs">1–4 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Finance</div><div class="tl-role-name">Financial Controller</div><div class="tl-role-tags"><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">4–6 yrs</span><span class="priority-tag t-ph">🇵🇭 BIR</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Legal</div><div class="tl-role-name">In-house Legal Counsel</div><div class="tl-role-tags"><span class="priority-tag t-mid">Mid–Senior</span><span class="priority-tag t-yrs">4–7 yrs</span></div></div>
+      </div>
+      <div class="tl-focus"><strong>Phase 2 focus:</strong> Expand to casino and bingo verticals. Scale CS for volume. Build CRM, VIP, and affiliate capability to protect LTV and grow traffic. KYC grows as player volumes rise. PAGCOR will require updated compliance documentation when new game verticals are added.</div>
+    </div>
+
+    <!-- PHASE 3 -->
+    <div class="tl-phase" style="--phase-color:#10b981;--phase-rgb:16,185,129;">
+      <div class="tl-dot"></div>
+      <div class="tl-phase-header">
+        <div><div class="tl-phase-title">Phase 3 — Full Suite</div><div class="tl-phase-meta">Month 12–24 · Specialty Games · Poker · Scale & Optimise</div></div>
+        <div class="tl-phase-hc">Target: <strong>65–95+</strong> FTE</div>
+      </div>
+      <div class="tl-roles-grid">
+        <div class="tl-role-card"><div class="tl-role-dept">Product</div><div class="tl-role-name">Head of Speciality Games</div><div class="tl-role-tags"><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">6–10 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Engineering</div><div class="tl-role-name">Mobile Engineer (iOS + Android)</div><div class="tl-role-tags"><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–6 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Engineering</div><div class="tl-role-name">Data / BI Analyst</div><div class="tl-role-tags"><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">QA</div><div class="tl-role-name">QA Engineer — Games</div><div class="tl-role-tags"><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">UX & Design</div><div class="tl-role-name">UX Researcher</div><div class="tl-role-tags"><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">UX & Design</div><div class="tl-role-name">Motion / Game UI Designer</div><div class="tl-role-tags"><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–6 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">CRM</div><div class="tl-role-name">CRM Data Analyst</div><div class="tl-role-tags"><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">VIP</div><div class="tl-role-name">VIP Account Manager ×2 + VIP Analyst</div><div class="tl-role-tags"><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">2–5 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Affiliates</div><div class="tl-role-name">SEO / Content Specialist</div><div class="tl-role-tags"><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Fraud</div><div class="tl-role-name">Risk Rules Analyst</div><div class="tl-role-tags"><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">Finance</div><div class="tl-role-name">FP&A Analyst</div><div class="tl-role-tags"><span class="priority-tag t-mid">Mid</span><span class="priority-tag t-yrs">3–5 yrs</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">People & HR</div><div class="tl-role-name">HR Manager + Talent Acquisition</div><div class="tl-role-tags"><span class="priority-tag t-senior">Senior</span><span class="priority-tag t-yrs">5–9 yrs</span><span class="priority-tag t-ph">🇵🇭 DOLE</span></div></div>
+        <div class="tl-role-card"><div class="tl-role-dept">People & HR</div><div class="tl-role-name">HR Generalist / People Ops</div><div class="tl-role-tags"><span class="priority-tag t-junior">Junior–Mid</span><span class="priority-tag t-yrs">2–4 yrs</span></div></div>
+      </div>
+      <div class="tl-focus"><strong>Phase 3 focus:</strong> Launch billiards PvP, crash game, and online pachinko. Motion / Game UI Designer becomes critical here. HR formalises as total headcount approaches 65+. KYC requires additional analysts as the player base scales. The Data / BI Analyst enables evidence-based decisions across all departments.</div>
+    </div>
+
+    <!-- PH REGULATORY -->
+    <div style="background:var(--surface);border:1px solid rgba(245,158,11,0.28);border-radius:4px;padding:20px;margin-top:8px;">
+      <div style="font-size:12px;letter-spacing:0.25em;text-transform:uppercase;color:var(--accent4);margin-bottom:12px;">🇵🇭 Philippines Regulatory Hiring Obligations</div>
+      <div class="reg-grid">
+        <div class="reg-card"><div class="reg-card-title">PAGCOR Licence</div>CCO and Compliance Officer must be named on the licence. PAGCOR can audit without notice. Both must be in place before soft launch.</div>
+        <div class="reg-card"><div class="reg-card-title">AMLC (R.A. 9160)</div>A designated AML Compliance Officer and operational STR filing process are mandatory. The AML/STR Officer is a non-negotiable Phase 1 hire.</div>
+        <div class="reg-card"><div class="reg-card-title">NPC / R.A. 10173 (Data Privacy)</div>A registered DPO must be filed with the National Privacy Commission before player data is collected. Required at or before go-live.</div>
+        <div class="reg-card"><div class="reg-card-title">BSP e-Money Regulations</div>GCash and Maya integrations require BSP-compliant payment processes. The Payments Specialist must understand BSP e-money rules for fund flow.</div>
+        <div class="reg-card"><div class="reg-card-title">DOLE Labour Compliance</div>Once hiring locally in PH, DOLE registration plus SSS, PhilHealth, and Pag-IBIG obligations apply. HR Manager needed before headcount reaches 20.</div>
+        <div class="reg-card"><div class="reg-card-title">BIR Tax Compliance</div>All Philippine revenue is subject to BIR filings. A Financial Controller with BIR experience is required by Phase 2 at the latest.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- /page-timeline -->
+
+<script>
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function filterDept(group, btn) {
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.dept-card').forEach(card => {
+    const match = group === 'all' || card.dataset.group === group;
+    if (match) {
+      card.classList.remove('hidden');
+      card.style.animation = 'none';
+      card.offsetHeight;
+      card.style.animation = '';
+    } else {
+      card.classList.add('hidden');
+    }
+  });
+}
+
+document.querySelectorAll('.dept-card').forEach((card, i) => {
+  card.style.animationDelay = (i * 0.05) + 's';
+});
+</script>
+</body>
+</html>
